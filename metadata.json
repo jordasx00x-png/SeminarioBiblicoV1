@@ -1,0 +1,8 @@
+{
+  "name": "Remix Seminario Teológico Digital",
+  "description": "Plataforma educativa de Teología y Estudios Bíblicos (Versión Estática).",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

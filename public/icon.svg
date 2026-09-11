@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <!-- Rounded elegant background of the app icon -->
+  <rect width="512" height="512" rx="112" fill="#1A2533" />
+  
+  <!-- Subtle circular radiant outline -->
+  <circle cx="256" cy="256" r="190" fill="none" stroke="#DFB15B" stroke-width="6" opacity="0.4" />
+  
+  <!-- Outer shield/ring -->
+  <circle cx="256" cy="256" r="170" fill="none" stroke="#DFB15B" stroke-width="10" stroke-dasharray="12 8" />
+  <circle cx="256" cy="256" r="150" fill="none" stroke="#DFB15B" stroke-width="3" />
+  
+  <!-- Stylized Open Book (Bible) at the bottom/middle -->
+  <!-- Left page -->
+  <path d="M 256,330 C 220,300 170,295 130,305 L 130,195 C 170,185 220,190 256,220 Z" fill="#FDFCFB" stroke="#DFB15B" stroke-width="4" stroke-linejoin="round" />
+  <!-- Right page -->
+  <path d="M 256,330 C 292,300 342,295 382,305 L 382,195 C 342,185 292,190 256,220 Z" fill="#FDFCFB" stroke="#DFB15B" stroke-width="4" stroke-linejoin="round" />
+  
+  <!-- Soft pages underlay for 3D depth effect -->
+  <path d="M 130,305 C 170,295 220,300 256,330 C 292,300 342,295 382,305 L 382,312 C 342,302 292,307 256,337 C 220,307 170,302 130,312 Z" fill="#DFB15B" stroke="#DFB15B" stroke-width="1" />
+
+  <!-- Elegant Latin Cross rising from the open Bible -->
+  <!-- Vertical beam -->
+  <rect x="244" y="90" width="24" height="150" rx="4" fill="#DFB15B" />
+  <!-- Horizontal beam -->
+  <rect x="200" y="125" width="112" height="24" rx="4" fill="#DFB15B" />
+  
+  <!-- Glowing central cross accent -->
+  <circle cx="256" cy="137" r="20" fill="#1A2533" />
+  <circle cx="256" cy="137" r="10" fill="#FDFCFB" />
+  
+  <!-- Elegant little decorative stars/light rays -->
+  <path d="M 256,65 L 259,73 L 267,76 L 259,79 L 256,87 L 253,79 L 245,76 L 253,73 Z" fill="#DFB15B" />
+</svg>

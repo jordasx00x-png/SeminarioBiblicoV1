@@ -1,0 +1,85 @@
+src/components/DailyVerseNotification.tsx:      <div className="bg-white dark:bg-zinc-900 border border-[#E0D7C6] dark:border-zinc-700 shadow-xl rounded-lg p-5 w-80 flex flex-col gap-3">
+src/components/DailyVerseNotification.tsx:          <div className="flex items-center gap-2 text-[#7F1D1D] dark:text-red-400">
+src/components/DailyVerseNotification.tsx:          <button onClick={() => setIsVisible(false)} className="text-gray-400 dark:text-zinc-500 hover:text-black dark:hover:text-white">
+src/components/DailyVerseNotification.tsx:        <p className="text-sm font-serif italic text-gray-700 dark:text-zinc-200 leading-relaxed">
+src/components/CourseOverview.tsx:    <div className="flex flex-col min-h-full font-serif text-[#2C2C2C] dark:text-stone-300 bg-[#FDFCFB] dark:bg-[#121212] transition-colors">
+src/components/CourseOverview.tsx:      <header className="h-16 bg-white dark:bg-zinc-900 border-b border-[#E0D7C6] dark:border-zinc-800 px-4 md:px-8 flex items-center shadow-sm sticky top-0 z-20 shrink-0 transition-colors">
+src/components/CourseOverview.tsx:            className="flex items-center gap-2 text-gray-500 hover:text-[#1A2533] dark:hover:text-stone-100 transition-colors font-sans text-xs md:text-sm font-semibold uppercase tracking-widest"
+src/components/CourseOverview.tsx:           <div className="text-[10px] md:text-xs font-sans text-gray-500 dark:text-zinc-400 uppercase tracking-widest mb-2 flex items-center gap-2">
+src/components/CourseOverview.tsx:             <span className="bg-[#1A2533] dark:bg-zinc-700 text-[#E0D7C6] px-2 py-0.5 rounded">Módulo Activo</span>
+src/components/CourseOverview.tsx:           <h1 className="text-3xl md:text-5xl font-bold text-[#1A2533] dark:text-stone-100 mb-4 leading-tight">
+src/components/CourseOverview.tsx:           <p className="text-gray-600 dark:text-stone-400 font-sans mt-4 text-sm md:text-base md:text-lg leading-relaxed max-w-2xl border-l-4 border-[#7F1D1D] dark:border-red-800 pl-4">
+src/components/CourseOverview.tsx:        <div className="bg-white dark:bg-zinc-900 border border-[#E0D7C6] dark:border-zinc-800 rounded-xl p-6 shadow-sm mb-10 animate-in fade-in slide-in-from-bottom-6 duration-500 transition-colors">
+src/components/CourseOverview.tsx:              <span className="text-xs font-bold text-gray-500 dark:text-zinc-400 uppercase tracking-widest font-sans">Progreso General ({completedScaled}/{total})</span>
+src/components/CourseOverview.tsx:              <span className="text-sm font-bold text-[#1A2533] dark:text-stone-100">{percentage}%</span>
+src/components/CourseOverview.tsx:           <div className="h-2 w-full bg-gray-100 dark:bg-zinc-800 rounded-full overflow-hidden mb-4">
+src/components/CourseOverview.tsx:             <div className="h-full bg-[#7F1D1D] dark:bg-red-800 rounded-full transition-all duration-500" style={{ width: `${percentage}%` }}></div>
+src/components/CourseOverview.tsx:             <div className="pt-4 border-t border-[#E0D7C6] dark:border-zinc-800 flex justify-end">
+src/components/CourseOverview.tsx:                 className="flex items-center gap-2 bg-[#1A2533] dark:bg-zinc-800 text-white px-6 py-2.5 rounded text-[10px] md:text-xs font-bold tracking-widest uppercase hover:bg-black dark:hover:bg-zinc-700 transition-colors shadow-sm font-sans"
+src/components/Sidebar.tsx:    <div className={`fixed inset-y-0 left-0 z-40 bg-[#1A2533] dark:bg-zinc-950 text-white border-r border-[#E0D7C6] dark:border-zinc-800 transform flex flex-col shadow-2xl md:shadow-none transition-all duration-300 ease-in-out pl-0
+src/components/Sidebar.tsx:      <div className="p-5 border-b border-[#2C3E50] dark:border-zinc-800 flex items-center justify-between md:hidden bg-[#151D28] dark:bg-zinc-900">
+src/components/Sidebar.tsx:            className="p-1.5 text-gray-400 hover:text-white transition-colors bg-[#1A2533]/50 dark:bg-zinc-800 rounded-lg border border-[#2C3E50] dark:border-zinc-700"
+src/components/Sidebar.tsx:      <div className="p-6 border-b border-[#2C3E50] dark:border-zinc-800 hidden md:flex items-center justify-between">
+src/components/Sidebar.tsx:            className="p-1.5 text-gray-400 hover:text-white transition-colors bg-[#1A2533]/50 dark:bg-zinc-800 rounded-lg border border-[#2C3E50] dark:border-zinc-700 md:flex hidden"
+src/components/Sidebar.tsx:               isDashboardActive ? 'bg-[#7F1D1D] text-white shadow-lg' : 'text-gray-300 hover:bg-[#2C3E50] dark:hover:bg-zinc-800 hover:text-white'
+src/components/Sidebar.tsx:               <div className="px-3 py-2 text-[10px] uppercase tracking-widest text-[#8E9EAD] dark:text-zinc-500 font-sans">
+src/components/Sidebar.tsx:                             isActive ? 'bg-[#7F1D1D] text-white shadow-lg' : 'text-gray-400 hover:bg-[#2C3E50] dark:hover:bg-zinc-800 hover:text-white'
+src/components/Sidebar.tsx:                             <BookOpen className={`w-4 h-4 shrink-0 ${isActive ? 'text-white' : 'text-gray-500 dark:text-zinc-500'}`} />
+src/components/Sidebar.tsx:      <div className="p-4 bg-[#111A24] dark:bg-zinc-900 border-t border-[#2C3E50] dark:border-zinc-800">
+src/components/FormattedContent.tsx:            tempParts.push(<strong key={s} className="font-bold text-stone-900 dark:text-stone-100">{applyGlossary([innerText])}</strong>);
+src/components/ProfileModal.tsx:      <div className="bg-white dark:bg-zinc-900 border border-transparent dark:border-zinc-800 rounded-xl shadow-2xl max-w-md w-full overflow-hidden flex flex-col">
+src/components/ProfileModal.tsx:        <div className="flex justify-between items-center p-5 border-b border-[#E0D7C6] dark:border-zinc-800">
+src/components/ProfileModal.tsx:          <h2 className="text-xl font-bold text-[#1A2533] dark:text-stone-100 uppercase tracking-widest font-sans flex items-center gap-2">
+src/components/ProfileModal.tsx:            <UserIcon size={20} className="text-[#7F1D1D] dark:text-[#E0D7C6]" /> 
+src/components/ProfileModal.tsx:            className="text-gray-400 hover:text-gray-700 dark:hover:text-stone-100 transition-colors"
+src/components/ProfileModal.tsx:            <label className="text-xs font-bold text-gray-500 dark:text-zinc-400 uppercase tracking-widest font-sans">
+src/components/ProfileModal.tsx:              <UserIcon size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-zinc-500" />
+src/components/ProfileModal.tsx:                className="w-full pl-10 pr-4 py-2.5 bg-gray-50 dark:bg-zinc-800 border border-[#E0D7C6] dark:border-zinc-700 dark:text-stone-100 rounded outline-none focus:border-[#7F1D1D] dark:focus:border-zinc-500 focus:ring-1 focus:ring-[#7F1D1D] transition-all font-sans text-sm"
+src/components/ProfileModal.tsx:            <label className="text-xs font-bold text-gray-500 dark:text-zinc-400 uppercase tracking-widest font-sans">
+src/components/ProfileModal.tsx:              <Mail size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-zinc-500" />
+src/components/ProfileModal.tsx:                className="w-full pl-10 pr-4 py-2.5 bg-gray-50 dark:bg-zinc-800 border border-[#E0D7C6] dark:border-zinc-700 dark:text-stone-100 rounded outline-none focus:border-[#7F1D1D] dark:focus:border-zinc-500 focus:ring-1 focus:ring-[#7F1D1D] transition-all font-sans text-sm"
+src/components/ProfileModal.tsx:            <label className="text-xs font-bold text-gray-500 dark:text-zinc-400 uppercase tracking-widest font-sans">
+src/components/ProfileModal.tsx:              <Phone size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-zinc-500" />
+src/components/ProfileModal.tsx:                className="w-full pl-10 pr-4 py-2.5 bg-gray-50 dark:bg-zinc-800 border border-[#E0D7C6] dark:border-zinc-700 dark:text-stone-100 rounded outline-none focus:border-[#7F1D1D] dark:focus:border-zinc-500 focus:ring-1 focus:ring-[#7F1D1D] transition-all font-sans text-sm"
+src/components/ProfileModal.tsx:          <div className="pt-4 flex justify-end gap-3 border-t border-[#E0D7C6] dark:border-zinc-800 mt-6">
+src/components/ProfileModal.tsx:              className="px-4 py-2 text-sm font-bold text-gray-600 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-stone-100 transition-colors uppercase tracking-wider font-sans"
+src/components/ProfileModal.tsx:              className="px-6 py-2 bg-[#1A2533] dark:bg-[#7F1D1D] text-white rounded text-sm font-bold hover:bg-black dark:hover:bg-[#991B1B] transition-colors uppercase tracking-wider font-sans shadow shadow-[#1A2533]/20 flex items-center gap-2"
+src/components/WelcomePage.tsx:    <div className="min-h-screen bg-[#FDFCFB] dark:bg-[#121212] transition-colors duration-500 flex flex-col items-center justify-center p-6 text-center">
+src/components/WelcomePage.tsx:        <h1 className="text-4xl md:text-5xl font-bold text-[#1A2533] dark:text-stone-100 font-sans tracking-tight">
+src/components/WelcomePage.tsx:        <p className="text-lg text-gray-600 dark:text-gray-400 max-w-md font-serif">
+src/components/WelcomePage.tsx:        <div className="w-12 h-1 bg-[#E0D7C6] dark:bg-zinc-700 mt-4 rounded-full" />
+src/components/LessonViewer.tsx:      <header className="h-16 bg-white dark:bg-[#1a1a1a] border-b border-[#E0D7C6] dark:border-zinc-800 px-4 md:px-8 flex items-center justify-between shadow-sm sticky top-0 z-20 shrink-0 transition-colors">
+src/components/LessonViewer.tsx:            className="flex items-center gap-2 text-gray-500 hover:text-[#1A2533] dark:hover:text-stone-100 transition-colors font-sans text-xs font-semibold uppercase tracking-widest mr-1 md:mr-2 shrink-0"
+src/components/LessonViewer.tsx:          <div className="h-4 w-px bg-[#E0D7C6] dark:bg-zinc-800 hidden sm:block shrink-0"></div>
+src/components/LessonViewer.tsx:          <span className="text-xs font-semibold text-[#1A2533] dark:text-stone-100 truncate">Día {lesson.day}: {lesson.title}</span>
+src/components/LessonViewer.tsx:               showExam ? 'bg-[#7F1D1D] text-white hover:bg-red-800' : 'bg-gray-100 dark:bg-zinc-800 text-gray-400 dark:text-zinc-500 cursor-not-allowed'
+src/components/LessonViewer.tsx:      <div className="flex-1 p-4 md:p-8 flex gap-8 bg-[#FDFCFB] dark:bg-[#121212] justify-center transition-colors">
+src/components/LessonViewer.tsx:          <article className="bg-white dark:bg-[#1a1a1a] border border-[#E0D7C6] dark:border-zinc-800 rounded-xl p-6 md:p-10 shadow-sm flex flex-col gap-8 relative font-serif text-[#2C2C2C] dark:text-stone-100 transition-colors">
+src/components/LessonViewer.tsx:            <h2 className="text-3xl text-[#1A2533] dark:text-stone-100 mb-2 border-b border-[#F0E6D2] dark:border-zinc-800 pb-4 font-bold">{lesson.title}</h2>
+src/components/LessonViewer.tsx:              <div className="bg-[#FAF9F6] dark:bg-zinc-900 border-l-4 border-[#1A2533] dark:border-stone-400 p-6 mb-8 mt-2 animate-in fade-in slide-in-from-left-4 duration-700">
+src/components/LessonViewer.tsx:                <div className="flex items-center gap-2 text-[#7F1D1D] dark:text-red-400 mb-3">
+src/components/LessonViewer.tsx:                <p className="text-xl font-serif italic text-[#1A2533] dark:text-stone-100 mb-3 leading-relaxed">
+src/components/LessonViewer.tsx:                <p className="text-sm font-bold text-gray-500 dark:text-zinc-400 uppercase tracking-tighter text-right">— {lesson.baseVerse.reference}</p>
+src/components/LessonViewer.tsx:                        className={`text-gray-700 dark:text-gray-200 leading-relaxed text-lg ${isLastUnlockedText && !showExam ? 'border-l-4 border-[#7F1D1D] pl-6 py-2 italic bg-gray-50/50 dark:bg-zinc-800/80' : ''}`}
+src/components/LessonViewer.tsx:                                className="bg-white dark:bg-zinc-900 border text-xs md:text-sm border-[#E0D7C6] dark:border-zinc-700 text-[#1A2533] dark:text-stone-100 hover:bg-gray-50 dark:hover:bg-zinc-800 px-6 py-3 rounded font-bold tracking-widest uppercase transition-colors shadow-sm"
+src/components/LessonViewer.tsx:                              className="bg-[#1A2533] dark:bg-zinc-800 hover:bg-[#2C3E50] dark:hover:bg-zinc-700 text-[#E0D7C6] dark:text-stone-100 px-8 py-3 rounded text-sm font-bold tracking-widest uppercase transition-colors shadow"
+src/components/LessonViewer.tsx:                      <div className="bg-[#FAF9F6] dark:bg-zinc-900/60 border-2 border-dashed border-[#D1B17F] rounded-xl p-6 md:p-8 relative overflow-hidden my-4 group">
+src/components/LessonViewer.tsx:                          <BookOpen size={64} className="text-[#1A2533] dark:text-stone-300" />
+src/components/LessonViewer.tsx:                        <h4 className="text-sm font-bold text-[#7F1D1D] dark:text-red-400 uppercase tracking-[0.2em] mb-4 flex items-center gap-2">
+src/components/LessonViewer.tsx:                          className="text-[#1A2533] dark:text-stone-100 leading-relaxed font-sans text-base prose prose-sm max-w-none"
+src/components/LessonViewer.tsx:                             className="bg-[#1A2533] dark:bg-zinc-800 hover:bg-[#2C3E50] dark:hover:bg-zinc-700 text-[#E0D7C6] dark:text-stone-100 px-8 py-3 rounded text-sm font-bold tracking-widest uppercase transition-colors shadow"
+src/components/LessonViewer.tsx:                     <div key={block.id} className="bg-gray-50 dark:bg-zinc-900/40 p-6 md:p-8 rounded-lg border border-dashed border-[#BDB2A0] dark:border-zinc-700 my-8 animate-in fade-in zoom-in-95 duration-500 font-sans shadow-sm">
+src/components/LessonViewer.tsx:                       <p className="text-sm font-bold text-[#7F1D1D] dark:text-red-400 uppercase tracking-wide mb-4">Control de Lectura</p>
+src/components/LessonViewer.tsx:                       <p className="font-serif text-lg text-[#1A2533] dark:text-stone-100 mb-5">{q.question}</p>
+src/components/LessonViewer.tsx:                           let btnClass = "w-full text-left flex items-center gap-3 p-3 border rounded bg-white dark:bg-zinc-850 transition-all text-sm";
+src/components/LessonViewer.tsx:                              btnClass += " border-[#E0D7C6] dark:border-zinc-700 hover:border-[#7F1D1D] dark:hover:border-zinc-500 cursor-pointer text-gray-700 dark:text-stone-200 hover:bg-gray-50 dark:hover:bg-zinc-800 hover:shadow-sm";
+src/components/LessonViewer.tsx:                                 btnClass += " border-emerald-500 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-900 dark:text-emerald-300 shadow-sm ring-1 ring-emerald-500";
+src/components/LessonViewer.tsx:                                 btnClass += " border-red-300 bg-red-50 dark:bg-red-950/40 text-red-900 dark:text-red-300";
+src/components/LessonViewer.tsx:                                 btnClass += " border-[#E0D7C6] dark:border-zinc-800 text-gray-400 dark:text-zinc-650 opacity-60";
+src/components/LessonViewer.tsx:                         <div className="mt-5 text-sm text-red-600 dark:text-red-400 font-bold bg-white dark:bg-zinc-800 px-4 py-2 inline-block border border-red-200 dark:border-red-900/40 rounded">
+src/App.tsx:      localStorage.removeItem('darkMode');
+src/App.tsx:      document.documentElement.classList.remove('dark');
+src/App.tsx:    <div className={`min-h-screen bg-[#FDFCFB] text-[#2C2C2C] dark:bg-[#121212] dark:text-stone-100 font-serif flex flex-col md:flex-row relative transition-colors duration-300`}>
+src/App.tsx:          className="hidden md:flex fixed top-4 left-4 z-40 p-2.5 rounded-xl bg-white/90 dark:bg-zinc-800/90 backdrop-blur shadow-lg border border-gray-200 dark:border-zinc-700 hover:bg-gray-100 dark:hover:bg-zinc-700 transition-all active:scale-95"
+src/App.tsx:          <Menu size={20} className="text-gray-600 dark:text-gray-300" />
+src/App.tsx:      <footer className="md:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-zinc-900 border-t border-[#E0D7C6] dark:border-zinc-800 h-16 flex items-center justify-around z-40 px-2 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] transition-colors duration-300">

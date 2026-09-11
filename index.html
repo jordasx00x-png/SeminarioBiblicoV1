@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Seminario Teológico Digital</title>
+    
+    <link rel="icon" type="image/svg+xml" href="/icon.svg" />
+    <link rel="icon" type="image/png" href="/icon-192.png" />
+    
+    <!-- PWA Manifest & Theme Color -->
+    <link rel="manifest" href="./manifest.json" />
+    <meta name="theme-color" content="#FFFFFF" />
+    
+    <!-- iOS / Mobile Web App Touch capability & styles -->
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="Seminario" />
+    <link rel="apple-touch-icon" href="./icon-192.png" />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+    
+    <!-- Limpieza segura de Service Workers y cachés previas -->
+    <script>
+      try {
+        if ('serviceWorker' in navigator && typeof navigator.serviceWorker.getRegistrations === 'function') {
+          navigator.serviceWorker.getRegistrations().then(function(registrations) {
+            for (var i = 0; i < registrations.length; i++) {
+              registrations[i].unregister().catch(function() {});
+            }
+          }).catch(function() {});
+        }
+      } catch (e) {}
+
+      try {
+        if (typeof window !== 'undefined' && 'caches' in window && typeof window.caches.keys === 'function') {
+          window.caches.keys().then(function(names) {
+            for (var i = 0; i < names.length; i++) {
+              window.caches.delete(names[i]).catch(function() {});
+            }
+          }).catch(function() {});
+        }
+      } catch (e) {}
+    </script>
+  </body>
+</html>
+

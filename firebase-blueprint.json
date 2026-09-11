@@ -1,0 +1,45 @@
+{
+  "entities": {
+    "UserProgress": {
+      "title": "User Progress",
+      "description": "Progress of a user in the courses.",
+      "type": "object",
+      "properties": {
+        "completedLessons": {
+          "type": "map",
+          "description": "Map of lesson ID to lesson progress data"
+        },
+        "completedBlockExams": {
+          "type": "map",
+          "description": "Map of block exam ID to exam progress data"
+        }
+      }
+    },
+    "UserProfile": {
+      "title": "User Profile",
+      "description": "User profile settings.",
+      "type": "object",
+      "properties": {
+        "fullName": { "type": "string" },
+        "phoneNumber": { "type": "string" },
+        "email": { "type": "string" },
+        "studyReminderEnabled": { "type": "boolean" },
+        "studyReminderTime": { "type": "string" }
+      }
+    }
+  },
+  "firestore": {
+    "users/{userId}/progress/default": {
+      "schema": {
+        "$ref": "#/entities/UserProgress"
+      },
+      "description": "Progress data for a specific user. Using 'default' as the document ID for the single progress record."
+    },
+    "users/{userId}/profile/default": {
+      "schema": {
+        "$ref": "#/entities/UserProfile"
+      },
+      "description": "Profile data for a specific user."
+    }
+  }
+}

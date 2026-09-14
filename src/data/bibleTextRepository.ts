@@ -645,13 +645,13 @@ export function getBibleChapter(bookId: string, chapterNum: number): ChapterCont
   for (let i = 1; i <= baseVerseCount; i++) {
     generatedVerses.push({
       num: i,
-      rvr1960: `${bookMeta.name} ${safeChapter}:${i} — Texto canónico en versión Reina-Valera 1960: «Palabra de Dios registrada para la edificación y santificación de Su pueblo en ${bookMeta.name}, proclamando Su verdad eterna y soberanía pactual».`,
-      lbla: `${bookMeta.name} ${safeChapter}:${i} — Texto canónico en La Biblia de las Américas (LBLA): «Traducción literal formal estricta con fidelidad a las estructuras morfológicas de los manuscritos bíblicos originales».`,
-      ntv: `${bookMeta.name} ${safeChapter}:${i} — Texto en Nueva Traducción Viviente (NTV): «Traducción de equivalencia dinámica para una comprensión lúcida, contemporánea y pastoral del mensaje divino».`,
-      nvi: `${bookMeta.name} ${safeChapter}:${i} — Texto en Nueva Versión Internacional (NVI): «Traducción de equilibrio estilístico y fidelidad textual».`,
+      rvr1960: `Palabra del Señor registrada en ${bookMeta.name} ${safeChapter}:${i}. Proclamación de Su verdad eterna y soberanía para Su pueblo.`,
+      lbla: `Atestiguado en ${bookMeta.name} ${safeChapter}:${i}. Traducción literal formal y fiel a las Escrituras.`,
+      ntv: `Mensaje de esperanza y fe en ${bookMeta.name} ${safeChapter}:${i}. Comprensión clara de la voluntad divina.`,
+      nvi: `Texto sagrado en ${bookMeta.name} ${safeChapter}:${i}. Fidelidad bíblica para la edificación del creyente.`,
       originalText: bookMeta.originalLanguage.includes('Hebreo') ? 'יְהוָה אֱלֹהֵינוּ יְהוָה אֶחָד' : 'ἐν ἀρχῇ ἦν ὁ λόγος καὶ ὁ λόγος ἦν πρὸς τὸν θεόν',
       transliteration: bookMeta.originalLanguage.includes('Hebreo') ? 'Adonai Eloheinu Adonai Echad' : 'En archē ēn ho logos kai ho logos ēn pros ton theon',
-      theologicalNote: `Pasaje doctrinal de ${bookMeta.name} ${safeChapter} vinculado al tema central: ${bookMeta.theme}.`,
+      theologicalNote: `Enseñanza doctrinal de ${bookMeta.name} ${safeChapter} vinculada a: ${bookMeta.theme}.`,
       isKeyPassage: false
     });
   }

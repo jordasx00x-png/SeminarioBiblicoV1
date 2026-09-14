@@ -13,13 +13,22 @@ import {
   Sparkles,
   Filter,
   Loader2,
-  Check
+  Check,
+  Highlighter,
+  Edit3,
+  Trash2,
+  Palette,
+  FileText,
+  Plus
 } from 'lucide-react';
 import { BIBLE_BOOKS_CANON, findBibleBook } from '../data/completeBibleData';
 import { getBibleChapter, ChapterContent } from '../data/bibleTextRepository';
 import { generateVerseCommentary, generateCrossReferences } from '../utils/verseCommentaryGenerator';
 import { searchBibleByPhrase, VerseSearchResult } from '../utils/bibleSearchEngine';
 import { getChapterOffline, getChapterOfflineAsync, saveChapterOffline } from '../utils/offlineStorage';
+import { useBibleNotes } from '../hooks/useBibleNotes';
+import { HighlightColor, getColorClasses, deleteBibleNote } from '../utils/bibleNotesStorage';
+import { BibleNotesDrawer } from './BibleNotesDrawer';
 
 export interface AcademicPanelProps {
   initialBookId?: string;
@@ -57,7 +66,14 @@ export function AcademicPanel({
   const [isBookDrawerOpen, setIsBookDrawerOpen] = useState<boolean>(false);
   const [bookSearchQuery, setBookSearchQuery] = useState<string>('');
   const [bookTestamentTab, setBookTestamentTab] = useState<'ALL' | 'Antiguo Testamento' | 'Nuevo Testamento'>('ALL');
-  const [activeVerseMenuTab, setActiveVerseMenuTab] = useState<'menu' | 'comentario_biblico' | 'referencias' | 'comentario_historico'>('menu');
+  const [activeVerseMenuTab, setActiveVerseMenuTab] = useState<'menu' | 'comentario_biblico' | 'referencias' | 'comentario_historico' | 'subrayado'>('menu');
+
+  // Notes and Highlighting hooks
+  const { allNotes, chapterNotes, addOrUpdateHighlight, removeNote } = useBibleNotes(selectedBookId, selectedChapter);
+  const [isNotesDrawerOpen, setIsNotesDrawerOpen] = useState<boolean>(false);
+  const [noteInputText, setNoteInputText] = useState<string>('');
+  const [selectedColor, setSelectedColor] = useState<HighlightColor>('yellow');
+  const [selectedTextSnippet, setSelectedTextSnippet] = useState<{ verse: number; text: string } | null>(null);
 
   // Phrase search states
   const [isPhraseSearchOpen, setIsPhraseSearchOpen] = useState<boolean>(false);
@@ -242,6 +258,21 @@ export function AcademicPanel({
           </div>
 
           <div className="flex items-center gap-2 w-full md:w-auto justify-end overflow-x-auto pb-1 md:pb-0">
+            <button
+              onClick={() => setIsNotesDrawerOpen(true)}
+              className="px-3 py-1.5 rounded-lg bg-amber-600 hover:bg-amber-500 text-white text-xs font-bold flex items-center gap-1.5 border border-amber-400/40 shadow-sm transition-all cursor-pointer shrink-0"
+              title="Ver todas mis notas y versículos subrayados"
+            >
+              <Highlighter className="w-3.5 h-3.5 text-amber-200" />
+              <span className="hidden sm:inline">Mis Notas</span>
+              <span className="sm:hidden">Notas</span>
+              {allNotes.length > 0 && (
+                <span className="px-1.5 py-0.5 rounded-full bg-black/40 text-[10px] font-mono text-amber-200">
+                  {allNotes.length}
+                </span>
+              )}
+            </button>
+
             <button
               onClick={() => setIsPhraseSearchOpen(true)}
               className="px-3 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-stone-950 text-xs font-bold flex items-center gap-1.5 border border-amber-400 shadow-sm transition-all cursor-pointer shrink-0"
@@ -465,27 +496,83 @@ export function AcademicPanel({
                   </div>
                 ))}
               </div>
-            ) : (realVerses.length > 0 ? realVerses.map(rv => {
+              ) : (realVerses.length > 0 ? realVerses.map(rv => {
                 const curatedVerse = currentChapterContent.verses.find(v => v.num === rv.num);
                 return { ...curatedVerse, ...rv, theologicalNote: curatedVerse?.theologicalNote, originalText: curatedVerse?.originalText, isKeyPassage: curatedVerse?.isKeyPassage };
-              }) : currentChapterContent.verses).map(verse => (
+              }) : currentChapterContent.verses).map(verse => {
+                const vNotes = chapterNotes.filter(n => n.verse === verse.num);
+                const mainHighlight = vNotes[0];
+                const colorStyle = mainHighlight ? getColorClasses(mainHighlight.color) : null;
+
+                return (
               <div key={verse.num} className="relative">
                 <div 
-                  onClick={() => handleVerseClick(verse.num)}
-                  className={`flex gap-4 group p-2 rounded-xl transition-colors cursor-pointer ${
-                    selectedVerse === verse.num 
+                  onClick={() => {
+                    handleVerseClick(verse.num);
+                    const existing = chapterNotes.find(n => n.verse === verse.num);
+                    if (existing) {
+                      setNoteInputText(existing.noteText || '');
+                      setSelectedColor(existing.color);
+                    } else {
+                      setNoteInputText('');
+                    }
+                  }}
+                  onMouseUp={() => {
+                    const sel = window.getSelection();
+                    if (sel && !sel.isCollapsed) {
+                      const txt = sel.toString().trim();
+                      if (txt.length > 2) {
+                        setSelectedTextSnippet({ verse: verse.num, text: txt });
+                        setSelectedVerse(verse.num);
+                        setActiveVerseMenuTab('subrayado');
+                      }
+                    }
+                  }}
+                  className={`flex gap-4 group p-2.5 rounded-xl transition-colors cursor-pointer ${
+                    colorStyle ? colorStyle.bg : (selectedVerse === verse.num 
                       ? 'bg-amber-50 dark:bg-zinc-900 ring-1 ring-amber-300 shadow-sm' 
-                      : 'hover:bg-stone-50 dark:hover:bg-zinc-900'
+                      : 'hover:bg-stone-50 dark:hover:bg-zinc-900')
                   }`}
                 >
-                  <span className={`font-bold font-mono text-sm shrink-0 pt-1 select-none ${
-                    selectedVerse === verse.num ? 'text-amber-600 dark:text-amber-400' : 'text-[#7F1D1D] dark:text-amber-500'
-                  }`}>
-                    {verse.num}
-                  </span>
-                  <p className="flex-1">
-                    {verse[activeTranslation as keyof typeof verse] as string || verse.rvr1960}
-                  </p>
+                  <div className="flex flex-col items-center pt-0.5">
+                    <span className={`font-bold font-mono text-sm shrink-0 select-none ${
+                      selectedVerse === verse.num ? 'text-amber-600 dark:text-amber-400' : 'text-[#7F1D1D] dark:text-amber-500'
+                    }`}>
+                      {verse.num}
+                    </span>
+                    {mainHighlight && (
+                      <span className={`w-2 h-2 rounded-full mt-1 ${colorStyle?.dot}`}></span>
+                    )}
+                  </div>
+                  <div className="flex-1 space-y-1">
+                    <p>
+                      {verse[activeTranslation as keyof typeof verse] as string || verse.rvr1960}
+                    </p>
+                    {/* Render attached note badge if present */}
+                    {vNotes.map(n => n.noteText ? (
+                      <div key={n.id} className="mt-1 text-xs bg-amber-50/90 dark:bg-zinc-800/90 border border-amber-200 dark:border-zinc-700 p-2 rounded-lg font-sans text-gray-800 dark:text-gray-200 flex items-start gap-2 shadow-xs">
+                        <Edit3 className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
+                        <div className="flex-1">
+                          {n.selectedText && (
+                            <span className="font-serif italic font-semibold text-amber-900 dark:text-amber-300 block text-[11px]">
+                              «{n.selectedText}»:
+                            </span>
+                          )}
+                          <span>{n.noteText}</span>
+                        </div>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            removeNote(n.id);
+                          }}
+                          className="text-gray-400 hover:text-red-500 p-0.5 cursor-pointer"
+                          title="Eliminar nota"
+                        >
+                          <Trash2 className="w-3 h-3" />
+                        </button>
+                      </div>
+                    ) : null)}
+                  </div>
                 </div>
 
                 {/* Inline tools overlay for selected verse */}
@@ -518,6 +605,32 @@ export function AcademicPanel({
                               <X className="w-4 h-4" />
                             </button>
                           </div>
+
+                          <button 
+                            onClick={() => {
+                              const existing = chapterNotes.find(n => n.verse === verse.num);
+                              if (existing) {
+                                setNoteInputText(existing.noteText || '');
+                                setSelectedColor(existing.color);
+                              }
+                              setActiveVerseMenuTab('subrayado');
+                            }}
+                            className="flex items-center gap-3 p-3 rounded-lg bg-stone-50 dark:bg-zinc-800/50 hover:bg-amber-50 dark:hover:bg-zinc-800 text-sm font-medium transition-colors border border-transparent hover:border-amber-200 dark:hover:border-zinc-700 text-left cursor-pointer"
+                          >
+                            <Highlighter className="w-4 h-4 text-amber-500 shrink-0" />
+                            <div className="flex-1">
+                              <div className="font-semibold text-gray-800 dark:text-gray-200 flex items-center justify-between">
+                                <span>Subrayar y Nota Personal</span>
+                                {mainHighlight && (
+                                  <span className="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-amber-100 dark:bg-amber-900/60 text-amber-800 dark:text-amber-200">
+                                    Resaltado
+                                  </span>
+                                )}
+                              </div>
+                              <div className="text-xs text-gray-500 dark:text-gray-400">Escoge un color de subrayado y escribe tus notas de estudio</div>
+                            </div>
+                          </button>
+
                           <button 
                             onClick={() => setActiveVerseMenuTab('comentario_biblico')}
                             className="flex items-center gap-3 p-3 rounded-lg bg-stone-50 dark:bg-zinc-800/50 hover:bg-amber-50 dark:hover:bg-zinc-800 text-sm font-medium transition-colors border border-transparent hover:border-amber-200 dark:hover:border-zinc-700 text-left"
@@ -559,6 +672,7 @@ export function AcademicPanel({
                               <ArrowLeft className="w-4 h-4" />
                             </button>
                             <span className="font-bold text-sm text-[#1A2533] dark:text-white flex-1">
+                              {activeVerseMenuTab === 'subrayado' && `Subrayado y Notas — ${currentBook.name} ${selectedChapter}:${verse.num}`}
                               {activeVerseMenuTab === 'comentario_biblico' && `Comentario Bíblico — ${currentBook.name} ${selectedChapter}:${verse.num}`}
                               {activeVerseMenuTab === 'referencias' && `Referencias Cruzadas — ${currentBook.name} ${selectedChapter}:${verse.num}`}
                               {activeVerseMenuTab === 'comentario_historico' && `Contexto Histórico y Cultural — v. ${verse.num}`}
@@ -572,6 +686,100 @@ export function AcademicPanel({
                           </div>
                           
                           <div className="text-sm text-gray-600 dark:text-gray-300 font-sans leading-relaxed">
+                            {activeVerseMenuTab === 'subrayado' && (
+                              <div className="space-y-4">
+                                {selectedTextSnippet && selectedTextSnippet.verse === verse.num && (
+                                  <div className="p-2.5 rounded-lg bg-amber-50 dark:bg-zinc-800 border border-amber-300 dark:border-amber-700 text-xs font-serif italic text-amber-950 dark:text-amber-200">
+                                    <span className="font-sans font-bold not-italic text-[10px] uppercase block text-amber-600 mb-0.5">Texto seleccionado:</span>
+                                    «{selectedTextSnippet.text}»
+                                  </div>
+                                )}
+
+                                {/* Color Palette */}
+                                <div>
+                                  <label className="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-2 uppercase tracking-wider">
+                                    Selecciona Color de Subrayado:
+                                  </label>
+                                  <div className="flex items-center gap-2 flex-wrap">
+                                    {(['yellow', 'green', 'blue', 'pink', 'purple', 'orange'] as HighlightColor[]).map((c) => {
+                                      const cDetails = getColorClasses(c);
+                                      const isSelected = selectedColor === c;
+                                      return (
+                                        <button
+                                          key={c}
+                                          onClick={() => {
+                                            setSelectedColor(c);
+                                            addOrUpdateHighlight(
+                                              selectedBookId,
+                                              currentBook.name,
+                                              selectedChapter,
+                                              verse.num,
+                                              c,
+                                              selectedTextSnippet?.verse === verse.num ? selectedTextSnippet.text : undefined,
+                                              noteInputText
+                                            );
+                                          }}
+                                          className={`px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer border ${
+                                            isSelected ? 'ring-2 ring-amber-500 scale-105 shadow-xs' : 'opacity-80 hover:opacity-100'
+                                          } ${cDetails.badge}`}
+                                        >
+                                          <span className={`w-3 h-3 rounded-full ${cDetails.dot}`}></span>
+                                          <span className="capitalize">{c}</span>
+                                        </button>
+                                      );
+                                    })}
+
+                                    {vNotes.length > 0 && (
+                                      <button
+                                        onClick={() => {
+                                          vNotes.forEach(n => removeNote(n.id));
+                                          setNoteInputText('');
+                                        }}
+                                        className="px-2.5 py-1.5 rounded-lg text-xs font-bold text-red-600 hover:bg-red-50 dark:hover:bg-red-950/40 border border-red-200 dark:border-red-800/50 flex items-center gap-1 cursor-pointer ml-auto"
+                                        title="Quitar subrayado y notas de este versículo"
+                                      >
+                                        <Trash2 className="w-3.5 h-3.5" />
+                                        <span>Borrar</span>
+                                      </button>
+                                    )}
+                                  </div>
+                                </div>
+
+                                {/* Note textarea */}
+                                <div>
+                                  <label className="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1 uppercase tracking-wider">
+                                    Nota de Estudio / Reflexión Personal:
+                                  </label>
+                                  <textarea
+                                    value={noteInputText}
+                                    onChange={(e) => setNoteInputText(e.target.value)}
+                                    placeholder="Escribe tus notas, exégesis o meditaciones personales para este versículo..."
+                                    rows={3}
+                                    className="w-full p-3 text-xs bg-stone-50 dark:bg-zinc-800 border border-stone-300 dark:border-zinc-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 dark:text-white font-sans"
+                                  />
+                                  <div className="flex justify-end gap-2 mt-2">
+                                    <button
+                                      onClick={() => {
+                                        addOrUpdateHighlight(
+                                          selectedBookId,
+                                          currentBook.name,
+                                          selectedChapter,
+                                          verse.num,
+                                          selectedColor,
+                                          selectedTextSnippet?.verse === verse.num ? selectedTextSnippet.text : undefined,
+                                          noteInputText
+                                        );
+                                        setActiveVerseMenuTab('menu');
+                                      }}
+                                      className="px-4 py-1.5 rounded-xl bg-[#7F1D1D] hover:bg-red-900 text-white font-bold text-xs flex items-center gap-1.5 shadow-sm cursor-pointer"
+                                    >
+                                      <Check className="w-3.5 h-3.5" />
+                                      <span>Guardar Nota y Subrayado</span>
+                                    </button>
+                                  </div>
+                                </div>
+                              </div>
+                            )}
                             {activeVerseMenuTab === 'comentario_biblico' && (
                               <div className="space-y-3 max-h-[320px] overflow-y-auto custom-scrollbar pr-2">
                                 {verse.theologicalNote && (
@@ -686,7 +894,8 @@ export function AcademicPanel({
                   );
                 })()}
               </div>
-            ))}
+            );
+          })}
           </div>
           
           {/* Bottom Bible Navigation Bar */}
@@ -928,6 +1137,19 @@ export function AcademicPanel({
           </div>
         </div>
       )}
+
+      {/* Bible Notes and Highlights Drawer */}
+      <BibleNotesDrawer 
+        isOpen={isNotesDrawerOpen}
+        onClose={() => setIsNotesDrawerOpen(false)}
+        notes={allNotes}
+        onNavigateToVerse={(bId, cNum, vNum) => {
+          setSelectedBookId(bId);
+          setSelectedChapter(cNum);
+          setSelectedVerse(vNum);
+          setActiveVerseMenuTab('subrayado');
+        }}
+      />
     </div>
   );
 }

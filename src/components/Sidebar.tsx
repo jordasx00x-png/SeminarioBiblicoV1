@@ -2,6 +2,7 @@ import { Course, UserProgress } from '../types';
 import { BookOpen, Award, CheckCircle, LogOut, LayoutDashboard, Settings, X, GraduationCap, Calendar as CalendarIcon, FileText, Edit3, Sparkles } from 'lucide-react';
 import { User } from 'firebase/auth';
 import { safeStorage } from '../utils/safeStorage';
+import { PWAInstallButton } from './PWAInstallButton';
 
 interface SidebarProps {
   courses: Course[];
@@ -203,6 +204,10 @@ export function Sidebar({
               <span>Ajustes del Perfil</span>
             </button>
           )}
+
+          <div className="pt-2 px-1">
+            <PWAInstallButton />
+          </div>
         </div>
       </nav>
       

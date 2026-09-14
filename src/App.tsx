@@ -17,6 +17,7 @@ import { AcademicPanel } from './components/AcademicPanel';
 import { StudyCalendar } from './components/StudyCalendar';
 import { GradesPanel } from './components/GradesPanel';
 import { HomePanel } from './components/HomePanel';
+import { OfflineBanner } from './components/OfflineBanner';
 import { Menu, X, LayoutDashboard, BookOpen, Settings, Edit3 } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 
@@ -346,6 +347,8 @@ export default function App() {
           <span className="text-[10px] font-bold uppercase tracking-tighter">{sidebarOpen ? 'Cerrar' : 'Menú'}</span>
         </button>
       </footer>
+
+      <OfflineBanner />
     </div>
   );
 }

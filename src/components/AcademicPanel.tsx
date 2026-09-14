@@ -9,11 +9,17 @@ import {
   MessageSquare,
   Link as LinkIcon,
   History,
-  X
+  X,
+  Sparkles,
+  Filter,
+  Loader2,
+  Check
 } from 'lucide-react';
 import { BIBLE_BOOKS_CANON, findBibleBook } from '../data/completeBibleData';
 import { getBibleChapter, ChapterContent } from '../data/bibleTextRepository';
 import { generateVerseCommentary, generateCrossReferences } from '../utils/verseCommentaryGenerator';
+import { searchBibleByPhrase, VerseSearchResult } from '../utils/bibleSearchEngine';
+import { getChapterOffline, getChapterOfflineAsync, saveChapterOffline } from '../utils/offlineStorage';
 
 export interface AcademicPanelProps {
   initialBookId?: string;
@@ -22,6 +28,19 @@ export interface AcademicPanelProps {
   onCloseSecondScreen?: () => void;
   isSecondScreenMode?: boolean;
 }
+
+const POPULAR_PHRASE_SUGGESTIONS = [
+  'El Señor es mi pastor',
+  'Por sus frutos los conoceréis',
+  'Justificados pues por la fe',
+  'Todo lo puedo en Cristo',
+  'Porque de tal manera amó Dios',
+  'En el principio era el Verbo',
+  'La fe es la certeza de lo que se espera',
+  'Lámpara es a mis pies tu palabra',
+  'Buscad primeramente el reino de Dios',
+  'Yo soy el camino, y la verdad'
+];
 
 export function AcademicPanel({
   initialBookId,
@@ -40,6 +59,14 @@ export function AcademicPanel({
   const [bookTestamentTab, setBookTestamentTab] = useState<'ALL' | 'Antiguo Testamento' | 'Nuevo Testamento'>('ALL');
   const [activeVerseMenuTab, setActiveVerseMenuTab] = useState<'menu' | 'comentario_biblico' | 'referencias' | 'comentario_historico'>('menu');
 
+  // Phrase search states
+  const [isPhraseSearchOpen, setIsPhraseSearchOpen] = useState<boolean>(false);
+  const [phraseQuery, setPhraseQuery] = useState<string>('');
+  const [phraseSearchResults, setPhraseSearchResults] = useState<VerseSearchResult[]>([]);
+  const [isSearchingPhrase, setIsSearchingPhrase] = useState<boolean>(false);
+  const [hasSearchedPhrase, setHasSearchedPhrase] = useState<boolean>(false);
+  const [phraseFilterTestament, setPhraseFilterTestament] = useState<'ALL' | 'Antiguo Testamento' | 'Nuevo Testamento'>('ALL');
+
   useEffect(() => {
     if (initialBookId) setSelectedBookId(initialBookId);
     if (initialChapter) setSelectedChapter(initialChapter);
@@ -49,6 +76,35 @@ export function AcademicPanel({
     }
   }, [initialBookId, initialChapter, initialVerse]);
 
+  const handleExecutePhraseSearch = async (overrideQuery?: string) => {
+    const term = overrideQuery !== undefined ? overrideQuery : phraseQuery;
+    if (!term.trim()) return;
+
+    setIsSearchingPhrase(true);
+    setHasSearchedPhrase(true);
+    try {
+      const results = await searchBibleByPhrase(term, activeTranslation);
+      setPhraseSearchResults(results);
+    } catch (err) {
+      console.error('Error conducting phrase search:', err);
+    } finally {
+      setIsSearchingPhrase(false);
+    }
+  };
+
+  const handleSelectSearchResult = (res: VerseSearchResult) => {
+    setSelectedBookId(res.bookId);
+    setSelectedChapter(res.chapter);
+    setSelectedVerse(res.verse);
+    setActiveVerseMenuTab('menu');
+    setIsPhraseSearchOpen(false);
+  };
+
+  const filteredPhraseResults = useMemo(() => {
+    if (phraseFilterTestament === 'ALL') return phraseSearchResults;
+    return phraseSearchResults.filter(r => r.testament === phraseFilterTestament);
+  }, [phraseSearchResults, phraseFilterTestament]);
+
 
   const [realVerses, setRealVerses] = useState<any[]>([]);
   const [isLoadingVerses, setIsLoadingVerses] = useState(false);
@@ -57,24 +113,44 @@ export function AcademicPanel({
     let isMounted = true;
     const fetchVerses = async () => {
       setIsLoadingVerses(true);
+      
+      // Check offline local storage or IndexedDB cache first
+      const cached = await getChapterOfflineAsync(selectedBookId, selectedChapter);
+      if (cached && cached.length > 0 && isMounted) {
+        setRealVerses(cached);
+        setIsLoadingVerses(false);
+      }
+
       try {
         const bookIndex = BIBLE_BOOKS_CANON.findIndex(b => b.id === selectedBookId) + 1;
-        // Map translation to bolls.life translation ID
-        const translationId = activeTranslation === 'rvr1960' ? 'RV1960' : 'RV1960'; // We use RV1960 for now as it's reliable
+        const transMap: Record<string, string> = {
+          rvr1960: 'RV1960',
+          nvi: 'NVI',
+          lbla: 'LBLA',
+          ntv: 'NTV'
+        };
+        const translationId = transMap[activeTranslation] || 'RV1960';
         const response = await fetch(`https://bolls.life/get-chapter/${translationId}/${bookIndex}/${selectedChapter}/`);
-        const data = await response.json();
-        
-        if (isMounted && data && Array.isArray(data)) {
-          setRealVerses(data.map(v => ({
-            num: v.verse,
-            rvr1960: v.text.replace(/<[^>]*>?/gm, ''),
-            lbla: v.text.replace(/<[^>]*>?/gm, ''),
-            ntv: v.text.replace(/<[^>]*>?/gm, ''),
-            nvi: v.text.replace(/<[^>]*>?/gm, '')
-          })));
+        if (response.ok) {
+          const data = await response.json();
+          
+          if (isMounted && data && Array.isArray(data)) {
+            const mapped = data.map((v: any) => {
+              const cleanText = v.text ? v.text.replace(/<[^>]*>?/gm, '').trim() : '';
+              return {
+                num: v.verse,
+                rvr1960: activeTranslation === 'rvr1960' ? cleanText : (cached?.find(c => c.num === v.verse)?.rvr1960 || cleanText),
+                lbla: activeTranslation === 'lbla' ? cleanText : (cached?.find(c => c.num === v.verse)?.lbla || cleanText),
+                ntv: activeTranslation === 'ntv' ? cleanText : (cached?.find(c => c.num === v.verse)?.ntv || cleanText),
+                nvi: activeTranslation === 'nvi' ? cleanText : (cached?.find(c => c.num === v.verse)?.nvi || cleanText)
+              };
+            });
+            setRealVerses(mapped);
+            saveChapterOffline(selectedBookId, selectedChapter, mapped);
+          }
         }
       } catch (err) {
-        console.error('Error fetching verses:', err);
+        console.warn('Network offline or fetch error, using cached or fallback repository:', err);
       } finally {
         if (isMounted) setIsLoadingVerses(false);
       }
@@ -167,8 +243,18 @@ export function AcademicPanel({
 
           <div className="flex items-center gap-2 w-full md:w-auto justify-end overflow-x-auto pb-1 md:pb-0">
             <button
+              onClick={() => setIsPhraseSearchOpen(true)}
+              className="px-3 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-stone-950 text-xs font-bold flex items-center gap-1.5 border border-amber-400 shadow-sm transition-all cursor-pointer shrink-0"
+              title="Buscar versículos por frase en toda la Biblia"
+            >
+              <Search className="w-3.5 h-3.5 text-stone-900" />
+              <span className="hidden sm:inline">Buscar por Frase</span>
+              <span className="sm:hidden">Frase</span>
+            </button>
+
+            <button
               onClick={() => setIsBookDrawerOpen(true)}
-              className="px-2.5 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white text-xs font-bold flex items-center gap-1.5 border border-white/20 transition-colors shadow-sm"
+              className="px-2.5 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white text-xs font-bold flex items-center gap-1.5 border border-white/20 transition-colors shadow-sm shrink-0"
               title="Abrir selector rápido de libros"
             >
               <BookMarked className="w-3.5 h-3.5 text-amber-300" />
@@ -329,6 +415,30 @@ export function AcademicPanel({
 
       <div className="flex-1 overflow-y-auto bg-white dark:bg-zinc-950 p-6 flex justify-center pb-24">
         <div className="max-w-4xl w-full">
+          {/* Quick Phrase Search Trigger Banner */}
+          <div className="mb-6 bg-[#FDFBF7] dark:bg-zinc-900 border border-[#E0D7C6] dark:border-zinc-800 rounded-2xl p-3.5 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-xs">
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-lg bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0">
+                <Search className="w-4 h-4" />
+              </div>
+              <div>
+                <p className="text-xs font-bold text-gray-800 dark:text-gray-200">
+                  ¿Buscas un versículo específico por frase o palabra clave?
+                </p>
+                <p className="text-[11px] text-gray-500 dark:text-gray-400">
+                  Busca frases exactas en los 66 libros del canon bíblico.
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={() => setIsPhraseSearchOpen(true)}
+              className="px-3.5 py-1.5 rounded-xl bg-[#1A2533] dark:bg-zinc-800 hover:bg-[#2C3E50] text-amber-200 text-xs font-bold flex items-center gap-1.5 border border-amber-500/30 transition-all cursor-pointer whitespace-nowrap"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-amber-300" />
+              <span>Buscar Versículo por Frase</span>
+            </button>
+          </div>
+
           <div className="text-center mb-8 border-b border-[#E0D7C6] dark:border-zinc-800 pb-6">
             <h2 className="text-3xl md:text-4xl font-black font-serif text-[#1A2533] dark:text-white mb-2">
               {currentBook.name} {selectedChapter}
@@ -603,6 +713,221 @@ export function AcademicPanel({
           </div>
         </div>
       </div>
+
+      {/* Phrase Search Modal */}
+      {isPhraseSearchOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-3 sm:p-6 animate-in fade-in duration-200">
+          <div className="bg-[#FAF9F6] dark:bg-zinc-900 border border-[#E0D7C6] dark:border-zinc-700 w-full max-w-4xl h-[90vh] max-h-[820px] rounded-2xl shadow-2xl flex flex-col overflow-hidden font-sans">
+            
+            {/* Modal Header */}
+            <div className="p-4 sm:p-5 bg-[#1A2533] text-white flex items-center justify-between border-b border-[#2C3E50] shrink-0">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-[#7F1D1D] flex items-center justify-center border border-amber-500/30 text-amber-200 shadow-sm">
+                  <Search className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="font-serif font-bold text-base sm:text-lg text-white flex items-center gap-2">
+                    <span>Buscador de Versículos por Frase</span>
+                    <span className="text-[10px] uppercase font-sans tracking-wider px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                      Biblia
+                    </span>
+                  </h3>
+                  <p className="text-xs text-gray-300">
+                    Encuentre versículos bíblicos buscando por frase o palabra clave
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => setIsPhraseSearchOpen(false)}
+                className="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors cursor-pointer"
+                title="Cerrar buscador"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Search Controls Bar */}
+            <div className="p-4 bg-[#F4EFE6] dark:bg-zinc-800/60 border-b border-[#E0D7C6] dark:border-zinc-700/80 flex flex-col gap-3 shrink-0">
+              <form 
+                onSubmit={(e) => { e.preventDefault(); handleExecutePhraseSearch(); }}
+                className="flex items-center gap-2"
+              >
+                <div className="relative flex-1">
+                  <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
+                  <input
+                    type="text"
+                    value={phraseQuery}
+                    onChange={(e) => setPhraseQuery(e.target.value)}
+                    placeholder="Escriba una frase (ej. 'por sus frutos los conoceréis', 'el Señor es mi pastor')..."
+                    className="w-full pl-10 pr-10 py-2.5 text-xs sm:text-sm rounded-xl bg-white dark:bg-zinc-900 border border-stone-300 dark:border-zinc-700 focus:outline-none focus:ring-2 focus:ring-[#7F1D1D] dark:text-white"
+                    autoFocus
+                  />
+                  {phraseQuery && (
+                    <button
+                      type="button"
+                      onClick={() => { setPhraseQuery(''); setPhraseSearchResults([]); setHasSearchedPhrase(false); }}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  )}
+                </div>
+                <button
+                  type="submit"
+                  disabled={isSearchingPhrase || !phraseQuery.trim()}
+                  className="px-5 py-2.5 rounded-xl bg-[#7F1D1D] hover:bg-red-800 disabled:opacity-50 text-white font-bold text-xs sm:text-sm flex items-center gap-2 transition-all shadow-sm cursor-pointer shrink-0"
+                >
+                  {isSearchingPhrase ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin text-amber-200" />
+                      <span>Buscando...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Search className="w-4 h-4 text-amber-200" />
+                      <span>Buscar</span>
+                    </>
+                  )}
+                </button>
+              </form>
+
+              {/* Sample Quick Phrase Suggestions */}
+              <div className="flex items-center gap-1.5 overflow-x-auto pb-1 custom-scrollbar">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 shrink-0 mr-1 flex items-center gap-1">
+                  <Sparkles className="w-3 h-3 text-amber-500" />
+                  Sugerencias:
+                </span>
+                {POPULAR_PHRASE_SUGGESTIONS.map((sug, idx) => (
+                  <button
+                    key={idx}
+                    type="button"
+                    onClick={() => {
+                      setPhraseQuery(sug);
+                      handleExecutePhraseSearch(sug);
+                    }}
+                    className="px-2.5 py-1 rounded-lg text-[11px] font-medium bg-white dark:bg-zinc-800 text-gray-700 dark:text-zinc-200 border border-stone-300 dark:border-zinc-700 hover:border-amber-500 hover:bg-amber-50 dark:hover:bg-zinc-700 transition-colors shrink-0 cursor-pointer"
+                  >
+                    "{sug}"
+                  </button>
+                ))}
+              </div>
+
+              {/* Testament Filter Options */}
+              {phraseSearchResults.length > 0 && (
+                <div className="flex items-center justify-between pt-2 border-t border-[#E0D7C6] dark:border-zinc-700/60 text-xs">
+                  <div className="flex items-center gap-2">
+                    <Filter className="w-3.5 h-3.5 text-gray-500" />
+                    <span className="font-bold text-gray-700 dark:text-gray-300">
+                      Filtrar por Testamento:
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    {(['ALL', 'Antiguo Testamento', 'Nuevo Testamento'] as const).map(testament => (
+                      <button
+                        key={testament}
+                        onClick={() => setPhraseFilterTestament(testament)}
+                        className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition-colors ${
+                          phraseFilterTestament === testament
+                            ? 'bg-[#7F1D1D] text-white'
+                            : 'bg-white dark:bg-zinc-800 text-gray-700 dark:text-gray-300 border border-stone-300 dark:border-zinc-700'
+                        }`}
+                      >
+                        {testament === 'ALL' ? 'Toda la Biblia' : testament}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Results Content Area */}
+            <div className="flex-1 overflow-y-auto p-4 sm:p-6 custom-scrollbar bg-[#FDFBF7] dark:bg-zinc-950">
+              {isSearchingPhrase ? (
+                <div className="flex flex-col items-center justify-center py-16 gap-3 text-stone-500 dark:text-stone-400">
+                  <Loader2 className="w-8 h-8 animate-spin text-[#7F1D1D]" />
+                  <p className="text-sm font-medium">Buscando coincidencias en los 66 libros de la Biblia...</p>
+                </div>
+              ) : filteredPhraseResults.length > 0 ? (
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between pb-2 border-b border-[#E0D7C6] dark:border-zinc-800 text-xs text-gray-500">
+                    <span>
+                      Se encontraron <strong className="text-gray-900 dark:text-white font-bold">{filteredPhraseResults.length}</strong> versículos para "{phraseQuery}"
+                    </span>
+                    <span className="font-mono text-[11px]">Haga clic en un versículo para abrirlo en la Biblia</span>
+                  </div>
+
+                  <div className="grid grid-cols-1 gap-3">
+                    {filteredPhraseResults.map((res, idx) => (
+                      <div
+                        key={idx}
+                        onClick={() => handleSelectSearchResult(res)}
+                        className="group p-4 rounded-xl bg-white dark:bg-zinc-900 border border-[#E0D7C6] dark:border-zinc-800 hover:border-amber-500 hover:shadow-md transition-all cursor-pointer relative"
+                      >
+                        <div className="flex items-center justify-between gap-2 mb-2">
+                          <div className="flex items-center gap-2">
+                            <span className="font-bold font-serif text-sm text-[#7F1D1D] dark:text-amber-400 group-hover:underline flex items-center gap-1.5">
+                              <BookOpen className="w-4 h-4 text-amber-600" />
+                              {res.bookName} {res.chapter}:{res.verse}
+                            </span>
+                            <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-stone-100 dark:bg-zinc-800 text-stone-600 dark:text-stone-300 border border-stone-200 dark:border-zinc-700">
+                              {res.division}
+                            </span>
+                          </div>
+                          <span className="text-xs font-bold text-amber-700 dark:text-amber-400 opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1">
+                            Abrir pasaje &rarr;
+                          </span>
+                        </div>
+
+                        <p className="font-serif text-sm sm:text-base text-gray-800 dark:text-gray-200 leading-relaxed italic">
+                          "{<span dangerouslySetInnerHTML={{ __html: res.text.replace(/<mark>/gi, '<mark class="bg-amber-200 dark:bg-amber-900/80 text-amber-950 dark:text-amber-100 font-bold px-1 rounded border border-amber-400/50">') }} />}"
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ) : hasSearchedPhrase ? (
+                <div className="text-center py-16 px-4 space-y-3">
+                  <div className="w-12 h-12 rounded-full bg-amber-100 dark:bg-zinc-800 text-amber-800 dark:text-amber-300 flex items-center justify-center mx-auto text-lg font-bold">
+                    ?
+                  </div>
+                  <h4 className="font-bold text-base text-gray-800 dark:text-gray-200">
+                    No se encontraron versículos para "{phraseQuery}"
+                  </h4>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 max-w-md mx-auto">
+                    Intente buscar con palabras clave más cortas o sinónimos (por ejemplo: "pastor", "frutos", "fe", "camino verdad").
+                  </p>
+                </div>
+              ) : (
+                <div className="text-center py-12 px-4 space-y-4">
+                  <div className="w-12 h-12 rounded-full bg-stone-100 dark:bg-zinc-800 text-[#7F1D1D] dark:text-amber-400 flex items-center justify-center mx-auto">
+                    <Search className="w-6 h-6" />
+                  </div>
+                  <div>
+                    <h4 className="font-serif font-bold text-base sm:text-lg text-gray-800 dark:text-gray-200 mb-1">
+                      Busque cualquier frase o versículo en la Biblia
+                    </h4>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 max-w-md mx-auto leading-relaxed">
+                      Escriba una frase en el buscador superior o elija una de las frases sugeridas para encontrar de inmediato su cita exacta en las Sagradas Escrituras.
+                    </p>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Modal Footer */}
+            <div className="p-3 sm:p-4 bg-[#FAF9F6] dark:bg-zinc-900 border-t border-[#E0D7C6] dark:border-zinc-800 flex items-center justify-between text-xs text-gray-500 dark:text-gray-400 shrink-0">
+              <span className="hidden sm:inline">Traducción activa: {activeTranslation.toUpperCase()}</span>
+              <button
+                onClick={() => setIsPhraseSearchOpen(false)}
+                className="px-4 py-1.5 rounded-lg bg-stone-200 dark:bg-zinc-800 hover:bg-stone-300 dark:hover:bg-zinc-700 text-gray-800 dark:text-gray-200 font-bold transition-colors cursor-pointer ml-auto"
+              >
+                Cerrar Buscador
+              </button>
+            </div>
+
+          </div>
+        </div>
+      )}
     </div>
   );
 }

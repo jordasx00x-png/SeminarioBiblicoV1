@@ -65,27 +65,27 @@ export function Sidebar({
   };
 
   return (
-    <div className={`fixed inset-y-0 left-0 z-40 bg-[#1A2533] dark:bg-zinc-950 text-white border-r border-[#E0D7C6] dark:border-zinc-800 transform flex flex-col shadow-2xl md:shadow-none transition-all duration-300 ease-in-out pl-0
-      ${isOpen ? 'translate-x-0 w-64' : '-translate-x-full w-64'} 
+    <div className={`fixed inset-y-0 left-0 z-40 bg-[#0F172A] text-slate-100 border-r border-slate-800/80 transform flex flex-col shadow-2xl md:shadow-none transition-all duration-300 ease-in-out pl-0
+      ${isOpen ? 'translate-x-0 w-72' : '-translate-x-full w-72'} 
       md:relative md:translate-x-0 
-      ${isDesktopOpen ? 'md:w-64' : 'md:w-0 md:border-r-0 md:opacity-0 md:overflow-hidden'}
+      ${isDesktopOpen ? 'md:w-72' : 'md:w-0 md:border-r-0 md:opacity-0 md:overflow-hidden'}
     `}>
       
       {/* Mobile-only menu header with Close button */}
-      <div className="p-5 border-b border-[#2C3E50] dark:border-zinc-800 flex items-center justify-between md:hidden bg-[#151D28] dark:bg-zinc-900">
+      <div className="p-5 border-b border-slate-800 flex items-center justify-between md:hidden bg-[#0A0F1D]">
         <div className="flex items-center gap-3">
-           <div className="w-9 h-9 rounded-lg bg-white/10 flex items-center justify-center border border-white/20 shrink-0">
-              <span className="font-serif font-bold text-[#E0D7C6] text-sm tracking-widest leading-none">STD</span>
+           <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#7F1D1D] to-amber-700 flex items-center justify-center shadow-lg border border-amber-500/30 shrink-0">
+              <span className="font-serif font-bold text-white text-sm tracking-widest leading-none">STD</span>
            </div>
-           <h1 className="text-[15px] font-bold tracking-tight text-[#E0D7C6] flex flex-col justify-center leading-tight">
+           <h1 className="text-[15px] font-bold tracking-tight text-white flex flex-col justify-center leading-tight font-sans">
              SEMINARIO
-             <span className="text-[8px] font-sans font-bold opacity-70 uppercase tracking-[0.2em] text-[#E0D7C6]">Teológico Digital</span>
+             <span className="text-[9px] font-sans font-bold text-amber-400 uppercase tracking-[0.2em]">Teológico Digital</span>
            </h1>
         </div>
         {onClose && (
           <button 
             onClick={onClose}
-            className="p-1.5 text-gray-400 hover:text-white transition-colors bg-[#1A2533]/50 dark:bg-zinc-800 rounded-lg border border-[#2C3E50] dark:border-zinc-700"
+            className="p-2 text-slate-400 hover:text-white transition-colors bg-slate-800/60 rounded-xl border border-slate-700/60"
             aria-label="Cerrar menú"
           >
             <X size={18} />
@@ -93,20 +93,20 @@ export function Sidebar({
         )}
       </div>
 
-      <div className="p-5 border-b border-[#2C3E50] dark:border-zinc-800 hidden md:flex items-center justify-between">
+      <div className="p-5 border-b border-slate-800/80 hidden md:flex items-center justify-between bg-[#0A0F1D]/50 backdrop-blur-md">
         <div className="flex items-center gap-3">
-           <div className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center border border-white/20 shrink-0 shadow-lg">
-              <span className="font-serif font-bold text-[#E0D7C6] text-sm tracking-widest leading-none">STD</span>
+           <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#7F1D1D] to-amber-700 flex items-center justify-center shadow-lg border border-amber-500/30 shrink-0">
+              <span className="font-serif font-bold text-white text-sm tracking-widest leading-none">STD</span>
            </div>
-           <h1 className="text-[16px] font-bold tracking-tight text-[#E0D7C6] flex flex-col justify-center leading-tight">
+           <h1 className="text-[16px] font-bold tracking-tight text-white flex flex-col justify-center leading-tight font-sans">
              SEMINARIO
-             <span className="text-[9px] font-sans font-bold opacity-70 uppercase tracking-[0.2em] text-[#E0D7C6]">Teológico Digital</span>
+             <span className="text-[9px] font-sans font-bold text-amber-400 uppercase tracking-[0.2em]">Teológico Digital</span>
            </h1>
         </div>
         {onToggleDesktop && (
           <button 
             onClick={onToggleDesktop} 
-            className="p-1.5 text-gray-400 hover:text-white transition-colors bg-[#1A2533]/50 dark:bg-zinc-800 rounded-lg border border-[#2C3E50] dark:border-zinc-700 md:flex hidden"
+            className="p-1.5 text-slate-400 hover:text-white transition-all bg-slate-800/50 hover:bg-slate-700/60 rounded-xl border border-slate-700/50 md:flex hidden"
             aria-label="Contraer menú"
           >
             <X size={18} />
@@ -114,36 +114,42 @@ export function Sidebar({
         )}
       </div>
       
-      <nav className="flex-1 overflow-y-auto py-4 px-3 space-y-1 custom-scrollbar">
-        <div className="space-y-1">
+      <nav className="flex-1 overflow-y-auto py-5 px-3.5 space-y-2 custom-scrollbar font-sans">
+        <div className="px-2 pb-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-400">
+          Navegación Principal
+        </div>
+
+        <div className="space-y-1.5">
            {/* 0. Pantalla de Inicio */}
            <button 
               onClick={() => handleNavClick('home')}
-              className={`w-full text-left px-3 py-2.5 rounded-lg text-sm transition-colors flex items-center justify-between group ${
+              className={`w-full text-left px-3.5 py-3 rounded-xl text-xs font-semibold transition-all duration-200 flex items-center justify-between group cursor-pointer ${
                 !isInsideCourseOrLesson && activeTab === 'home' 
-                  ? 'bg-[#7F1D1D] text-white shadow-md font-semibold' 
-                  : 'text-gray-300 hover:bg-[#2C3E50] dark:hover:bg-zinc-800 hover:text-white'
+                  ? 'bg-gradient-to-r from-[#7F1D1D] to-red-900 text-white shadow-lg shadow-red-950/50 border border-red-700/60 font-bold' 
+                  : 'text-slate-300 hover:bg-slate-800/70 hover:text-white hover:translate-x-1'
               }`}
             >
               <div className="flex items-center gap-3">
-                <Sparkles className={`w-4 h-4 ${!isInsideCourseOrLesson && activeTab === 'home' ? 'text-white' : 'text-[#E0D7C6]'}`} />
-                <span>Pantalla de Inicio</span>
+                <Sparkles className={`w-4 h-4 transition-colors ${!isInsideCourseOrLesson && activeTab === 'home' ? 'text-amber-300' : 'text-amber-400/80 group-hover:text-amber-300'}`} />
+                <span>Inicio / General</span>
               </div>
+              <span className={`w-1.5 h-1.5 rounded-full ${!isInsideCourseOrLesson && activeTab === 'home' ? 'bg-amber-400 shadow-xs shadow-amber-400' : 'bg-transparent'}`} />
             </button>
+
           {/* 1. Catálogo de Cursos (Inicio) */}
           <button 
              onClick={() => handleNavClick('courses')}
-             className={`w-full text-left px-3 py-2.5 rounded-lg text-sm transition-colors flex items-center justify-between group ${
+             className={`w-full text-left px-3.5 py-3 rounded-xl text-xs font-semibold transition-all duration-200 flex items-center justify-between group cursor-pointer ${
                !isInsideCourseOrLesson && activeTab === 'courses' 
-                 ? 'bg-[#7F1D1D] text-white shadow-md font-semibold' 
-                 : 'text-gray-300 hover:bg-[#2C3E50] dark:hover:bg-zinc-800 hover:text-white'
+                 ? 'bg-gradient-to-r from-[#7F1D1D] to-red-900 text-white shadow-lg shadow-red-950/50 border border-red-700/60 font-bold' 
+                 : 'text-slate-300 hover:bg-slate-800/70 hover:text-white hover:translate-x-1'
              }`}
            >
              <div className="flex items-center gap-3">
-               <BookOpen className={`w-4 h-4 ${!isInsideCourseOrLesson && activeTab === 'courses' ? 'text-white' : 'text-[#E0D7C6]'}`} />
+               <BookOpen className={`w-4 h-4 transition-colors ${!isInsideCourseOrLesson && activeTab === 'courses' ? 'text-amber-300' : 'text-amber-400/80 group-hover:text-amber-300'}`} />
                <span>Catálogo de Cursos</span>
              </div>
-             <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-white/10 text-gray-300">
+             <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-slate-800 text-amber-300 border border-slate-700/60 font-bold">
                {courses.length}
              </span>
            </button>
@@ -151,90 +157,110 @@ export function Sidebar({
           {/* 2. La Biblia */}
           <button 
              onClick={() => handleNavClick('academic')}
-             className={`w-full text-left px-3 py-2.5 rounded-lg text-sm transition-colors flex items-center justify-between group ${
+             className={`w-full text-left px-3.5 py-3 rounded-xl text-xs font-semibold transition-all duration-200 flex items-center justify-between group cursor-pointer ${
                !isInsideCourseOrLesson && activeTab === 'academic' 
-                 ? 'bg-[#7F1D1D] text-white shadow-md font-semibold' 
-                 : 'text-gray-300 hover:bg-[#2C3E50] dark:hover:bg-zinc-800 hover:text-white'
+                 ? 'bg-gradient-to-r from-[#7F1D1D] to-red-900 text-white shadow-lg shadow-red-950/50 border border-red-700/60 font-bold' 
+                 : 'text-slate-300 hover:bg-slate-800/70 hover:text-white hover:translate-x-1'
              }`}
            >
              <div className="flex items-center gap-3">
-               <BookOpen className={`w-4 h-4 ${!isInsideCourseOrLesson && activeTab === 'academic' ? 'text-white' : 'text-[#E0D7C6]'}`} />
-               <span>La Biblia</span>
+               <BookOpen className={`w-4 h-4 transition-colors ${!isInsideCourseOrLesson && activeTab === 'academic' ? 'text-amber-300' : 'text-amber-400/80 group-hover:text-amber-300'}`} />
+               <span>Lector Bíblico</span>
              </div>
+             <span className="text-[10px] font-sans px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-300 border border-amber-500/30 font-bold">
+               RVR60
+             </span>
            </button>
 
           {/* 3. Plan de Estudio (3 Meses) */}
           <button 
              onClick={() => handleNavClick('calendar')}
-             className={`w-full text-left px-3 py-2.5 rounded-lg text-sm transition-colors flex items-center gap-3 ${
+             className={`w-full text-left px-3.5 py-3 rounded-xl text-xs font-semibold transition-all duration-200 flex items-center justify-between group cursor-pointer ${
                !isInsideCourseOrLesson && activeTab === 'calendar' 
-                 ? 'bg-[#7F1D1D] text-white shadow-md font-semibold' 
-                 : 'text-gray-300 hover:bg-[#2C3E50] dark:hover:bg-zinc-800 hover:text-white'
+                 ? 'bg-gradient-to-r from-[#7F1D1D] to-red-900 text-white shadow-lg shadow-red-950/50 border border-red-700/60 font-bold' 
+                 : 'text-slate-300 hover:bg-slate-800/70 hover:text-white hover:translate-x-1'
              }`}
            >
-             <CalendarIcon className={`w-4 h-4 ${!isInsideCourseOrLesson && activeTab === 'calendar' ? 'text-white' : 'text-[#E0D7C6]'}`} />
-             <span>Plan de Estudio</span>
+             <div className="flex items-center gap-3">
+               <CalendarIcon className={`w-4 h-4 transition-colors ${!isInsideCourseOrLesson && activeTab === 'calendar' ? 'text-amber-300' : 'text-amber-400/80 group-hover:text-amber-300'}`} />
+               <span>Plan de Estudio</span>
+             </div>
+             <span className="text-[10px] font-sans px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 font-medium">
+               3 Meses
+             </span>
            </button>
 
           {/* 4. Progreso y Boleta Final */}
           <button 
              onClick={() => handleNavClick('grades')}
-             className={`w-full text-left px-3 py-2.5 rounded-lg text-sm transition-colors flex items-center gap-3 ${
+             className={`w-full text-left px-3.5 py-3 rounded-xl text-xs font-semibold transition-all duration-200 flex items-center justify-between group cursor-pointer ${
                !isInsideCourseOrLesson && activeTab === 'grades' 
-                 ? 'bg-[#7F1D1D] text-white shadow-md font-semibold' 
-                 : 'text-gray-300 hover:bg-[#2C3E50] dark:hover:bg-zinc-800 hover:text-white'
+                 ? 'bg-gradient-to-r from-[#7F1D1D] to-red-900 text-white shadow-lg shadow-red-950/50 border border-red-700/60 font-bold' 
+                 : 'text-slate-300 hover:bg-slate-800/70 hover:text-white hover:translate-x-1'
              }`}
            >
-             <Award className={`w-4 h-4 ${!isInsideCourseOrLesson && activeTab === 'grades' ? 'text-white' : 'text-[#E0D7C6]'}`} />
-             <span>Progreso y Boleta</span>
+             <div className="flex items-center gap-3">
+               <Award className={`w-4 h-4 transition-colors ${!isInsideCourseOrLesson && activeTab === 'grades' ? 'text-amber-300' : 'text-amber-400/80 group-hover:text-amber-300'}`} />
+               <span>Progreso y Boleta</span>
+             </div>
+             <span className="text-[10px] font-sans px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-bold">
+               Kardex
+             </span>
            </button>
         </div>
 
         {/* Separator */}
-        <div className="pt-4 mt-4 border-t border-[#2C3E50] dark:border-zinc-800 space-y-1">
+        <div className="pt-4 mt-4 border-t border-slate-800/80 space-y-2">
+          <div className="px-2 text-[10px] font-bold uppercase tracking-wider text-slate-400">
+            Herramientas y Perfil
+          </div>
+
           {onOpenProfile && (
             <button 
               onClick={() => {
                 onOpenProfile();
                 if (onClose) onClose();
               }}
-              className="w-full text-left px-3 py-2 rounded-lg text-sm transition-colors flex items-center gap-3 text-gray-300 hover:bg-[#2C3E50] dark:hover:bg-zinc-800 hover:text-white"
+              className="w-full text-left px-3.5 py-2.5 rounded-xl text-xs font-medium transition-all duration-200 flex items-center gap-3 text-slate-300 hover:bg-slate-800/70 hover:text-white hover:translate-x-1 cursor-pointer"
             >
-              <Settings className="w-4 h-4 text-[#E0D7C6]" />
+              <Settings className="w-4 h-4 text-amber-400/80" />
               <span>Ajustes del Perfil</span>
             </button>
           )}
 
-          <div className="pt-2 px-1">
+          <div className="pt-2 px-0.5">
             <PWAInstallButton />
           </div>
         </div>
       </nav>
       
-      <div className="p-4 bg-[#111A24] dark:bg-zinc-900 border-t border-[#2C3E50] dark:border-zinc-800">
-         <div className="flex items-center justify-between mb-3">
-           <div className="flex items-center gap-3">
-              {user?.photoURL ? (
-                 <img src={user.photoURL} alt="Avatar" className="w-8 h-8 rounded" referrerPolicy="no-referrer" />
-              ) : (
-                 <div className="w-8 h-8 rounded bg-[#7F1D1D] flex items-center justify-center text-xs text-white">
-                   {user?.displayName ? user.displayName.charAt(0).toUpperCase() : 'U'}
-                 </div>
-              )}
-              <div className="flex flex-col">
-                 <div className="text-xs font-bold text-white max-w-[120px] truncate">{customProfile?.fullName || user?.displayName || 'Usuario'}</div>
-                 <div className="text-[10px] text-gray-400">{isLicenciaturaUnlocked ? 'Rango: Licenciado 🎓' : 'Nivel: Bachillerato'}</div>
+      <div className="p-4 bg-[#0A0F1D] border-t border-slate-800/90 font-sans">
+         <div className="flex items-center justify-between">
+           <div className="flex items-center gap-3 min-w-0">
+              <div className="relative shrink-0">
+                {user?.photoURL ? (
+                   <img src={user.photoURL} alt="Avatar" className="w-9 h-9 rounded-xl object-cover border border-amber-500/30" referrerPolicy="no-referrer" />
+                ) : (
+                   <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#7F1D1D] to-amber-700 flex items-center justify-center text-xs font-bold text-white shadow-xs">
+                     {user?.displayName ? user.displayName.charAt(0).toUpperCase() : 'U'}
+                   </div>
+                )}
+                <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-500 border-2 border-[#0A0F1D]" />
+              </div>
+              <div className="flex flex-col min-w-0">
+                 <div className="text-xs font-bold text-white truncate">{customProfile?.fullName || user?.displayName || 'Usuario'}</div>
+                 <div className="text-[10px] text-amber-400 font-medium truncate">{isLicenciaturaUnlocked ? 'Rango: Licenciado 🎓' : 'Nivel: Bachillerato'}</div>
               </div>
            </div>
-           <div className="flex items-center gap-2">
+           <div className="flex items-center gap-1 shrink-0">
              {onOpenProfile && (
-               <button onClick={onOpenProfile} className="text-gray-400 hover:text-white transition-colors" title="Configurar cuenta">
-                 <Settings size={16} />
+               <button onClick={onOpenProfile} className="p-1.5 text-slate-400 hover:text-white transition-colors rounded-lg hover:bg-slate-800" title="Configurar cuenta">
+                 <Settings size={15} />
                </button>
              )}
              {onSignOut && (
-               <button onClick={onSignOut} className="text-gray-400 hover:text-white transition-colors" title="Cerrar sesión">
-                 <LogOut size={16} />
+               <button onClick={onSignOut} className="p-1.5 text-slate-400 hover:text-red-400 transition-colors rounded-lg hover:bg-slate-800" title="Cerrar sesión">
+                 <LogOut size={15} />
                </button>
              )}
            </div>

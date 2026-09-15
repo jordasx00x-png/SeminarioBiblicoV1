@@ -10,8 +10,8 @@ export const doctoradoExegesis: Course = {
     {
       id: 'doc-exe-1',
       day: 1,
-      title: 'Epistemología de la Interpretación',
-      blocks: [{ type: 'text', id: 'b1', content: 'Introducción a la base filosófica del conocimiento y su impacto en la lectura del texto sagrado.' }],
+      title: 'Epistemología de la Interpretación y Crítica Textual',
+      blocks: [],
       finalExam: []
     }
   ]
@@ -28,7 +28,7 @@ export const doctoradoSistematica: Course = {
       id: 'doc-sis-1',
       day: 1,
       title: 'Ontología y Revelación',
-      blocks: [{ type: 'text', id: 'b1', content: 'El ser de Dios y la comunicación de su voluntad en la historia de la salvación.' }],
+      blocks: [],
       finalExam: []
     }
   ]
@@ -44,8 +44,8 @@ export const doctoradoArqueologia: Course = {
     {
       id: 'doc-arq-1',
       day: 1,
-      title: 'Metodología de Campo en Arqueología',
-      blocks: [{ type: 'text', id: 'b1', content: 'Técnicas de excavación y catalogación de hallazgos del periodo del Hierro II.' }],
+      title: 'Metodología de Campo en Arqueología Bíblica',
+      blocks: [],
       finalExam: []
     }
   ]
@@ -62,7 +62,7 @@ export const doctoradoEtica: Course = {
       id: 'doc-eti-1',
       day: 1,
       title: 'La Ética en la Ciudad Postsecular',
-      blocks: [{ type: 'text', id: 'b1', content: 'Desafíos del pluralismo moral y la respuesta de la academia cristiana.' }],
+      blocks: [],
       finalExam: []
     }
   ]
@@ -78,8 +78,8 @@ export const doctoradoLiderazgo: Course = {
     {
       id: 'doc-lid-1',
       day: 1,
-      title: 'Modelos de Liderazgo Servidor',
-      blocks: [{ type: 'text', id: 'b1', content: 'Análisis de la autoridad espiritual en la eclesiología contemporánea.' }],
+      title: 'Modelos de Liderazgo Servidor y Eclesiología Transcultural',
+      blocks: [],
       finalExam: []
     }
   ]

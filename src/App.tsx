@@ -6,6 +6,7 @@ import { useProfile } from './hooks/useProfile';
 import { useStudyReminder } from './hooks/useStudyReminder';
 import { safeStorage } from './utils/safeStorage';
 import { Sidebar } from './components/Sidebar';
+import { TopNavbar } from './components/TopNavbar';
 import { LessonViewer } from './components/LessonViewer';
 import { Dashboard } from './components/Dashboard';
 import { CourseOverview } from './components/CourseOverview';
@@ -97,97 +98,73 @@ export default function App() {
   const activeLesson = activeCourse?.lessons.find(l => l.id === activeLessonId);
 
   return (
-    <div className={`min-h-screen bg-[#FDFCFB] text-[#2C2C2C] dark:bg-[#121212] dark:text-stone-100 font-serif flex flex-col md:flex-row relative transition-colors duration-300`}>
+    <div className="min-h-screen bg-slate-50/70 text-slate-900 font-sans flex flex-col relative transition-colors duration-300">
       <DailyVerseNotification />
 
-      
-      {/* Mobile top bar */}
-      <div className="md:hidden bg-white text-[#1A2533] px-4 md:px-5 py-3 md:py-4 flex justify-between items-center shadow-sm border-b border-[#E0D7C6] sticky top-0 z-50">
-         <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-lg bg-[#1A2533] flex items-center justify-center shadow-sm shrink-0">
-               <span className="font-serif font-bold text-[#E0D7C6] text-sm tracking-widest leading-none">STD</span>
-            </div>
-            <h1 className="text-[15px] font-bold tracking-tight text-[#1A2533] flex flex-col justify-center leading-tight">
-              SEMINARIO
-              <span className="text-[8px] font-sans font-bold opacity-70 uppercase tracking-[0.2em]">Teológico Digital</span>
-            </h1>
-         </div>
-         <div className="flex items-center gap-1.5 shrink-0">
-            <button
-               onClick={() => setShowProfile(true)}
-               className="p-2 text-gray-500 hover:text-[#1A2533] transition-colors rounded-lg bg-gray-50 active:bg-gray-100"
-            >
-               <Settings size={22} />
-            </button>
-            <button 
-              onClick={() => setSidebarOpen(prev => !prev)} 
-              className="p-2 text-gray-500 hover:text-[#1A2533] transition-colors rounded-lg bg-gray-50 active:bg-gray-100"
-            >
-              {sidebarOpen ? <X size={22} /> : <Menu size={22} />}
-            </button>
-         </div>
-      </div>
-
-
-      <Sidebar 
-         courses={mockDatabase.courses}
-         activeCourseId={activeCourseId}
-         activeLessonId={activeLessonId}
-         activeTab={activeTab}
-         onSelectTab={setActiveTab}
-         onSelectLesson={(courseId, lessonId) => {
-           setActiveCourseId(courseId);
-           setActiveLessonId(lessonId);
-           setSidebarOpen(false); // Auto-close on mobile
-         }}
-         progress={progress}
-         isOpen={sidebarOpen}
-         isDesktopOpen={desktopSidebarOpen}
-         onToggleDesktop={() => setDesktopSidebarOpen(prev => !prev)}
-         user={user}
-         customProfile={customProfile}
-         onSignOut={signOut}
-         onOpenProfile={() => setShowProfile(true)}
-         onClose={() => setSidebarOpen(false)}
+      {/* Top Global Executive Campus Navbar */}
+      <TopNavbar
+        activeTab={activeTab}
+        onSelectTab={(tab) => {
+          setActiveTab(tab);
+          setActiveCourseId(null);
+          setActiveLessonId(null);
+        }}
+        user={user}
+        customProfile={customProfile}
+        progress={progress}
+        onOpenProfile={() => setShowProfile(true)}
+        onSignOut={signOut}
+        onToggleSidebar={() => setSidebarOpen(prev => !prev)}
+        isSidebarOpen={sidebarOpen}
       />
 
-      {/* Floating button when desktop sidebar is closed */}
-      {!desktopSidebarOpen && (
-        <button
-          onClick={() => setDesktopSidebarOpen(true)}
-          className="hidden md:flex fixed top-4 left-4 z-40 p-2.5 rounded-xl bg-white/90 dark:bg-zinc-800/90 backdrop-blur shadow-lg border border-gray-200 dark:border-zinc-700 hover:bg-gray-100 dark:hover:bg-zinc-700 transition-all active:scale-95"
-          aria-label="Abrir menú"
-        >
-          <Menu size={20} className="text-gray-600 dark:text-gray-300" />
-        </button>
-      )}
-
-      {/* Overlay to catch clicks off the sidebar in mobile view */}
-      {sidebarOpen && (
-         <div 
-           className="fixed inset-0 z-30 bg-[#1A2533]/80 backdrop-blur-sm md:hidden animate-in fade-in duration-300"
-           onClick={() => setSidebarOpen(false)}
-         />
-      )}
-
-
-
-      <AnimatePresence>
-      {showProfile && (
-        <ProfileModal 
-          user={user} 
-          onClose={() => setShowProfile(false)} 
-          onSave={saveProfile}
-          onResetAllAccounts={handleResetAllAccounts}
+      <div className="flex-1 flex relative">
+        <Sidebar 
+           courses={mockDatabase.courses}
+           activeCourseId={activeCourseId}
+           activeLessonId={activeLessonId}
+           activeTab={activeTab}
+           onSelectTab={setActiveTab}
+           onSelectLesson={(courseId, lessonId) => {
+             setActiveCourseId(courseId);
+             setActiveLessonId(lessonId);
+             setSidebarOpen(false);
+           }}
+           progress={progress}
+           isOpen={sidebarOpen}
+           isDesktopOpen={desktopSidebarOpen}
+           onToggleDesktop={() => setDesktopSidebarOpen(prev => !prev)}
+           user={user}
+           customProfile={customProfile}
+           onSignOut={signOut}
+           onOpenProfile={() => setShowProfile(true)}
+           onClose={() => setSidebarOpen(false)}
         />
-      )}
-      </AnimatePresence>
 
-      <main className="flex-1 flex flex-col min-h-0 w-full relative">
-         <div 
-           ref={scrollContainerRef}
-           className="absolute inset-0 overflow-y-auto custom-scrollbar pb-24 md:pb-0"
-         >
+        {/* Overlay to catch clicks off the sidebar in mobile view */}
+        {sidebarOpen && (
+           <div 
+             className="fixed inset-0 z-30 bg-slate-950/70 backdrop-blur-sm md:hidden animate-in fade-in duration-300"
+             onClick={() => setSidebarOpen(false)}
+           />
+        )}
+
+        <AnimatePresence>
+        {showProfile && (
+          <ProfileModal 
+            user={user} 
+            onClose={() => setShowProfile(false)} 
+            onSave={saveProfile}
+            onResetAllAccounts={handleResetAllAccounts}
+          />
+        )}
+        </AnimatePresence>
+
+        <main className="flex-1 flex flex-col min-h-0 w-full relative">
+           <div 
+             ref={scrollContainerRef}
+             className="absolute inset-0 overflow-y-auto custom-scrollbar pb-24 md:pb-6"
+           >
            <AnimatePresence mode="wait">
              {activeLesson && activeCourse ? (
                <motion.div 
@@ -310,41 +287,54 @@ export default function App() {
            </AnimatePresence>
          </div>
       </main>
+      </div>
 
-
-
-      <footer className="md:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-zinc-900 border-t border-[#E0D7C6] dark:border-zinc-800 h-16 flex items-center justify-around z-40 px-2 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] transition-colors duration-300">
+      <footer className="md:hidden fixed bottom-3 left-3 right-3 bg-[#0F172A]/95 text-slate-200 backdrop-blur-xl border border-slate-700/80 rounded-2xl h-16 flex items-center justify-around z-40 px-2 shadow-2xl transition-all font-sans">
         <button 
           onClick={() => {
+            setActiveTab('home');
             setActiveCourseId(null);
             setActiveLessonId(null);
             setSidebarOpen(false);
           }}
-          className={`flex flex-col items-center gap-1 transition-colors ${!activeCourseId ? 'text-[#7F1D1D]' : 'text-gray-400'}`}
+          className={`flex flex-col items-center gap-1 transition-all px-3 py-1 rounded-xl ${!activeCourseId && activeTab === 'home' ? 'text-amber-400 bg-amber-400/10 font-bold scale-105' : 'text-slate-400 hover:text-white'}`}
         >
-          <LayoutDashboard size={20} />
-          <span className="text-[10px] font-bold uppercase tracking-tighter">Inicio</span>
+          <LayoutDashboard size={18} />
+          <span className="text-[9px] font-bold uppercase tracking-wider">Inicio</span>
         </button>
 
-        {activeCourseId && (
-          <button 
-            onClick={() => {
-              setActiveLessonId(null);
-              setSidebarOpen(false);
-            }}
-            className={`flex flex-col items-center gap-1 transition-colors ${activeCourseId && !activeLessonId ? 'text-[#7F1D1D]' : 'text-gray-400'}`}
-          >
-            <BookOpen size={20} />
-            <span className="text-[10px] font-bold uppercase tracking-tighter">Módulo</span>
-          </button>
-        )}
+        <button 
+          onClick={() => {
+            setActiveTab('courses');
+            setActiveCourseId(null);
+            setActiveLessonId(null);
+            setSidebarOpen(false);
+          }}
+          className={`flex flex-col items-center gap-1 transition-all px-3 py-1 rounded-xl ${!activeCourseId && activeTab === 'courses' ? 'text-amber-400 bg-amber-400/10 font-bold scale-105' : 'text-slate-400 hover:text-white'}`}
+        >
+          <BookOpen size={18} />
+          <span className="text-[9px] font-bold uppercase tracking-wider">Cursos</span>
+        </button>
+
+        <button 
+          onClick={() => {
+            setActiveTab('academic');
+            setActiveCourseId(null);
+            setActiveLessonId(null);
+            setSidebarOpen(false);
+          }}
+          className={`flex flex-col items-center gap-1 transition-all px-3 py-1 rounded-xl ${!activeCourseId && activeTab === 'academic' ? 'text-amber-400 bg-amber-400/10 font-bold scale-105' : 'text-slate-400 hover:text-white'}`}
+        >
+          <Edit3 size={18} />
+          <span className="text-[9px] font-bold uppercase tracking-wider">Biblia</span>
+        </button>
 
         <button 
           onClick={() => setSidebarOpen(prev => !prev)}
-          className={`flex flex-col items-center gap-1 transition-colors ${sidebarOpen ? 'text-[#7F1D1D]' : 'text-gray-400'}`}
+          className={`flex flex-col items-center gap-1 transition-all px-3 py-1 rounded-xl ${sidebarOpen ? 'text-amber-400 bg-amber-400/10 font-bold scale-105' : 'text-slate-400 hover:text-white'}`}
         >
-          {sidebarOpen ? <X size={20} /> : <Menu size={20} />}
-          <span className="text-[10px] font-bold uppercase tracking-tighter">{sidebarOpen ? 'Cerrar' : 'Menú'}</span>
+          {sidebarOpen ? <X size={18} /> : <Menu size={18} />}
+          <span className="text-[9px] font-bold uppercase tracking-wider">{sidebarOpen ? 'Cerrar' : 'Menú'}</span>
         </button>
       </footer>
 

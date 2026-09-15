@@ -1,16 +1,14 @@
 import { useState, useEffect, useMemo } from 'react';
 import { Lesson, Course, UserProgress } from '../types';
 import { FinalExam } from './FinalExam';
-import { LessonNotes } from './LessonNotes';
 import { ReinforcementVerses } from './ReinforcementVerses';
 import { LessonAssignments } from './LessonAssignments';
-import { ReflectionActivities } from './ReflectionActivities';
 import { FormattedContent, VerseContext } from './FormattedContent';
 import { InteractiveCheckpoint } from './InteractiveCheckpoint';
 import { LessonAudioPlayer } from './LessonAudioPlayer';
 import { ReadingToolbar } from './ReadingToolbar';
 import { BibleVerseModal } from './BibleVerseModal';
-import { ArrowLeft, BookOpen, CheckCircle2, Clock, Target, ExternalLink, GraduationCap, Sparkles, BookMarked, Compass, ShieldCheck } from 'lucide-react';
+import { ArrowLeft, BookOpen, CheckCircle2, Clock, Target, ExternalLink, GraduationCap, Sparkles, BookMarked, Compass, ShieldCheck, Quote } from 'lucide-react';
 
 interface LessonViewerProps {
   key?: string | number;
@@ -356,6 +354,35 @@ export function LessonViewer({ lesson, course, progress, onComplete, onBack }: L
                 })}
               </div>
 
+              {/* Comentarios de Teólogos e Historiadores Clave */}
+              {lesson.commentaries && lesson.commentaries.length > 0 && (
+                <div className="mt-8 pt-6 border-t border-[#E0D7C6]/60 space-y-4">
+                  <div className="flex items-center gap-2 text-[#7F1D1D] font-sans">
+                    <Quote size={20} />
+                    <h3 className="text-base md:text-lg font-bold font-serif text-[#1A2533]">
+                      Comentarios Teológicos e Históricos Relevantes
+                    </h3>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {lesson.commentaries.map((c, idx) => (
+                      <div key={idx} className="bg-stone-50/90 p-4 md:p-5 rounded-xl border border-[#D1B17F]/40 shadow-2xs font-sans flex flex-col justify-between">
+                        <p className="text-xs md:text-sm font-serif italic text-stone-800 leading-relaxed mb-3">
+                          "{c.text}"
+                        </p>
+                        <div className="flex items-center justify-between pt-2 border-t border-stone-200/60 text-[11px]">
+                          <span className="font-bold text-[#7F1D1D] uppercase tracking-wider">
+                            — {c.author}
+                          </span>
+                          <span className="text-stone-500 bg-white px-2 py-0.5 rounded border border-stone-200">
+                            Teólogo Histórico
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
             </article>
 
             {/* Reinforcement Verses */}
@@ -375,12 +402,6 @@ export function LessonViewer({ lesson, course, progress, onComplete, onBack }: L
                 lessonTitle={lesson.title}
               />
             )}
-
-            {/* Reflection Activities */}
-            <ReflectionActivities lessonId={lesson.id} courseId={course.id} />
-
-            {/* Lesson Personal Notes */}
-            <LessonNotes lessonId={lesson.id} courseId={course.id} />
 
             {/* Comprehensive Final Exam */}
             {lesson.finalExam && lesson.finalExam.length > 0 ? (

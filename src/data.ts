@@ -37,18 +37,33 @@ export const mockDatabase: Database = {
   ]
 };
 
-// Pad all courses with 90 or their respective expected lessons to simulate real progression with rich, high-fidelity content
+// Pad all courses with expected lessons and ensure every lesson has rich, high-fidelity content
 mockDatabase.courses.forEach(course => {
   const expectedLessons = course.durationMonths ? course.durationMonths * 30 : 90;
-  if (course.lessons.length < expectedLessons) {
-    const existingDays = new Set(course.lessons.map(l => l.day));
-    for (let i = 1; i <= expectedLessons; i++) {
-        if (!existingDays.has(i)) {
-             const title = getLessonTitleForDay(course.id, i);
-             const generatedLesson = generateLessonForDay(course.id, i, title);
-             course.lessons.push(generatedLesson);
-        }
+  
+  // 1. Upgrade/Enrich existing sparse lessons (e.g., manual stubs with minimal text)
+  course.lessons = course.lessons.map(lesson => {
+    const firstBlock = lesson.blocks && lesson.blocks[0];
+    const isFirstBlockShort = firstBlock && 'content' in firstBlock && typeof firstBlock.content === 'string' && firstBlock.content.length < 200;
+    const isSparse = !lesson.baseVerse || 
+                     !lesson.finalExam || 
+                     lesson.finalExam.length === 0 || 
+                     lesson.blocks.length <= 1 || 
+                     isFirstBlockShort;
+    if (isSparse) {
+      return generateLessonForDay(course.id, lesson.day, lesson.title, course.type);
     }
-    course.lessons.sort((a, b) => a.day - b.day);
+    return lesson;
+  });
+
+  // 2. Pad missing days up to expectedLessons
+  const existingDays = new Set(course.lessons.map(l => l.day));
+  for (let i = 1; i <= expectedLessons; i++) {
+    if (!existingDays.has(i)) {
+      const title = getLessonTitleForDay(course.id, i);
+      const generatedLesson = generateLessonForDay(course.id, i, title, course.type);
+      course.lessons.push(generatedLesson);
+    }
   }
+  course.lessons.sort((a, b) => a.day - b.day);
 });

@@ -32,15 +32,41 @@ export type HermeneuticalExercise = {
   practicalApplication: string;
 };
 
+export type VerseWithMetadata = {
+  reference: string;
+  text: string;
+  readingTimeMinutes?: number;
+  relevance?: string;
+};
+
+export type BibleReadingPlan = {
+  totalReadingTimeMinutes: number; // Max 20 min rule!
+  recommendedPassage: string;
+  mainVerse: VerseWithMetadata;
+  complementaryVerses: VerseWithMetadata[];
+};
+
+export type TheologicalExegesis = {
+  title?: string;
+  mainTheme?: string;
+  historicalGrammaticalContext: string;
+  theologicalAnalysis: string;
+  christocentricFocus: string;
+  doctrinalApplication: string;
+};
+
 export type Lesson = {
   id: string;
   day: number;
   title: string;
   blocks: ContentBlock[];
   finalExam: ExamQuestion[];
-  baseVerse?: { reference: string; text: string };
+  baseVerse?: VerseWithMetadata;
+  bibleReadingTimeMinutes?: number;
+  bibleReadingPlan?: BibleReadingPlan;
+  theologicalExegesis?: TheologicalExegesis;
   commentaries?: { author: string; text: string }[];
-  verses?: { reference: string; text: string }[];
+  verses?: VerseWithMetadata[];
   assignments?: { id: string; description: string }[];
   objectives?: string[];
   estimatedMinutes?: number;

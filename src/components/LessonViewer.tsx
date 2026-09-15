@@ -10,7 +10,7 @@ import { InteractiveCheckpoint } from './InteractiveCheckpoint';
 import { LessonAudioPlayer } from './LessonAudioPlayer';
 import { ReadingToolbar } from './ReadingToolbar';
 import { BibleVerseModal } from './BibleVerseModal';
-import { ArrowLeft, BookOpen, CheckCircle2, Clock, Target, ExternalLink } from 'lucide-react';
+import { ArrowLeft, BookOpen, CheckCircle2, Clock, Target, ExternalLink, GraduationCap, Sparkles, BookMarked, Compass, ShieldCheck } from 'lucide-react';
 
 interface LessonViewerProps {
   key?: string | number;
@@ -177,34 +177,134 @@ export function LessonViewer({ lesson, course, progress, onComplete, onBack }: L
               {/* Audio Lecturer */}
               <LessonAudioPlayer title={lesson.title} textToRead={fullTextToRead} />
 
-              {/* Base Verse: Highly Interactive with Second Screen trigger */}
-              {lesson.baseVerse && (
-                <div 
-                  onClick={() => setActiveBibleVerse({ reference: lesson.baseVerse!.reference, text: lesson.baseVerse!.text })}
-                  className="bg-[#FAF9F6] border-l-4 border-[#7F1D1D] p-6 rounded-r-xl my-2 shadow-xs hover:shadow-md hover:bg-amber-50/70 border border-[#D1B17F]/30 transition-all cursor-pointer group relative"
-                  title="Haga clic para abrir este versículo en la segunda pantalla de estudio"
-                >
-                  <div className="flex items-center justify-between text-[#7F1D1D] mb-3 font-sans">
-                    <div className="flex items-center gap-2">
-                      <BookOpen size={18} />
-                      <span className="text-xs font-bold uppercase tracking-widest">Texto Base para la Exégesis</span>
+              {/* Guía de Lectura Bíblica (Límite Máximo: 20 min) */}
+              {(() => {
+                const bibleReadingTime = lesson.bibleReadingTimeMinutes || (lesson.bibleReadingPlan?.totalReadingTimeMinutes) || 13;
+                return (
+                  <div className="bg-gradient-to-r from-amber-50 to-amber-100/60 border border-amber-300/80 rounded-xl p-4 font-sans flex flex-col md:flex-row md:items-center justify-between gap-3 shadow-xs my-1">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-lg bg-[#7F1D1D] text-white flex items-center justify-center shrink-0 shadow-xs">
+                        <Clock size={20} />
+                      </div>
+                      <div>
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <h4 className="text-xs font-bold uppercase tracking-wider text-[#7F1D1D]">Plan de Lectura Bíblica Dirigido</h4>
+                          <span className="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2.5 py-0.5 rounded-full border border-emerald-300">
+                            ⏱️ Lectura Bíblica ~{bibleReadingTime} min (Límite Máx. 20 min)
+                          </span>
+                        </div>
+                        <p className="text-xs text-stone-700 font-medium mt-0.5">
+                          Lectura estructurada para no exceder los 20 minutos de lectura bíblica por clase (Versículo Principal + Complementarios).
+                        </p>
+                      </div>
                     </div>
-                    <span className="text-xs font-bold text-[#7F1D1D] bg-white px-2.5 py-1 rounded-md border border-[#7F1D1D]/20 group-hover:bg-[#7F1D1D] group-hover:text-white transition-colors flex items-center gap-1 shadow-2xs">
-                      <span>Abrir en Segunda Pantalla</span>
-                      <ExternalLink size={12} />
-                    </span>
+                    {lesson.baseVerse && (
+                      <div className="flex items-center gap-2 text-xs font-semibold text-amber-900 bg-white/90 px-3 py-1.5 rounded-lg border border-amber-200/90 shrink-0">
+                        <BookOpen size={14} className="text-[#7F1D1D]" />
+                        <span>Pasaje Principal: <strong>{lesson.baseVerse.reference}</strong></span>
+                      </div>
+                    )}
                   </div>
-                  <p className="text-xl md:text-2xl font-serif italic text-[#1A2533] mb-3 leading-relaxed">
-                    "{lesson.baseVerse.text}"
-                  </p>
-                  <div className="flex items-center justify-between font-sans pt-2 border-t border-[#E0D7C6]/50">
-                    <span className="text-xs text-gray-500 italic">
-                      Toque para consultar traducciones, contexto de capítulo y análisis morfológico
-                    </span>
-                    <p className="text-sm font-bold text-[#7F1D1D] uppercase tracking-widest font-sans">
-                      — {lesson.baseVerse.reference}
+                );
+              })()}
+
+              {/* Base Verse: Versículo Principal de la Clase */}
+              {lesson.baseVerse && (
+                <div className="space-y-4 my-2">
+                  <div 
+                    onClick={() => setActiveBibleVerse({ reference: lesson.baseVerse!.reference, text: lesson.baseVerse!.text })}
+                    className="bg-[#FAF9F6] border-l-4 border-[#7F1D1D] p-6 rounded-r-xl shadow-xs hover:shadow-md hover:bg-amber-50/70 border border-[#D1B17F]/30 transition-all cursor-pointer group relative"
+                    title="Haga clic para abrir este versículo en la segunda pantalla de estudio"
+                  >
+                    <div className="flex items-center justify-between text-[#7F1D1D] mb-3 font-sans">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <BookMarked size={18} />
+                        <span className="text-xs font-bold uppercase tracking-widest">Versículo Principal de la Clase</span>
+                        <span className="text-[10px] font-bold text-amber-900 bg-amber-100/90 px-2.5 py-0.5 rounded-full border border-amber-200">
+                          ~{lesson.baseVerse.readingTimeMinutes || 5} min de lectura
+                        </span>
+                      </div>
+                      <span className="text-xs font-bold text-[#7F1D1D] bg-white px-2.5 py-1 rounded-md border border-[#7F1D1D]/20 group-hover:bg-[#7F1D1D] group-hover:text-white transition-colors flex items-center gap-1 shadow-2xs">
+                        <span>Abrir en Segunda Pantalla</span>
+                        <ExternalLink size={12} />
+                      </span>
+                    </div>
+                    <p className="text-xl md:text-2xl font-serif italic text-[#1A2533] mb-3 leading-relaxed">
+                      "{lesson.baseVerse.text}"
                     </p>
+                    <div className="flex items-center justify-between font-sans pt-2 border-t border-[#E0D7C6]/50">
+                      <span className="text-xs text-gray-500 italic">
+                        Texto Bíblico Base para la Exégesis y Doctrina Central
+                      </span>
+                      <p className="text-sm font-bold text-[#7F1D1D] uppercase tracking-widest font-sans">
+                        — {lesson.baseVerse.reference}
+                      </p>
+                    </div>
                   </div>
+
+                  {/* Explicación Teológica y Exegética del Versículo Principal */}
+                  {lesson.theologicalExegesis ? (
+                    <div className="bg-stone-50/90 border border-amber-300/80 rounded-xl p-5 md:p-7 space-y-4 font-sans text-stone-800 shadow-xs">
+                      <div className="flex items-center gap-2 pb-3 border-b border-amber-200/70">
+                        <GraduationCap className="w-5 h-5 text-[#7F1D1D]" />
+                        <h3 className="font-serif font-bold text-lg md:text-xl text-[#1A2533]">
+                          {lesson.theologicalExegesis.title || `Explicación Teológica y Exegética (${lesson.baseVerse.reference})`}
+                        </h3>
+                      </div>
+                      
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="bg-white p-4 rounded-xl border border-stone-200/90 shadow-2xs">
+                          <h4 className="text-xs font-bold text-[#7F1D1D] uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                            <Compass size={14} />
+                            Contexto Histórico y Gramatical
+                          </h4>
+                          <p className="text-xs md:text-sm text-stone-700 leading-relaxed font-sans">
+                            {lesson.theologicalExegesis.historicalGrammaticalContext}
+                          </p>
+                        </div>
+
+                        <div className="bg-white p-4 rounded-xl border border-stone-200/90 shadow-2xs">
+                          <h4 className="text-xs font-bold text-[#7F1D1D] uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                            <BookOpen size={14} />
+                            Análisis Teológico Doctrinal
+                          </h4>
+                          <p className="text-xs md:text-sm text-stone-700 leading-relaxed font-sans">
+                            {lesson.theologicalExegesis.theologicalAnalysis}
+                          </p>
+                        </div>
+
+                        <div className="bg-white p-4 rounded-xl border border-stone-200/90 shadow-2xs">
+                          <h4 className="text-xs font-bold text-[#7F1D1D] uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                            <Sparkles size={14} />
+                            Enfoque Cristocéntrico
+                          </h4>
+                          <p className="text-xs md:text-sm text-stone-700 leading-relaxed font-sans">
+                            {lesson.theologicalExegesis.christocentricFocus}
+                          </p>
+                        </div>
+
+                        <div className="bg-white p-4 rounded-xl border border-stone-200/90 shadow-2xs">
+                          <h4 className="text-xs font-bold text-[#7F1D1D] uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                            <ShieldCheck size={14} />
+                            Aplicación Pastoral y Doctrinal
+                          </h4>
+                          <p className="text-xs md:text-sm text-stone-700 leading-relaxed font-sans">
+                            {lesson.theologicalExegesis.doctrinalApplication}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="bg-stone-50/90 border border-amber-300/80 rounded-xl p-5 md:p-6 font-sans text-stone-800 shadow-xs">
+                      <h4 className="font-serif font-bold text-base text-[#1A2533] mb-2 flex items-center gap-2">
+                        <GraduationCap size={18} className="text-[#7F1D1D]" />
+                        <span>Desarrollo Teológico del Versículo Principal ({lesson.baseVerse.reference})</span>
+                      </h4>
+                      <p className="text-xs md:text-sm text-stone-700 leading-relaxed font-sans">
+                        Este versículo principal articula el fundamento bíblico inerrante para la lección de hoy. A través de un análisis sintáctico y contextual, extraemos las implicaciones doctrinales que sustentan la fe histórica, conectando directamente con el tema de <strong>{lesson.title}</strong>.
+                      </p>
+                    </div>
+                  )}
                 </div>
               )}
 

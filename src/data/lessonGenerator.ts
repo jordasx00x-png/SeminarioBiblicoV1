@@ -199,13 +199,51 @@ export function generateLessonForDay(courseId: string, day: number, title: strin
     THEOLOGIANS_POOL[theologianIdx2 !== theologianIdx1 ? theologianIdx2 : (theologianIdx2 + 1) % THEOLOGIANS_POOL.length]
   ];
 
-  // 4. Verification reinforcement verses
+  // 4. Verification reinforcement verses (Versículos Complementarios)
   const verseIdx1 = (day * 13 + 1) % VERSE_POOL.length;
   const verseIdx2 = (day * 17 + 3) % VERSE_POOL.length;
-  const verses = [
-    { reference: VERSE_POOL[verseIdx1].reference, text: VERSE_POOL[verseIdx1].text },
-    { reference: VERSE_POOL[verseIdx2].reference, text: VERSE_POOL[verseIdx2].text }
+  
+  const mainVerseObj = {
+    reference: baseVerse.reference,
+    text: baseVerse.text,
+    readingTimeMinutes: 5,
+    relevance: `Versículo Principal de la Clase — Fundamento bíblico medular sobre ${title}.`
+  };
+
+  const complementaryVerses = [
+    { 
+      reference: VERSE_POOL[verseIdx1].reference, 
+      text: VERSE_POOL[verseIdx1].text,
+      readingTimeMinutes: 4,
+      relevance: `Pasaje complementario 1: Refuerza la perspectiva doctrinal del tema en el contexto del canon.`
+    },
+    { 
+      reference: VERSE_POOL[verseIdx2].reference, 
+      text: VERSE_POOL[verseIdx2].text,
+      readingTimeMinutes: 4,
+      relevance: `Pasaje complementario 2: Ilustra la aplicación práctica y la armonía con la sana doctrina.`
+    }
   ];
+
+  // Total reading time calculation (Garantizado <= 20 min de lectura bíblica por clase)
+  const totalBibleReadingMinutes = mainVerseObj.readingTimeMinutes + 
+    complementaryVerses.reduce((acc, v) => acc + (v.readingTimeMinutes || 3), 0); // 13 min total
+
+  const bibleReadingPlan = {
+    totalReadingTimeMinutes: totalBibleReadingMinutes, // 13 mins (Límite max: 20 min)
+    recommendedPassage: `${mainVerseObj.reference} & pasajes clave en ${complementaryVerses[0].reference}`,
+    mainVerse: mainVerseObj,
+    complementaryVerses
+  };
+
+  const theologicalExegesis = {
+    title: `Exégesis y Desarrollo Teológico del Versículo Principal (${mainVerseObj.reference})`,
+    mainTheme: title,
+    historicalGrammaticalContext: `El pasaje de ${mainVerseObj.reference} se sitúa dentro de un momento crucial de la revelación bíblica. El autor sagrado emplea términos gramaticales precisos en la lengua original para transmitir verdades inamovibles. La estructura sintáctica del pasaje destaca la iniciativa divina, la coherencia del pacto y el marco histórico en el que los primeros oyentes recibieron la palabra de Dios sin distorsión.`,
+    theologicalAnalysis: `Al analizar teológicamente ${mainVerseObj.reference} en conexión con "${title}", reconocemos que Dios revela Su voluntad soberana de forma clara. La doctrina contenida en este pasaje resalta que la salvación, la santidad y la verdad revelada son de origen exclusivamente divino (monergismo). Este versículo destruye cualquier pretensión de justicia propia o especulación filosófica humana, articulando el dogma cristiano con rigor exegetico.`,
+    christocentricFocus: `Toda la Escritura apunta en última instancia a Jesucristo, y ${mainVerseObj.reference} no es la excepción. Este pasaje encuentra su cumplimiento supremo en la persona y obra del Mesías, quien como el Verbo encarnado satisfizo las demandas del Padre, abrió el camino de la gracia y se constituyó en el único Mediador entre Dios y los hombres.`,
+    doctrinalApplication: `Para el creyente y el estudiante de teología, la verdad de ${mainVerseObj.reference} exige una respuesta de fe obediente, humildad intelectual y adoración sincera. Nos motiva a proclamar la verdad con denuedo pastoral, defender la sana doctrina contra el error sutil y modelar una piedad santificada que dé toda la gloria al Dios Trino.`
+  };
 
   // 5. Original terms selection for languages lab
   const ORIGINAL_TERMS_BANK = [
@@ -228,7 +266,7 @@ export function generateLessonForDay(courseId: string, day: number, title: strin
     {
       type: 'note',
       id: `${courseId}-day-${day}-b-reading`,
-      content: `**Escuela de Doctrina Confesional y Lectura Complementaria (45 mins):**\nLea detenidamente su pasaje bíblico correspondiente: **${baseVerse.reference}**, **Hebreos 4**, **Romanos 8** y pasajes afines.\n\n**Preguntas Clave para el Auto-Examen en Oración:**\n1. ¿De qué forma pone en relieve este pasaje que la gracia de Dios es absolutamente independiente de nuestros "buenos deseos de mérito" naturales?\n2. ¿Cómo guarda esta verdad bíblica su corazón de caer en el legalismo agobiante o en el libertinaje libertino y carnal?\n3. ¿Qué oraciones de gratitud sincera suscita esta enseñanza para su devocional diario?`
+      content: `**Plan de Lectura Bíblica Dirigido (~${totalBibleReadingMinutes} min | Límite Máximo: 20 min):**\nLea con atención devocional el **Versículo Principal (${mainVerseObj.reference})** y los pasajes complementarios (**${complementaryVerses.map(v => v.reference).join(', ')}**).\n\n**Preguntas Clave de Reflexión Teológica:**\n1. ¿De qué forma pone en relieve el versículo principal (${mainVerseObj.reference}) el tema de la clase?\n2. ¿Cómo conectan los versículos complementarios con la doctrina expuesta?\n3. ¿Qué oraciones de gratitud y compromiso suscita este pasaje para su vida devocional?`
     },
     {
       type: 'text',
@@ -240,7 +278,7 @@ export function generateLessonForDay(courseId: string, day: number, title: strin
       id: `${courseId}-day-${day}-b-checkpoint`,
       question: {
         id: `cp-${courseId}-day-${day}`,
-        question: `Punto de Control Exegético: En base a lo analizado sobre "${title}", ¿cuál es el principio hermenéutico que se debe salvaguardar rigurosamente?`,
+        question: `Punto de Control Exegético: En base a lo analizado sobre "${title}" y el versículo principal ${mainVerseObj.reference}, ¿cuál es el principio hermenéutico que se debe salvaguardar rigurosamente?`,
         options: [
           'Interpretar el texto bíblico guiándose por las emociones del momento y el relativismo moral contemporáneo.',
           'Extraer el significado que el Espíritu inspiró al autor original considerando la gramática, el contexto histórico y la analogía de la fe.',
@@ -293,9 +331,12 @@ export function generateLessonForDay(courseId: string, day: number, title: strin
     title,
     blocks,
     finalExam,
-    baseVerse,
+    baseVerse: mainVerseObj,
+    bibleReadingTimeMinutes: totalBibleReadingMinutes,
+    bibleReadingPlan,
+    theologicalExegesis,
     commentaries,
-    verses,
+    verses: complementaryVerses,
     estimatedMinutes: 45,
     objectives: [
       `Dominar los principios exegéticos y teológicos fundamentales de ${title}`,
@@ -305,7 +346,7 @@ export function generateLessonForDay(courseId: string, day: number, title: strin
     originalTerms,
     hermeneuticalExercise: {
       title: `Laboratorio Inductivo Aplicado: ${title}`,
-      observation: `Examine detenidamente ${baseVerse.reference}. Identifique los verbos de acción, los pronombres y los conectores causales. Observe la progresión del pensamiento del autor inspirado.`,
+      observation: `Examine detenidamente ${mainVerseObj.reference}. Identifique los verbos de acción, los pronombres y los conectores causales. Observe la progresión del pensamiento del autor inspirado.`,
       historicalContext: `Considere las circunstancias del pueblo de Dios al recibir esta revelación: el pacto vigente, los desafíos culturales circundantes y la necesidad de fidelidad al Dios vivo.`,
       christocentricFocus: `Descubra la conexión de esta doctrina con la persona y obra salvífica de Jesucristo. ¿De qué manera esta verdad exalta Su sacrificio, Su sacerdocio eterno o Su gloria venidera?`,
       practicalApplication: `Traduzca esta verdad en piedad práctica: renueve su devocional diario, corrija desvíos en el carácter y sirva con mayor denuedo y humildad en su iglesia local.`

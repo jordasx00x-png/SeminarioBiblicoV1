@@ -24,7 +24,7 @@ export function InteractiveCheckpoint({ question }: InteractiveCheckpointProps) 
   };
 
   return (
-    <div className="my-8 rounded-xl border-2 border-[#E0D7C6] bg-[#FDFCFB] shadow-sm overflow-hidden font-sans transition-all">
+    <div className="my-8 rounded-xl border-2 border-[#E0D7C6] dark:border-slate-800 bg-[#FDFCFB] dark:bg-slate-900 shadow-sm overflow-hidden font-sans transition-all">
       {/* Header bar */}
       <div className="bg-[#1A2533] px-5 py-3.5 flex items-center justify-between text-white border-b border-[#2C3E50]">
         <div className="flex items-center gap-2">
@@ -53,7 +53,7 @@ export function InteractiveCheckpoint({ question }: InteractiveCheckpointProps) 
 
       {/* Content */}
       <div className="p-6 md:p-8 space-y-5">
-        <h4 className="text-base md:text-lg font-bold text-[#1A2533] font-serif leading-snug">
+        <h4 className="text-base md:text-lg font-bold text-[#1A2533] dark:text-slate-100 font-serif leading-snug">
           {question.question}
         </h4>
 
@@ -63,8 +63,8 @@ export function InteractiveCheckpoint({ question }: InteractiveCheckpointProps) 
             const isThisOptionSelected = selectedOption === idx;
             const isThisOptionCorrect = idx === question.correctAnswerIndex;
 
-            let optionStyle = "border-gray-200 hover:border-[#1A2533] hover:bg-stone-50 text-gray-700 bg-white";
-            let badgeStyle = "bg-stone-100 text-gray-600 border-gray-200";
+            let optionStyle = "border-gray-200 dark:border-slate-800 hover:border-[#1A2533] dark:hover:border-slate-600 hover:bg-stone-50 dark:hover:bg-slate-800 text-gray-700 dark:text-slate-200 bg-white dark:bg-slate-900";
+            let badgeStyle = "bg-stone-100 dark:bg-slate-800 text-gray-600 dark:text-slate-300 border-gray-200 dark:border-slate-700";
 
             if (hasAnswered) {
               if (isThisOptionCorrect) {

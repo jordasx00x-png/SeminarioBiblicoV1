@@ -247,7 +247,7 @@ ${currentEvaluation.theologicalSummary}
   const overallProgress = Math.round((approvedTasksCount / assignments.length) * 100);
 
   return (
-    <section className="bg-white border border-[#E0D7C6] rounded-xl overflow-hidden shadow-sm flex flex-col font-sans mb-8">
+    <section className="bg-white dark:bg-slate-900 border border-[#E0D7C6] dark:border-slate-800 rounded-xl overflow-hidden shadow-sm flex flex-col font-sans mb-8">
       {/* Top Header */}
       <div className="bg-[#1A2533] border-b border-[#2C3E50] px-5 py-4 flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-2.5">
@@ -283,7 +283,7 @@ ${currentEvaluation.theologicalSummary}
       </div>
 
       {/* Main Body */}
-      <div className="p-4 md:p-6 bg-[#FDFCFB]">
+      <div className="p-4 md:p-6 bg-[#FDFCFB] dark:bg-slate-900">
         {/* Assignments Selector Tabs */}
         {assignments.length > 1 && (
           <div className="flex items-center gap-2 overflow-x-auto pb-3 mb-4 border-b border-stone-200">

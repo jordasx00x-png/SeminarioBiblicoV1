@@ -30,7 +30,7 @@ export function FinalExam({ questions, isPreviouslyCompleted, previousScore, onC
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-sm overflow-hidden font-sans border border-[#E0D7C6]">
+    <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm overflow-hidden font-sans border border-[#E0D7C6] dark:border-slate-800">
       <div className="bg-[#1A2533] border-b border-[#2C3E50] p-8 text-center relative overflow-hidden text-white">
         <ScrollText className="mx-auto text-[#E0D7C6] mb-4" size={40} strokeWidth={1.5} />
         <h2 className="text-2xl font-bold mb-3 text-white tracking-tight font-serif">Evaluación Comprensiva</h2>
@@ -50,28 +50,28 @@ export function FinalExam({ questions, isPreviouslyCompleted, previousScore, onC
 
           return (
              <div key={q.id} className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                <h3 className="font-bold text-[#1A2533] text-lg flex gap-4 leading-relaxed font-serif">
-                  <span className="text-[#7F1D1D] shrink-0 mt-0.5">{index + 1}.</span> 
+                <h3 className="font-bold text-[#1A2533] dark:text-slate-100 text-lg flex gap-4 leading-relaxed font-serif">
+                  <span className="text-[#7F1D1D] dark:text-amber-400 shrink-0 mt-0.5">{index + 1}.</span> 
                   {q.question}
                 </h3>
                 
                 <div className="space-y-2 pl-0 md:pl-8">
                   {q.options.map((opt, i) => {
-                     let btnClass = "w-full text-left flex items-center gap-3 p-3 border rounded bg-white transition-all text-sm";
+                     let btnClass = "w-full text-left flex items-center gap-3 p-3 border rounded bg-white dark:bg-slate-900 transition-all text-sm";
                      
                      if (!submitted) {
                        if (selectedIdx === i) {
-                          btnClass += " border-[#7F1D1D] bg-red-50 text-red-900 shadow-sm ring-1 ring-[#7F1D1D]/50";
+                          btnClass += " border-[#7F1D1D] dark:border-amber-500 bg-red-50 dark:bg-amber-950/40 text-red-900 dark:text-amber-200 shadow-sm ring-1 ring-[#7F1D1D]/50";
                        } else {
-                          btnClass += " border-[#E0D7C6] text-gray-700 hover:border-[#7F1D1D] cursor-pointer hover:shadow-sm";
+                          btnClass += " border-[#E0D7C6] dark:border-slate-800 text-gray-700 dark:text-slate-200 hover:border-[#7F1D1D] dark:hover:border-amber-500/50 cursor-pointer hover:shadow-sm";
                        }
                      } else {
                         if (i === q.correctAnswerIndex) {
-                           btnClass += " border-emerald-500 bg-emerald-50 text-emerald-900 shadow-sm";
+                           btnClass += " border-emerald-500 bg-emerald-50 dark:bg-emerald-950/50 text-emerald-900 dark:text-emerald-200 shadow-sm";
                         } else if (i === selectedIdx) {
-                           btnClass += " border-red-300 bg-red-50 text-red-900 opacity-80 cursor-not-allowed";
+                           btnClass += " border-red-300 bg-red-50 dark:bg-red-950/50 text-red-900 dark:text-red-200 opacity-80 cursor-not-allowed";
                         } else {
-                           btnClass += " border-[#E0D7C6] text-gray-400 cursor-not-allowed opacity-50";
+                           btnClass += " border-[#E0D7C6] dark:border-slate-800 text-gray-400 dark:text-slate-500 cursor-not-allowed opacity-50";
                         }
                      }
 

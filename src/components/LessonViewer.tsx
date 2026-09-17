@@ -63,14 +63,14 @@ export function LessonViewer({ lesson, course, progress, onComplete, onBack }: L
 
   // Theme classes
   const themeCardClass = {
-    paper: 'bg-white border-[#E0D7C6] text-[#2C2C2C]',
-    sepia: 'bg-[#FBF7EE] border-[#E5D7B7] text-[#3D332A]',
+    paper: 'bg-white dark:bg-slate-900 border-[#E0D7C6] dark:border-slate-800 text-[#2C2C2C] dark:text-slate-100',
+    sepia: 'bg-[#FBF7EE] dark:bg-[#1C1814] border-[#E5D7B7] dark:border-[#332A22] text-[#3D332A] dark:text-[#E8DFC9]',
     contrast: 'bg-[#182330] border-[#2C3E50] text-[#EBE6DF]'
   }[readingTheme];
 
   const themeTitleClass = {
-    paper: 'text-[#1A2533]',
-    sepia: 'text-[#2D1E12]',
+    paper: 'text-[#1A2533] dark:text-stone-100',
+    sepia: 'text-[#2D1E12] dark:text-[#F4ECD8]',
     contrast: 'text-white'
   }[readingTheme];
 
@@ -131,19 +131,19 @@ export function LessonViewer({ lesson, course, progress, onComplete, onBack }: L
           })}
         />
 
-        <div className="flex-1 p-4 md:p-8 flex gap-8 bg-[#FDFCFB] justify-center transition-colors">
-          <div className="flex-1 flex flex-col gap-6 max-w-[850px] w-full">
+        <div className="flex-1 p-4 md:p-8 flex gap-8 bg-[#FDFCFB] dark:bg-slate-950 justify-center transition-all duration-300 ease-out">
+          <div className="flex-1 flex flex-col gap-6 max-w-[850px] w-full transition-all duration-300 ease-out">
             
             {/* Main Article Container */}
             <article className={`border rounded-xl p-6 md:p-10 shadow-sm flex flex-col gap-6 relative font-serif transition-colors ${themeCardClass}`}>
               
               {/* Header metadata */}
-              <div className="border-b border-[#E0D7C6]/60 pb-5">
-                <div className="flex flex-wrap items-center gap-2.5 text-xs font-sans font-bold uppercase tracking-widest text-[#7F1D1D] mb-3">
-                  <span className="px-2.5 py-1 rounded bg-[#7F1D1D]/10 border border-[#7F1D1D]/20">
+              <div className="border-b border-[#E0D7C6]/60 dark:border-slate-800 pb-5">
+                <div className="flex flex-wrap items-center gap-2.5 text-xs font-sans font-bold uppercase tracking-widest text-[#7F1D1D] dark:text-amber-400 mb-3">
+                  <span className="px-2.5 py-1 rounded bg-[#7F1D1D]/10 dark:bg-amber-400/10 border border-[#7F1D1D]/20 dark:border-amber-400/20">
                     Día {lesson.day} de Estudio
                   </span>
-                  <span className="flex items-center gap-1 text-gray-500 font-normal">
+                  <span className="flex items-center gap-1 text-gray-500 dark:text-slate-400 font-normal">
                     <Clock size={14} />
                     {lesson.estimatedMinutes || 45} minutos de formación
                   </span>
@@ -155,15 +155,15 @@ export function LessonViewer({ lesson, course, progress, onComplete, onBack }: L
 
                 {/* Objectives */}
                 {lesson.objectives && lesson.objectives.length > 0 && (
-                  <div className="mt-4 p-4 rounded-lg bg-stone-50/80 border border-stone-200/80 font-sans">
-                    <div className="flex items-center gap-1.5 text-xs font-bold text-[#1A2533] uppercase tracking-wider mb-2">
-                      <Target size={14} className="text-[#7F1D1D]" />
+                  <div className="mt-4 p-4 rounded-lg bg-stone-50/80 dark:bg-slate-800/80 border border-stone-200/80 dark:border-slate-700 font-sans">
+                    <div className="flex items-center gap-1.5 text-xs font-bold text-[#1A2533] dark:text-slate-100 uppercase tracking-wider mb-2">
+                      <Target size={14} className="text-[#7F1D1D] dark:text-amber-400" />
                       <span>Objetivos Pedagógicos de la Clase</span>
                     </div>
                     <ul className="space-y-1.5">
                       {lesson.objectives.map((obj, i) => (
-                        <li key={i} className="text-xs md:text-sm text-gray-700 flex items-start gap-2">
-                          <span className="text-[#7F1D1D] font-bold mt-0.5">•</span>
+                        <li key={i} className="text-xs md:text-sm text-gray-700 dark:text-slate-300 flex items-start gap-2">
+                          <span className="text-[#7F1D1D] dark:text-amber-400 font-bold mt-0.5">•</span>
                           <span>{obj}</span>
                         </li>
                       ))}
@@ -179,26 +179,26 @@ export function LessonViewer({ lesson, course, progress, onComplete, onBack }: L
               {(() => {
                 const bibleReadingTime = lesson.bibleReadingTimeMinutes || (lesson.bibleReadingPlan?.totalReadingTimeMinutes) || 13;
                 return (
-                  <div className="bg-gradient-to-r from-amber-50 to-amber-100/60 border border-amber-300/80 rounded-xl p-4 font-sans flex flex-col md:flex-row md:items-center justify-between gap-3 shadow-xs my-1">
+                  <div className="bg-gradient-to-r from-amber-50 to-amber-100/60 dark:from-amber-950/40 dark:to-slate-900 border border-amber-300/80 dark:border-amber-800/60 rounded-xl p-4 font-sans flex flex-col md:flex-row md:items-center justify-between gap-3 shadow-xs my-1">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-lg bg-[#7F1D1D] text-white flex items-center justify-center shrink-0 shadow-xs">
+                      <div className="w-10 h-10 rounded-lg bg-[#7F1D1D] dark:bg-amber-600 text-white flex items-center justify-center shrink-0 shadow-xs">
                         <Clock size={20} />
                       </div>
                       <div>
                         <div className="flex items-center gap-2 flex-wrap">
-                          <h4 className="text-xs font-bold uppercase tracking-wider text-[#7F1D1D]">Plan de Lectura Bíblica Dirigido</h4>
-                          <span className="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2.5 py-0.5 rounded-full border border-emerald-300">
+                          <h4 className="text-xs font-bold uppercase tracking-wider text-[#7F1D1D] dark:text-amber-300">Plan de Lectura Bíblica Dirigido</h4>
+                          <span className="bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 text-[10px] font-bold px-2.5 py-0.5 rounded-full border border-emerald-300 dark:border-emerald-800">
                             ⏱️ Lectura Bíblica ~{bibleReadingTime} min (Límite Máx. 20 min)
                           </span>
                         </div>
-                        <p className="text-xs text-stone-700 font-medium mt-0.5">
+                        <p className="text-xs text-stone-700 dark:text-amber-100/80 font-medium mt-0.5">
                           Lectura estructurada para no exceder los 20 minutos de lectura bíblica por clase (Versículo Principal + Complementarios).
                         </p>
                       </div>
                     </div>
                     {lesson.baseVerse && (
-                      <div className="flex items-center gap-2 text-xs font-semibold text-amber-900 bg-white/90 px-3 py-1.5 rounded-lg border border-amber-200/90 shrink-0">
-                        <BookOpen size={14} className="text-[#7F1D1D]" />
+                      <div className="flex items-center gap-2 text-xs font-semibold text-amber-900 dark:text-amber-200 bg-white/90 dark:bg-slate-800/90 px-3 py-1.5 rounded-lg border border-amber-200/90 dark:border-slate-700 shrink-0">
+                        <BookOpen size={14} className="text-[#7F1D1D] dark:text-amber-400" />
                         <span>Pasaje Principal: <strong>{lesson.baseVerse.reference}</strong></span>
                       </div>
                     )}
@@ -211,30 +211,30 @@ export function LessonViewer({ lesson, course, progress, onComplete, onBack }: L
                 <div className="space-y-4 my-2">
                   <div 
                     onClick={() => setActiveBibleVerse({ reference: lesson.baseVerse!.reference, text: lesson.baseVerse!.text })}
-                    className="bg-[#FAF9F6] border-l-4 border-[#7F1D1D] p-6 rounded-r-xl shadow-xs hover:shadow-md hover:bg-amber-50/70 border border-[#D1B17F]/30 transition-all cursor-pointer group relative"
+                    className="bg-[#FAF9F6] dark:bg-slate-800/80 border-l-4 border-[#7F1D1D] dark:border-amber-400 p-6 rounded-r-xl shadow-xs hover:shadow-md hover:bg-amber-50/70 dark:hover:bg-slate-800 border border-[#D1B17F]/30 dark:border-slate-700 transition-all cursor-pointer group relative"
                     title="Haga clic para abrir este versículo en la segunda pantalla de estudio"
                   >
-                    <div className="flex items-center justify-between text-[#7F1D1D] mb-3 font-sans">
+                    <div className="flex items-center justify-between text-[#7F1D1D] dark:text-amber-400 mb-3 font-sans">
                       <div className="flex items-center gap-2 flex-wrap">
                         <BookMarked size={18} />
                         <span className="text-xs font-bold uppercase tracking-widest">Versículo Principal de la Clase</span>
-                        <span className="text-[10px] font-bold text-amber-900 bg-amber-100/90 px-2.5 py-0.5 rounded-full border border-amber-200">
+                        <span className="text-[10px] font-bold text-amber-900 dark:text-amber-200 bg-amber-100/90 dark:bg-amber-950/80 px-2.5 py-0.5 rounded-full border border-amber-200 dark:border-amber-800">
                           ~{lesson.baseVerse.readingTimeMinutes || 5} min de lectura
                         </span>
                       </div>
-                      <span className="text-xs font-bold text-[#7F1D1D] bg-white px-2.5 py-1 rounded-md border border-[#7F1D1D]/20 group-hover:bg-[#7F1D1D] group-hover:text-white transition-colors flex items-center gap-1 shadow-2xs">
+                      <span className="text-xs font-bold text-[#7F1D1D] dark:text-amber-300 bg-white dark:bg-slate-900 px-2.5 py-1 rounded-md border border-[#7F1D1D]/20 dark:border-amber-500/30 group-hover:bg-[#7F1D1D] dark:group-hover:bg-amber-600 group-hover:text-white transition-colors flex items-center gap-1 shadow-2xs">
                         <span>Abrir en Segunda Pantalla</span>
                         <ExternalLink size={12} />
                       </span>
                     </div>
-                    <p className="text-xl md:text-2xl font-serif italic text-[#1A2533] mb-3 leading-relaxed">
+                    <p className="text-xl md:text-2xl font-serif italic text-[#1A2533] dark:text-stone-100 mb-3 leading-relaxed">
                       "{lesson.baseVerse.text}"
                     </p>
-                    <div className="flex items-center justify-between font-sans pt-2 border-t border-[#E0D7C6]/50">
-                      <span className="text-xs text-gray-500 italic">
+                    <div className="flex items-center justify-between font-sans pt-2 border-t border-[#E0D7C6]/50 dark:border-slate-700">
+                      <span className="text-xs text-gray-500 dark:text-slate-400 italic">
                         Texto Bíblico Base para la Exégesis y Doctrina Central
                       </span>
-                      <p className="text-sm font-bold text-[#7F1D1D] uppercase tracking-widest font-sans">
+                      <p className="text-sm font-bold text-[#7F1D1D] dark:text-amber-400 uppercase tracking-widest font-sans">
                         — {lesson.baseVerse.reference}
                       </p>
                     </div>
@@ -242,63 +242,63 @@ export function LessonViewer({ lesson, course, progress, onComplete, onBack }: L
 
                   {/* Explicación Teológica y Exegética del Versículo Principal */}
                   {lesson.theologicalExegesis ? (
-                    <div className="bg-stone-50/90 border border-amber-300/80 rounded-xl p-5 md:p-7 space-y-4 font-sans text-stone-800 shadow-xs">
-                      <div className="flex items-center gap-2 pb-3 border-b border-amber-200/70">
-                        <GraduationCap className="w-5 h-5 text-[#7F1D1D]" />
-                        <h3 className="font-serif font-bold text-lg md:text-xl text-[#1A2533]">
+                    <div className="bg-stone-50/90 dark:bg-slate-800/90 border border-amber-300/80 dark:border-amber-800/60 rounded-xl p-5 md:p-7 space-y-4 font-sans text-stone-800 dark:text-slate-200 shadow-xs">
+                      <div className="flex items-center gap-2 pb-3 border-b border-amber-200/70 dark:border-slate-700">
+                        <GraduationCap className="w-5 h-5 text-[#7F1D1D] dark:text-amber-400" />
+                        <h3 className="font-serif font-bold text-lg md:text-xl text-[#1A2533] dark:text-amber-200">
                           {lesson.theologicalExegesis.title || `Explicación Teológica y Exegética (${lesson.baseVerse.reference})`}
                         </h3>
                       </div>
                       
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="bg-white p-4 rounded-xl border border-stone-200/90 shadow-2xs">
-                          <h4 className="text-xs font-bold text-[#7F1D1D] uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                        <div className="bg-white dark:bg-slate-900 p-4 rounded-xl border border-stone-200/90 dark:border-slate-800 shadow-2xs">
+                          <h4 className="text-xs font-bold text-[#7F1D1D] dark:text-amber-400 uppercase tracking-wider mb-2 flex items-center gap-1.5">
                             <Compass size={14} />
                             Contexto Histórico y Gramatical
                           </h4>
-                          <p className="text-xs md:text-sm text-stone-700 leading-relaxed font-sans">
+                          <p className="text-xs md:text-sm text-stone-700 dark:text-slate-300 leading-relaxed font-sans">
                             {lesson.theologicalExegesis.historicalGrammaticalContext}
                           </p>
                         </div>
 
-                        <div className="bg-white p-4 rounded-xl border border-stone-200/90 shadow-2xs">
-                          <h4 className="text-xs font-bold text-[#7F1D1D] uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                        <div className="bg-white dark:bg-slate-900 p-4 rounded-xl border border-stone-200/90 dark:border-slate-800 shadow-2xs">
+                          <h4 className="text-xs font-bold text-[#7F1D1D] dark:text-amber-400 uppercase tracking-wider mb-2 flex items-center gap-1.5">
                             <BookOpen size={14} />
                             Análisis Teológico Doctrinal
                           </h4>
-                          <p className="text-xs md:text-sm text-stone-700 leading-relaxed font-sans">
+                          <p className="text-xs md:text-sm text-stone-700 dark:text-slate-300 leading-relaxed font-sans">
                             {lesson.theologicalExegesis.theologicalAnalysis}
                           </p>
                         </div>
 
-                        <div className="bg-white p-4 rounded-xl border border-stone-200/90 shadow-2xs">
-                          <h4 className="text-xs font-bold text-[#7F1D1D] uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                        <div className="bg-white dark:bg-slate-900 p-4 rounded-xl border border-stone-200/90 shadow-2xs">
+                          <h4 className="text-xs font-bold text-[#7F1D1D] dark:text-amber-400 uppercase tracking-wider mb-2 flex items-center gap-1.5">
                             <Sparkles size={14} />
                             Enfoque Cristocéntrico
                           </h4>
-                          <p className="text-xs md:text-sm text-stone-700 leading-relaxed font-sans">
+                          <p className="text-xs md:text-sm text-stone-700 dark:text-slate-300 leading-relaxed font-sans">
                             {lesson.theologicalExegesis.christocentricFocus}
                           </p>
                         </div>
 
-                        <div className="bg-white p-4 rounded-xl border border-stone-200/90 shadow-2xs">
-                          <h4 className="text-xs font-bold text-[#7F1D1D] uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                        <div className="bg-white dark:bg-slate-900 p-4 rounded-xl border border-stone-200/90 dark:border-slate-800 shadow-2xs">
+                          <h4 className="text-xs font-bold text-[#7F1D1D] dark:text-amber-400 uppercase tracking-wider mb-2 flex items-center gap-1.5">
                             <ShieldCheck size={14} />
                             Aplicación Pastoral y Doctrinal
                           </h4>
-                          <p className="text-xs md:text-sm text-stone-700 leading-relaxed font-sans">
+                          <p className="text-xs md:text-sm text-stone-700 dark:text-slate-300 leading-relaxed font-sans">
                             {lesson.theologicalExegesis.doctrinalApplication}
                           </p>
                         </div>
                       </div>
                     </div>
                   ) : (
-                    <div className="bg-stone-50/90 border border-amber-300/80 rounded-xl p-5 md:p-6 font-sans text-stone-800 shadow-xs">
-                      <h4 className="font-serif font-bold text-base text-[#1A2533] mb-2 flex items-center gap-2">
-                        <GraduationCap size={18} className="text-[#7F1D1D]" />
+                    <div className="bg-stone-50/90 dark:bg-slate-800/90 border border-amber-300/80 dark:border-amber-800/60 rounded-xl p-5 md:p-6 font-sans text-stone-800 dark:text-slate-200 shadow-xs">
+                      <h4 className="font-serif font-bold text-base text-[#1A2533] dark:text-amber-200 mb-2 flex items-center gap-2">
+                        <GraduationCap size={18} className="text-[#7F1D1D] dark:text-amber-400" />
                         <span>Desarrollo Teológico del Versículo Principal ({lesson.baseVerse.reference})</span>
                       </h4>
-                      <p className="text-xs md:text-sm text-stone-700 leading-relaxed font-sans">
+                      <p className="text-xs md:text-sm text-stone-700 dark:text-slate-300 leading-relaxed font-sans">
                         Este versículo principal articula el fundamento bíblico inerrante para la lección de hoy. A través de un análisis sintáctico y contextual, extraemos las implicaciones doctrinales que sustentan la fe histórica, conectando directamente con el tema de <strong>{lesson.title}</strong>.
                       </p>
                     </div>
@@ -313,7 +313,7 @@ export function LessonViewer({ lesson, course, progress, onComplete, onBack }: L
                     return (
                       <div key={block.id} className="animate-in fade-in duration-300">
                         <FormattedContent 
-                          className={`text-gray-800 leading-relaxed font-serif ${fontClass}`}
+                          className={`text-gray-800 dark:text-slate-200 leading-relaxed font-serif ${fontClass}`}
                           content={block.content}
                           onSelectVerse={(ref) => setActiveBibleVerse({ reference: ref })}
                         />
@@ -332,16 +332,16 @@ export function LessonViewer({ lesson, course, progress, onComplete, onBack }: L
                   if (block.type === 'note') {
                     return (
                       <div key={block.id} className="animate-in fade-in duration-500">
-                        <div className="bg-[#FAF9F6] border-2 border-dashed border-[#D1B17F] rounded-xl p-6 md:p-8 relative overflow-hidden my-4">
+                        <div className="bg-[#FAF9F6] dark:bg-slate-800/80 border-2 border-dashed border-[#D1B17F] dark:border-amber-600/60 rounded-xl p-6 md:p-8 relative overflow-hidden my-4">
                           <div className="absolute top-0 right-0 p-3 opacity-10">
-                            <BookOpen size={64} className="text-[#1A2533]" />
+                            <BookOpen size={64} className="text-[#1A2533] dark:text-stone-100" />
                           </div>
-                          <h4 className="text-xs md:text-sm font-bold text-[#7F1D1D] uppercase tracking-[0.2em] mb-4 flex items-center gap-2 font-sans">
+                          <h4 className="text-xs md:text-sm font-bold text-[#7F1D1D] dark:text-amber-400 uppercase tracking-[0.2em] mb-4 flex items-center gap-2 font-sans">
                             <CheckCircle2 size={16} />
                             Puntos Clave para su Libreta Teológica
                           </h4>
                           <FormattedContent 
-                            className="text-[#1A2533] leading-relaxed font-sans text-sm md:text-base prose prose-sm max-w-none"
+                            className="text-[#1A2533] dark:text-slate-200 leading-relaxed font-sans text-sm md:text-base prose prose-sm dark:prose-invert max-w-none"
                             content={block.content}
                             onSelectVerse={(ref) => setActiveBibleVerse({ reference: ref })}
                           />
@@ -356,24 +356,24 @@ export function LessonViewer({ lesson, course, progress, onComplete, onBack }: L
 
               {/* Comentarios de Teólogos e Historiadores Clave */}
               {lesson.commentaries && lesson.commentaries.length > 0 && (
-                <div className="mt-8 pt-6 border-t border-[#E0D7C6]/60 space-y-4">
-                  <div className="flex items-center gap-2 text-[#7F1D1D] font-sans">
+                <div className="mt-8 pt-6 border-t border-[#E0D7C6]/60 dark:border-slate-800 space-y-4">
+                  <div className="flex items-center gap-2 text-[#7F1D1D] dark:text-amber-400 font-sans">
                     <Quote size={20} />
-                    <h3 className="text-base md:text-lg font-bold font-serif text-[#1A2533]">
+                    <h3 className="text-base md:text-lg font-bold font-serif text-[#1A2533] dark:text-amber-200">
                       Comentarios Teológicos e Históricos Relevantes
                     </h3>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {lesson.commentaries.map((c, idx) => (
-                      <div key={idx} className="bg-stone-50/90 p-4 md:p-5 rounded-xl border border-[#D1B17F]/40 shadow-2xs font-sans flex flex-col justify-between">
-                        <p className="text-xs md:text-sm font-serif italic text-stone-800 leading-relaxed mb-3">
+                      <div key={idx} className="bg-stone-50/90 dark:bg-slate-800/90 p-4 md:p-5 rounded-xl border border-[#D1B17F]/40 dark:border-slate-700 shadow-2xs font-sans flex flex-col justify-between">
+                        <p className="text-xs md:text-sm font-serif italic text-stone-800 dark:text-slate-200 leading-relaxed mb-3">
                           "{c.text}"
                         </p>
-                        <div className="flex items-center justify-between pt-2 border-t border-stone-200/60 text-[11px]">
-                          <span className="font-bold text-[#7F1D1D] uppercase tracking-wider">
+                        <div className="flex items-center justify-between pt-2 border-t border-stone-200/60 dark:border-slate-700 text-[11px]">
+                          <span className="font-bold text-[#7F1D1D] dark:text-amber-400 uppercase tracking-wider">
                             — {c.author}
                           </span>
-                          <span className="text-stone-500 bg-white px-2 py-0.5 rounded border border-stone-200">
+                          <span className="text-stone-500 dark:text-slate-400 bg-white dark:bg-slate-900 px-2 py-0.5 rounded border border-stone-200 dark:border-slate-800">
                             Teólogo Histórico
                           </span>
                         </div>

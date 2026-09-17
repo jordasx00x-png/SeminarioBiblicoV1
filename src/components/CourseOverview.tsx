@@ -63,7 +63,7 @@ export function CourseOverview({ course, progress, user, customProfile, onSelect
         {/* Progress Card */}
         <div className="bg-white border border-slate-200/90 rounded-3xl p-6 md:p-8 shadow-md">
            <div className="flex justify-between items-end mb-3 font-sans">
-              <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Progreso General ({completedReal}/{total} Clases Completadas)</span>
+              <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Progreso General ({completedReal.toLocaleString('es-ES')}/{total.toLocaleString('es-ES')} Clases Completadas)</span>
               <span className="text-base font-bold text-slate-900 font-mono">{percentage}%</span>
            </div>
            <div className="h-3 w-full bg-slate-100 rounded-full overflow-hidden mb-4 p-0.5 border border-slate-200/50">

@@ -147,7 +147,7 @@ export function BibleVerseModal({
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.96, y: 15 }}
         transition={{ duration: 0.25, ease: 'easeOut' }}
-        className={`bg-[#FAF9F5] text-[#2C2C2C] rounded-2xl shadow-2xl flex flex-col border border-[#D1B17F]/40 overflow-hidden font-serif ${
+        className={`bg-[#FAF9F5] dark:bg-slate-900 text-[#2C2C2C] dark:text-slate-100 rounded-2xl shadow-2xl flex flex-col border border-[#D1B17F]/40 dark:border-slate-800 overflow-hidden font-serif ${
           isFullScreen 
             ? 'w-full h-full max-w-none max-h-none rounded-none' 
             : 'w-full max-w-5xl h-[92vh] max-h-[850px]'

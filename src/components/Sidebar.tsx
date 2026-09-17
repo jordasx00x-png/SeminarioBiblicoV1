@@ -1,5 +1,5 @@
 import { Course, UserProgress } from '../types';
-import { BookOpen, Award, CheckCircle, LogOut, LayoutDashboard, Settings, X, GraduationCap, Calendar as CalendarIcon, FileText, Edit3, Sparkles } from 'lucide-react';
+import { BookOpen, Award, CheckCircle, LogOut, LayoutDashboard, Settings, X, GraduationCap, Calendar as CalendarIcon, FileText, Edit3, Sparkles, Moon, Sun } from 'lucide-react';
 import { User } from 'firebase/auth';
 import { safeStorage } from '../utils/safeStorage';
 import { PWAInstallButton } from './PWAInstallButton';
@@ -21,6 +21,8 @@ interface SidebarProps {
   onOpenProfile?: () => void;
   onOpenNotebook?: () => void;
   onClose?: () => void;
+  darkMode?: boolean;
+  onToggleDarkMode?: () => void;
 }
 
 export function Sidebar({ 
@@ -39,7 +41,9 @@ export function Sidebar({
   onSignOut, 
   onOpenProfile, 
   onOpenNotebook,
-  onClose 
+  onClose,
+  darkMode,
+  onToggleDarkMode
 }: SidebarProps) {
   const bibleStudies = courses.filter(c => c.type === 'BIBLE_STUDY');
   const specialized = courses.filter(c => c.type === 'SPECIALIZED');
@@ -214,6 +218,21 @@ export function Sidebar({
           <div className="px-2 text-[10px] font-bold uppercase tracking-wider text-slate-400">
             Herramientas y Perfil
           </div>
+
+          {onToggleDarkMode && (
+            <button 
+              onClick={onToggleDarkMode}
+              className="w-full text-left px-3.5 py-2.5 rounded-xl text-xs font-medium transition-all duration-200 flex items-center justify-between text-slate-300 hover:bg-slate-800/70 hover:text-white hover:translate-x-1 cursor-pointer"
+            >
+              <div className="flex items-center gap-3">
+                {darkMode ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-slate-400" />}
+                <span>Modo Oscuro</span>
+              </div>
+              <span className={`text-[10px] px-2 py-0.5 rounded-full font-mono uppercase font-bold ${darkMode ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30' : 'bg-slate-800 text-slate-400'}`}>
+                {darkMode ? 'ON' : 'OFF'}
+              </span>
+            </button>
+          )}
 
           {onOpenProfile && (
             <button 

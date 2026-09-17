@@ -19,6 +19,7 @@ import { StudyCalendar } from './components/StudyCalendar';
 import { GradesPanel } from './components/GradesPanel';
 import { HomePanel } from './components/HomePanel';
 import { OfflineBanner } from './components/OfflineBanner';
+import { FloatingNotesWidget } from './components/FloatingNotesWidget';
 import { Menu, X, LayoutDashboard, BookOpen, Settings, Edit3 } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 
@@ -64,11 +65,31 @@ export default function App() {
 
   useStudyReminder(customProfile);
 
-  // Dark mode has been removed, forcing light mode
+  const [notesLayout, setNotesLayout] = useState<{
+    isOpen: boolean;
+    isMinimized: boolean;
+    width: number;
+    rightOffset: number;
+  }>({
+    isOpen: false,
+    isMinimized: false,
+    width: 0,
+    rightOffset: 0
+  });
+
+  const [darkMode, setDarkMode] = useState<boolean>(() => {
+    return safeStorage.getItem('darkMode') === 'true';
+  });
+
   useEffect(() => {
-    safeStorage.removeItem('darkMode');
-    document.documentElement.classList.remove('dark');
-  }, []);
+    if (darkMode) {
+      document.documentElement.classList.add('dark');
+      safeStorage.setItem('darkMode', 'true');
+    } else {
+      document.documentElement.classList.remove('dark');
+      safeStorage.setItem('darkMode', 'false');
+    }
+  }, [darkMode]);
 
   useEffect(() => {
     safeStorage.setItem('desktopSidebarOpen', String(desktopSidebarOpen));
@@ -98,7 +119,7 @@ export default function App() {
   const activeLesson = activeCourse?.lessons.find(l => l.id === activeLessonId);
 
   return (
-    <div className="min-h-screen bg-slate-50/70 text-slate-900 font-sans flex flex-col relative transition-colors duration-300">
+    <div className="min-h-screen bg-slate-50/70 dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-sans flex flex-col relative transition-colors duration-300">
       <DailyVerseNotification />
 
       {/* Top Global Executive Campus Navbar */}
@@ -116,6 +137,8 @@ export default function App() {
         onSignOut={signOut}
         onToggleSidebar={() => setSidebarOpen(prev => !prev)}
         isSidebarOpen={sidebarOpen}
+        darkMode={darkMode}
+        onToggleDarkMode={() => setDarkMode(prev => !prev)}
       />
 
       <div className="flex-1 flex relative">
@@ -139,6 +162,8 @@ export default function App() {
            onSignOut={signOut}
            onOpenProfile={() => setShowProfile(true)}
            onClose={() => setSidebarOpen(false)}
+           darkMode={darkMode}
+           onToggleDarkMode={() => setDarkMode(prev => !prev)}
         />
 
         {/* Overlay to catch clicks off the sidebar in mobile view */}
@@ -156,6 +181,8 @@ export default function App() {
             onClose={() => setShowProfile(false)} 
             onSave={saveProfile}
             onResetAllAccounts={handleResetAllAccounts}
+            darkMode={darkMode}
+            onToggleDarkMode={() => setDarkMode(prev => !prev)}
           />
         )}
         </AnimatePresence>
@@ -163,7 +190,12 @@ export default function App() {
         <main className="flex-1 flex flex-col min-h-0 w-full relative">
            <div 
              ref={scrollContainerRef}
-             className="absolute inset-0 overflow-y-auto custom-scrollbar pb-24 md:pb-6"
+             className="absolute inset-0 overflow-y-auto custom-scrollbar pb-24 md:pb-6 transition-all duration-300 ease-out"
+             style={{
+               paddingRight: notesLayout.isOpen && !notesLayout.isMinimized && typeof window !== 'undefined' && window.innerWidth >= 768
+                 ? `${notesLayout.rightOffset}px`
+                 : '0px'
+             }}
            >
            <AnimatePresence mode="wait">
              {activeLesson && activeCourse ? (
@@ -337,6 +369,28 @@ export default function App() {
           <span className="text-[9px] font-bold uppercase tracking-wider">{sidebarOpen ? 'Cerrar' : 'Menú'}</span>
         </button>
       </footer>
+
+      <FloatingNotesWidget 
+        user={user}
+        customProfileName={customProfile?.fullName}
+        activeCourseTitle={activeCourse?.title}
+        activeLessonTitle={activeLesson?.title}
+        courseId={activeCourse?.id}
+        lessonId={activeLesson?.id}
+        onNavigateToLesson={(cId, lId) => {
+          let targetCourseId = cId;
+          if (!targetCourseId && lId) {
+            const course = mockDatabase.courses.find(c => c.lessons.some(l => l.id === lId));
+            if (course) targetCourseId = course.id;
+          }
+          if (targetCourseId) {
+            setActiveTab('courses');
+            setActiveCourseId(targetCourseId);
+            setActiveLessonId(lId);
+          }
+        }}
+        onLayoutChange={(info) => setNotesLayout(info)}
+      />
 
       <OfflineBanner />
     </div>

@@ -1,7 +1,7 @@
 import { Course } from '../../types';
 
 export const pabloCourse: Course = {
-  id: 'cartas-pascuales-pablo',
+  id: 'pablo',
   title: 'Epístolas del Apóstol Pablo: Doctrina, Gracia y Vida de Pacto',
   type: 'BIBLE_STUDY',
   description: 'Un estudio exhaustivo de las cartas paulinas, explorando la justificación por la fe sola, la soberanía de la gracia, la unión con Cristo y la comunión práctica de la Iglesia.',

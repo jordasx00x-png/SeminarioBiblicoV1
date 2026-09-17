@@ -523,9 +523,9 @@ function CourseCard({ course, progress, onSelectCourse, isLocked = false }: { ke
            {course.description}
          </p>
          
-         <div className="space-y-2 mb-2 mt-auto">
+          <div className="space-y-2 mb-2 mt-auto">
            <div className="flex justify-between items-end font-sans">
-              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Progreso ({completedReal}/{total} Clases)</span>
+              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Progreso ({completedReal.toLocaleString('es-ES')}/{total.toLocaleString('es-ES')} Clases)</span>
               <span className="text-xs font-bold text-slate-900">{percentage}%</span>
            </div>
            <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden p-0.5">
@@ -542,7 +542,7 @@ function CourseCard({ course, progress, onSelectCourse, isLocked = false }: { ke
           : 'bg-slate-50/70 border-slate-100 group-hover:bg-amber-500/5'
       }`}>
          <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-            {total} Clases {isLocked ? 'por habilitar' : '+ Evaluaciones'}
+            {total.toLocaleString('es-ES')} Clases {isLocked ? 'por habilitar' : '+ Evaluaciones'}
          </div>
          {isLocked ? (
            <div className="text-amber-900 text-[10px] md:text-xs leading-none font-bold tracking-widest uppercase flex items-center gap-1">

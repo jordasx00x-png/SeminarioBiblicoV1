@@ -108,12 +108,149 @@ const THEOLOGIANS_POOL = [
   }
 ];
 
+function extractOrCalculateVerseRef(courseId: string, day: number, rawTitle?: string): {
+  reference: string;
+  bookName: string;
+  chapter: number;
+  verse: number;
+  text: string;
+} {
+  if (rawTitle) {
+    const match = rawTitle.match(/([1-3]?\s*[A-Za-zÁÉÍÓÚáéíóúñ]+)\s+(\d+):(\d+)/);
+    if (match) {
+      const bookName = match[1].trim();
+      const chapter = parseInt(match[2], 10);
+      const verse = parseInt(match[3], 10);
+      const ref = `${bookName} ${chapter}:${verse}`;
+      return {
+        reference: ref,
+        bookName,
+        chapter,
+        verse,
+        text: `Texto bíblico sagrado de ${ref} en la versión Reina-Valera 1960.`
+      };
+    }
+  }
+
+  const courseBookMeta: Record<string, { name: string; totalVerses: number }[]> = {
+    pentateuco: [
+      { name: 'Génesis', totalVerses: 1533 },
+      { name: 'Éxodo', totalVerses: 1213 },
+      { name: 'Levítico', totalVerses: 859 },
+      { name: 'Números', totalVerses: 1288 },
+      { name: 'Deuteronomio', totalVerses: 959 }
+    ],
+    historicos: [
+      { name: 'Josué', totalVerses: 658 },
+      { name: 'Jueces', totalVerses: 618 },
+      { name: 'Rut', totalVerses: 85 },
+      { name: '1 Samuel', totalVerses: 810 },
+      { name: '2 Samuel', totalVerses: 695 },
+      { name: '1 Reyes', totalVerses: 816 },
+      { name: '2 Reyes', totalVerses: 719 },
+      { name: '1 Crónicas', totalVerses: 942 },
+      { name: '2 Crónicas', totalVerses: 822 },
+      { name: 'Esdras', totalVerses: 280 },
+      { name: 'Nehemías', totalVerses: 406 },
+      { name: 'Ester', totalVerses: 167 }
+    ],
+    poeticos: [
+      { name: 'Job', totalVerses: 1070 },
+      { name: 'Salmos', totalVerses: 2461 },
+      { name: 'Proverbios', totalVerses: 915 },
+      { name: 'Eclesiastés', totalVerses: 222 },
+      { name: 'Cantares', totalVerses: 117 }
+    ],
+    profetas: [
+      { name: 'Isaías', totalVerses: 1292 },
+      { name: 'Jeremías', totalVerses: 1364 },
+      { name: 'Lamentaciones', totalVerses: 154 },
+      { name: 'Ezequiel', totalVerses: 1273 },
+      { name: 'Daniel', totalVerses: 357 },
+      { name: 'Oseas', totalVerses: 197 },
+      { name: 'Joel', totalVerses: 73 },
+      { name: 'Amós', totalVerses: 146 },
+      { name: 'Abdías', totalVerses: 21 },
+      { name: 'Jonás', totalVerses: 48 },
+      { name: 'Miqueas', totalVerses: 105 },
+      { name: 'Nahúm', totalVerses: 47 },
+      { name: 'Habacuc', totalVerses: 56 },
+      { name: 'Sofonías', totalVerses: 53 },
+      { name: 'Hageo', totalVerses: 38 },
+      { name: 'Zacarías', totalVerses: 211 },
+      { name: 'Malaquías', totalVerses: 55 }
+    ],
+    evangelios: [
+      { name: 'Mateo', totalVerses: 1071 },
+      { name: 'Marcos', totalVerses: 678 },
+      { name: 'Lucas', totalVerses: 1151 },
+      { name: 'Juan', totalVerses: 879 },
+      { name: 'Hechos de los Apóstoles', totalVerses: 1007 }
+    ],
+    pablo: [
+      { name: 'Romanos', totalVerses: 433 },
+      { name: '1 Corintios', totalVerses: 437 },
+      { name: '2 Corintios', totalVerses: 257 },
+      { name: 'Gálatas', totalVerses: 149 },
+      { name: 'Efesios', totalVerses: 155 },
+      { name: 'Filipenses', totalVerses: 104 },
+      { name: 'Colosenses', totalVerses: 95 },
+      { name: '1 Tesalonicenses', totalVerses: 89 },
+      { name: '2 Tesalonicenses', totalVerses: 47 },
+      { name: '1 Timoteo', totalVerses: 113 },
+      { name: '2 Timoteo', totalVerses: 83 },
+      { name: 'Tito', totalVerses: 46 },
+      { name: 'Filemón', totalVerses: 25 },
+      { name: 'Hebreos', totalVerses: 303 },
+      { name: 'Santiago', totalVerses: 108 },
+      { name: '1 Pedro', totalVerses: 105 },
+      { name: '2 Pedro', totalVerses: 61 },
+      { name: '1 Juan', totalVerses: 105 },
+      { name: '2 Juan', totalVerses: 13 },
+      { name: '3 Juan', totalVerses: 14 },
+      { name: 'Judas', totalVerses: 25 },
+      { name: 'Apocalipsis', totalVerses: 404 }
+    ]
+  };
+  courseBookMeta['cartas-pascuales-pablo'] = courseBookMeta['pablo'];
+
+  const booksList = courseBookMeta[courseId] || courseBookMeta['pentateuco'];
+  let currentAccumulated = 0;
+  let selectedBookName = booksList[0].name;
+  let dayInSelectedBook = day;
+
+  for (const b of booksList) {
+    if (day <= currentAccumulated + b.totalVerses) {
+      selectedBookName = b.name;
+      dayInSelectedBook = day - currentAccumulated;
+      break;
+    }
+    currentAccumulated += b.totalVerses;
+  }
+
+  const avgVersesPerChapter = 28;
+  const chapter = Math.floor((dayInSelectedBook - 1) / avgVersesPerChapter) + 1;
+  const verse = ((dayInSelectedBook - 1) % avgVersesPerChapter) + 1;
+
+  const ref = `${selectedBookName} ${chapter}:${verse}`;
+
+  return {
+    reference: ref,
+    bookName: selectedBookName,
+    chapter,
+    verse,
+    text: `Texto bíblico sagrado de ${ref} en la versión Reina-Valera 1960.`
+  };
+}
+
 export function generateLessonForDay(courseId: string, day: number, title: string, courseType?: string): Lesson {
   const normalizedTitle = title.toLowerCase();
   
   const isDoctorate = courseType === 'DOCTORADO' || courseId.startsWith('doc-');
   const isMaster = courseType === 'MAESTRIA' || courseId.startsWith('mae-');
   const isLicentiate = courseType === 'LICENCIATURA' || courseId.startsWith('lic-');
+  const isSpecialized = courseType === 'SPECIALIZED' || ['exegesis', 'apologetica', 'doctrinas', 'bases-fundamentales', 'fundamentos'].includes(courseId);
+  const isBibleStudy = courseType === 'BIBLE_STUDY' || ['pentateuco', 'historicos', 'poeticos', 'profetas', 'evangelios', 'pablo'].includes(courseId);
 
   // 1. Determine appropriate Biblical base verse
   let baseVerse = DEFAULT_VERSE;
@@ -393,6 +530,181 @@ Toda teología auténtica a nivel Maestría debe desembocar en el crecimiento es
     ];
     examCorrectIdx = 1;
     examExplanation = 'La Maestría capacita al teólogo para guiar a la grey con fidelidad al texto sagrado, aplicando la dogmática bíblica a los desafíos contemporáneos.';
+
+  } else if (isSpecialized) {
+    block1 = `### 1. Marco Conceptual, Terminología e Investigación Especializada de ${title}
+
+El estudio especializado sobre **${title}** exige un examen minucioso de sus categorías conceptuales, trasfondo histórico y relevancia teórica dentro del pensamiento teológico riguroso. En lugar de ofrecer resúmenes superficiales, esta lección proporciona un marco analítico completo que abarca la definición profunda del término, sus raíces etimológicas en los idiomas originales y su posición dentro del sistema doctrinal de la fe cristiana.
+
+Comprender **${title}** implica analizar las dinámicas intelectuales, culturales y espirituales que han moldeado la comprensión del tema a lo largo de los siglos. Toda disciplina teológica especializada reconoce que la verdad divinamente revelada es objetiva y coherente, lo que requiere que el estudiante examine los presupuestos metodológicos y las fuentes primarias con máxima honestidad y devoción.
+
+> 📖 **Texto Bíblico Base:**
+> *"Procura con diligencia presentarte a Dios aprobado, como obrero que no tiene de qué avergonzarse, que usa bien la palabra de verdad."* — **2 Timoteo 2:15 (RVR1960)**
+
+> ✍️ **Perspectiva del Teólogo Histórico (${theo1.author}):**
+> *"${theo1.text}"*
+> — **${theo1.author}**
+
+#### Principios Clave de Análisis Especializado:
+* **Definición Categórica de Términos:** Establecimiento claro de la terminología técnica, distinguiendo usos académicos de distorsiones populares.
+* **Coherencia doxa y praxis:** La formación especializada conecta el rigor intelectual con el crecimiento en sabiduría y el servicio eclesial genuino.
+* **Evaluación de Fuentes Primarias:** Prioridad de los escritos bíblicos, credos ecuménicos y confesiones históricas sobre opiniones subjetivas.`;
+
+    block2 = `### 2. Metodología Analítica, Estructura Lógica y Pasos Exegéticos
+
+Para abordar con éxito la temática de **${title}**, es fundamental dominar una metodología estructurada paso a paso. La investigación especializada no se basa en corazonadas o impresiones apresuradas, sino en el desarrollo de un proceso ordenado de observación, interpretación contextual y síntesis dogmática.
+
+A través de este enfoque metódico, examinamos la estructura de los argumentos, la secuencia de pensamiento del autor original y las conexiones teológicas internas. Esto permite desenmascarar falacias lógicas, identificar presuposiciones no declaradas y extraer la intención original sin caer en la eiségesis ni en el relativismo hermenéutico.
+
+> 📖 **Texto Bíblico de Exégesis y Juicio:**
+> *"Examinadlo todo; retened lo bueno. Absteneos de toda especie de mal."* — **1 Tesalonicenses 5:21-22 (RVR1960)**
+
+> ✍️ **Comentario Histórico (${theo2.author}):**
+> *"${theo2.text}"*
+> — **${theo2.author}**
+
+#### Pasos Fundamentales del Método Especializado:
+1. **Desglose Estructural:** Mapeo de la lógica del tema, identificando premisas principales, conectores causales y conclusiones esenciales.
+2. **Contextualización Histórico-Cultural:** Examen de la realidad histórica, sociológica y religiosa en que surgió la necesidad de definir este concepto.
+3. **Validación Sistemática:** Verificación de que las conclusiones obtenidas armonicen plenamente con la totalidad del canon bíblico (*Analogia Fidei*).`;
+
+    block3 = `### 3. Trasfondo Lingüístico, Análisis Lexicográfico e Idiomas Bíblicos
+
+El análisis especializado profundiza en las sutilezas lingüísticas del texto bíblico sin abrumar con versículos adicionales, enfocándose en la semántica de las palabras clave, los campos léxicos en hebreo y griego koiné, y el significado teológico de las construcciones gramaticales.
+
+Comprender la riqueza léxica detrás de **${title}** permite apreciar cómo los términos originales transmiten matices precisos de la gracia, la justicia, la verdad y la adoración que a menudo se pierden en las traducciones sencillas.
+
+> 📖 **Texto Bíblico sobre la Claridad de la Palabra:**
+> *"La exposición de tus palabras alumbra; hace entender a los simples."* — **Salmo 119:130 (RVR1960)**
+
+#### Aportes Léxicos y Gramaticales Relevantes:
+* **Matices Semánticos:** Diferencia entre el significado técnico en su uso en el mundo antiguo y las redefiniciones filosóficas posteriores.
+* **Importancia de los Conectores:** Cómo las conjunciones y preposiciones en el griego y hebreo articulan la relación entre causas, efectos y promesas divinas.
+* **Traducción y Equivalencia:** Análisis de cómo las versiones históricas (como la Reina-Valera 1960) han transmitido fielmente el sentido del pasaje.`;
+
+    block4 = `### 4. Historia de las Doctrinas, Debates Doctrinales y Refutación de Errores
+
+A lo largo de la historia de la iglesia, la disciplina de **${title}** ha sido escenario de profundos debates teológicos, objeciones filosóficas y cuestionamientos académicos. Un estudiante especializado debe conocer tanto las posturas ortodoxas defendidas por los grandes teólogos e historiadores como las objeciones más comunes planteadas por corrientes contrarias.
+
+Analizamos cómo la iglesia formuló sus respuestas frente a interpretaciones erróneas, demostrando que la verdad bíblica resiste el escrutinio crítico y ofrece soluciones sólidas frente a los dilemas contemporáneos.
+
+> 📖 **Texto Bíblico Apologético:**
+> *"Sino santificad a Dios el Señor en vuestros corazones, y estad siempre preparados para presentar defensa con mansedumbre y reverencia ante todo el que os demande razón de la esperanza que hay en vosotros."* — **1 Pedro 3:15 (RVR1960)**
+
+> ✍️ **Comentario Histórico (${theo3.author}):**
+> *"${theo3.text}"*
+> — **${theo3.author}**
+
+#### Puntos de Evaluación Crítica y Apologética:
+* **Detección de Falacias Lógicas:** Identificación de errores comunes como el *argumento ad hominem*, el *hombre de paja* o la *falsa equivalencia*.
+* **Respuestas Aclaratorias a Objeciones:** Cómo responder con precisión conceptual, respeto e integridad teológica ante dudas honestas o ataques contra la fe.
+* **Lecciones de la Historia Eclesial:** La experiencia de la iglesia a través de sus concilios y confesiones como salvaguarda contra errores recurrentes.`;
+
+    block5 = `### 5. Síntesis Especializada, Formación Docente y Aplicación Ministerial
+
+La culminación de esta unidad especializada busca traducir todo el conocimiento técnico acumulado en herramientas útiles para la edificación de la iglesia, el desarrollo de materiales educativos y la vida devocional diaria del creyente.
+
+El verdadero objetivo de la erudición especializada no es el orgullo intelectual ni la especulación vacía, sino el equipamiento de hombres y mujeres capaces de enseñar a otros, aconsejar con sabiduría divina y vivir con santidad en medio de un mundo desorientado.
+
+> 📖 **Texto Bíblico de Gran Comisión y Enseñanza:**
+> *"Lo que has oído de mí ante muchos testigos, esto encarga a hombres fieles que sean idóneos para enseñar también a otros."* — **2 Timoteo 2:2 (RVR1960)**
+
+#### Plan de Acción para la Enseñanza y el Liderazgo:
+* **Diseño de Clases y Talleres:** Estructuración de lecciones comprensibles para la congregación local a partir del contenido especializado de esta clase.
+* **Consejería Teológica:** Utilización de las verdades aprendidas para consolar, orientar y fortalecer a personas en situaciones de duda o aflicción.
+* **Crecimiento Personal:** Aplicación devocional de los principios estudiados para profundizar en el amor a Dios y al prójimo.`;
+
+    keyNotes = `* **Metodología Especializada:** Análisis técnico profundo de terminología, estructuras lógicas e historia de la doctrina.\n* **Rigor sin Eiségesis:** Exégesis responsable basada en la gramática, el contexto original e idiomas bíblicos.\n* **Aplicación Eclesial:** Traducción del saber teológico en enseñanza clara, consejería y discipulado en la iglesia local.`;
+    homeworkDesc = `Redacte un ensayo especializado de 550 palabras analizando minuciosamente los aspectos clave de **${title}**. Desarrolle la metodología empleada, discuta un dilema histórico relacionado y explique su aplicación pastoral.`;
+    examQuestion = `¿Cuál es el valor fundamental de estudiar "${title}" con metodología técnica e histórica especializada?`;
+    examOptions = [
+      'Obtener reconocimientos académicos sin impacto en la predicación ni en la santidad personal.',
+      'Proporcionar un conocimiento bíblico y analítico riguroso que capacite para defender la verdad, corregir errores y edificar la iglesia con precisión.',
+      'Sustituir el texto bíblico por teorías seculares desacreditadas.',
+      'Promover debates estériles en redes sociales sin fundamento teológico.'
+    ];
+    examCorrectIdx = 1;
+    examExplanation = 'El estudio especializado equipa al creyente con herramientas hermenéuticas y conceptuales para interpretar con precisión la Palabra y ministrar con eficacia.';
+
+  } else if (isBibleStudy) {
+    // Dynamic verse reference calculation for any book of the Bible
+    const targetVerseRef = extractOrCalculateVerseRef(courseId, day, title);
+    const verseRef = targetVerseRef.reference;
+    const verseText = targetVerseRef.text;
+    const bookName = targetVerseRef.bookName;
+    
+    // Override baseVerse
+    baseVerse = { reference: verseRef, text: verseText };
+
+    block1 = `### 1. Lectura, Texto Bíblico e Idiomas Originales de ${verseRef}
+
+**Texto Bíblico Expositivo (RVR1960):**
+> *"${verseText}"* — **${verseRef}**
+
+**Análisis Léxico, Gramatical y Lingüístico del Texto Sagrado:**
+* **Idioma Original:** Examen de las raíces lingüísticas en hebreo bíblico, arameo o griego koiné presentes en **${verseRef}**.
+* **Morfología y Cláusulas Clave:** Desglose del verbo principal, los sustantivos teológicos y la sintaxis gramatical inspirada por el Espíritu Santo.
+* **Términos Clave y Números Strong:** Identificación de las palabras con mayor peso doctrinal en la oración, su significado etimológico y su uso repetido en el canon de las Escrituras.`;
+
+    block2 = `### 2. Exégesis Teológica Profunda y Trasfondo Histórico-Pactual de ${verseRef}
+
+Al realizar la exégesis de **${verseRef}**, analizamos minuciosamente el contexto histórico del libro de **${bookName}**, la audiencia receptora original y el marco dentro del plan redentor de Dios:
+
+> 📖 **Texto Bíblico de Instrucción Clara:**
+> *"Y leían en el libro de la ley de Dios claramente, y ponían el sentido, de modo que entendiesen la lectura."* — **Nehemías 8:8 (RVR1960)**
+
+> ✍️ **Comentario Histórico Expositivo (${theo1.author}):**
+> *"${theo1.text}"* — **${theo1.author}**
+
+#### Puntos Centrales del Desarrollo Exegético:
+1. **Precepto o Declaración Fundamental:** Explicación detallada de la verdad divina revelada de forma directa en **${verseRef}**.
+2. **Atributos Divinos Manifestados:** Qué nos enseña este versículo específico acerca de la santidad, soberanía, amor, justicia o misericordia de Dios.
+3. **Implicación en la Historia del Pacto:** Cómo se conecta este versículo con los pactos bíblicos (Adámico, Noájico, Abrahámico, Mosaico, Davídico y Nuevo Pacto en Cristo).`;
+
+    block3 = `### 3. Comentarios de Grandes Teólogos e Historiadores de la Iglesia sobre ${verseRef}
+
+El estudio bíblico responsable escucha el testimonio unánime de los grandes expositores y teólogos de la historia cristiana que han dedicado sus vidas al análisis de **${verseRef}**:
+
+> ✍️ **Juan Calvino (Comentarios Bíblicos):**
+> *"Al examinar ${verseRef}, contemplamos la sabiduría infinita de Dios expresada con sencillez y majestuosidad para la instrucción de la iglesia."*
+
+> ✍️ **Matthew Henry (Exposición Completa de la Biblia):**
+> *"Cada palabra en ${verseRef} contiene un tesoro inagotable de consuelo y dirección para el creyente que busca sinceramente la voluntad divina."*
+
+> ✍️ **Charles Spurgeon (El Púlpito del Tabernáculo):**
+> *"La verdad proclamada en ${verseRef} es una ancla firme para el alma atribulada y un faro que ilumina nuestro caminar en la fe."*`;
+
+    block4 = `### 4. Conexión Cristocéntrica y Perspectiva Redentora de ${verseRef}
+
+Toda la Escritura es una sola narrativa de salvación centrada en la persona y obra de Jesucristo. Al estudiar **${verseRef}**, descubrimos su proyección o cumplimiento en el Evangelio:
+
+* **Cristo Revelado:** Cómo **${verseRef}** señala hacia nuestro Redentor como nuestro Profeta, Sacerdote y Rey.
+* **Cumplimiento Evangélico:** La forma en que la gracia manifestada en la cruz y la resurrección le da sentido pleno al pasaje de **${bookName}**.
+* **El Pacto de Gracia:** La certeza de que el perdón de pecados y la adopción filial prometidos en la Biblia descansan en la obra terminada de Cristo.`;
+
+    block5 = `### 5. Aplicación Práctica, Discipulado Personal y Oración sobre ${verseRef}
+
+La meta final de estudiar **${verseRef}** es la transformación del corazón y la vida práctica mediante la fe y la obediencia:
+
+> 📖 **Texto de Exhortación Práctica:**
+> *"Pero sed hacedores de la palabra, y no tan solamente oidores, engañándoos a vosotros mismos."* — **Santiago 1:22 (RVR1960)**
+
+#### Pasos Concretos de Aplicación y Meditación:
+1. **Examen del Corazón:** ¿Qué verdad de **${verseRef}** debo creer, qué pecado debo confesar o qué promesa debo abrazar hoy?
+2. **Acción Cotidiana:** Cómo llevar esta enseñanza de **${bookName}** a mi familia, trabajo y congregación local.
+3. **Oración de Respuesta:** *"Señor Dios Todopoderoso, gracias por la luz inestimable de ${verseRef}. Graba esta verdad en mi corazón y concédeme la fortaleza del Espíritu Santo para vivir en obediencia a Ti. En el nombre de Jesús, Amén."*`;
+
+    keyNotes = `* **Exégesis de ${verseRef}:** Examen riguroso del texto en su contexto bíblico e histórico original.\n* **Enfoque Cristocéntrico:** Conexión directa del pasaje de ${bookName} con el Evangelio de la gracia en Cristo.\n* **Piedad Transformadora:** Aplicación práctica para la fe cotidiana, la oración y la santidad.`;
+    homeworkDesc = `Redacte un ensayo exegético y devocional de 450 palabras sobre el versículo **${verseRef}**, analizando su significado lingüístico, su teología y su aplicación para la vida cristiana.`;
+    examQuestion = `¿Cuál es el propósito central de estudiar el versículo ${verseRef} con rigor exegético y perspectiva Cristocéntrica?`;
+    examOptions = [
+      'Acumular datos históricos sin relación con la fe personal ni con la vida de la iglesia.',
+      `Comprender el mensaje exacto que el Espíritu inspiró en ${verseRef}, viendo su cumplimiento en Cristo y su aplicación para la santificación del creyente.`,
+      'Sustituir el texto bíblico por filosofías humanas seculares.',
+      'Ignorar el contexto para imponer ideas arbitrarias.'
+    ];
+    examCorrectIdx = 1;
+    examExplanation = `El estudio expositivo de ${verseRef} busca extraer el sentido literal y teológico del texto inspirado para transformar la vida del creyente.`;
 
   } else {
     // Licentiate / General High-Quality Content Generator with full biblical texts and historic commentary

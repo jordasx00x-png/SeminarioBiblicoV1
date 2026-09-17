@@ -73,26 +73,37 @@ const SPECIFIC_TITLES: CourseTitles = {
     "Cielos Nuevos y Tierra Nueva: La Glorificación del Universo"
   ],
   pentateuco: [
-    "Apertura del Canon: Autoría Mosáica del Pentateuco", // Day 1
-    "Génesis 1 y 2: Creación, Pacto de Obras y Sábado", // Day 2
-    "Génesis 3: La Caída y el Protoevangelio de la Serpiente", // Day 3
-    "La Geografía Histórica de Mesopotamia y Canaán",
-    "El Pacto Noájico: Preservación de la Creación y Orden Natural",
-    "El Llamado de Abraham y las Promesas del Pacto Incondicional",
-    "El Pacto Abrahamático en Génesis 15: Autenticación por Fuego",
-    "Génesis 22: El Sacrificio de Isaac y la Provisión Sustitutiva",
-    "El Linaje Elegido: Teología de Jacob, Esaú y la Primogenitura",
-    "José en Egipto: Providencia Divina sobre los Celos Humanos",
-    "Éxodo 3: El Nombre Revelado de Yahvé en la Zarza",
-    "Las Plagas de Egipto como Juicios sobre los Dioses del Nilo",
-    "La Institución de la Pascua y la Sangre Expiatoria",
-    "Cruzar el Mar Rojo y el Canto de la Gran Liberación",
-    "El Pacto del Sinaí: Teocracia e Implicación Ética",
-    "Los Diez Mandamientos: Decálogo como Ley Moral Eterna",
-    "El Tabernáculo: Simbolismo Sacerdotal e Habitación de Dios",
-    "Levítico: El Yom Kippur y la Mediación Sacerdotal",
-    "Números: El Censo Militar y la Tragedia de Cades-Barnea",
-    "Deuteronomio: Tratado del Pacto y Renovación Generacional"
+    "Estudio Bíblico Versículo por Versículo — Génesis 1:1 («En el principio creó Dios los cielos y la tierra»)", // Day 1
+    "Estudio Bíblico Versículo por Versículo — Génesis 1:2 («Y la tierra estaba desordenada y vacía...»)", // Day 2
+    "Estudio Bíblico Versículo por Versículo — Génesis 1:3 («Y dijo Dios: Sea la luz; y fue la luz»)", // Day 3
+    "Estudio Bíblico Versículo por Versículo — Génesis 1:4 («Y vio Dios que la luz era buena; y separó la luz...»)", // Day 4
+    "Estudio Bíblico Versículo por Versículo — Génesis 1:5 («Y llamó Dios a la luz Día, y a las tinieblas Noche»)", // Day 5
+    "Estudio Bíblico Versículo por Versículo — Génesis 1:6 («Haya expansión en medio de las aguas»)", // Day 6
+    "Estudio Bíblico Versículo por Versículo — Génesis 1:7 («E hizo Dios la expansión...»)", // Day 7
+    "Estudio Bíblico Versículo por Versículo — Génesis 1:8 («Y llamó Dios a la expansión Cielos»)", // Day 8
+    "Estudio Bíblico Versículo por Versículo — Génesis 1:9 («Júntense las aguas... y descúbrase lo seco»)", // Day 9
+    "Estudio Bíblico Versículo por Versículo — Génesis 1:10 («Y llamó Dios a lo seco Tierra, y a las aguas Mares»)", // Day 10
+    "Estudio Bíblico Versículo por Versículo — Génesis 1:11 («Produzca la tierra hierba verde y árbol de fruto»)", // Day 11
+    "Estudio Bíblico Versículo por Versículo — Génesis 1:12 («Produjo, pues, la tierra hierba verde...»)", // Day 12
+    "Estudio Bíblico Versículo por Versículo — Génesis 1:13 («Y fue la tarde y la mañana el día tercero»)", // Day 13
+    "Estudio Bíblico Versículo por Versículo — Génesis 1:14 («Haya lumbreras en la expansión de los cielos»)", // Day 14
+    "Estudio Bíblico Versículo por Versículo — Génesis 1:15 («Y sean por lumbreras para alumbrar sobre la tierra»)", // Day 15
+    "Estudio Bíblico Versículo por Versículo — Génesis 1:16 («E hizo Dios las dos grandes lumbreras y las estrellas»)", // Day 16
+    "Estudio Bíblico Versículo por Versículo — Génesis 1:17 («Y las puso Dios en la expansión de los cielos»)", // Day 17
+    "Estudio Bíblico Versículo por Versículo — Génesis 1:18 («Para señorear en el día y en la noche...»)", // Day 18
+    "Estudio Bíblico Versículo por Versículo — Génesis 1:19 («Y fue la tarde y la mañana el día cuarto»)", // Day 19
+    "Estudio Bíblico Versículo por Versículo — Génesis 1:20 («Produzcan las aguas seres vivientes y aves»)", // Day 20
+    "Estudio Bíblico Versículo por Versículo — Génesis 1:21 («Y creó Dios los grandes monstruos marinos...»)", // Day 21
+    "Estudio Bíblico Versículo por Versículo — Génesis 1:22 («Y Dios los bendijo: Fructificad y multiplicaos»)", // Day 22
+    "Estudio Bíblico Versículo por Versículo — Génesis 1:23 («Y fue la tarde y la mañana el día quinto»)", // Day 23
+    "Estudio Bíblico Versículo por Versículo — Génesis 1:24 («Produzca la tierra seres vivientes según su género»)", // Day 24
+    "Estudio Bíblico Versículo por Versículo — Génesis 1:25 («E hizo Dios animales de la tierra según su género»)", // Day 25
+    "Estudio Bíblico Versículo por Versículo — Génesis 1:26 («Hagamos al hombre a nuestra imagen, conforme a semejanza»)", // Day 26
+    "Estudio Bíblico Versículo por Versículo — Génesis 1:27 («Y creó Dios al hombre a su imagen... varón y hembra»)", // Day 27
+    "Estudio Bíblico Versículo por Versículo — Génesis 1:28 («Y los bendijo Dios: Fructificad y multiplicaos»)", // Day 28
+    "Estudio Bíblico Versículo por Versículo — Génesis 1:29 («He aquí que os he dado toda planta que da semilla»)", // Day 29
+    "Estudio Bíblico Versículo por Versículo — Génesis 1:30 («Y a toda bestia de la tierra... planta verde»)", // Day 30
+    "Estudio Bíblico Versículo por Versículo — Génesis 1:31 («Y vio Dios todo lo que había hecho: bueno en gran manera»)" // Day 31
   ],
   historicos: [
     "Teología de la Conquista en el Libro de Josué", // Day 1
@@ -330,11 +341,16 @@ const THEOLOGICAL_NOUNS: Record<string, string[]> = {
 export function getLessonTitleForDay(courseId: string, day: number, realTitle?: string): string {
   if (realTitle) return realTitle;
 
+  const bibleStudyCourseIds = ["pentateuco", "historicos", "poeticos", "profetas", "evangelios", "pablo", "cartas-pascuales-pablo"];
   const id = courseId === "bases-fundamentales" ? "bases-fundamentales" : courseId;
   const list = SPECIFIC_TITLES[id] || [];
   
   if (day <= list.length) {
     return list[day - 1];
+  }
+
+  if (bibleStudyCourseIds.includes(id)) {
+    return `Estudio Bíblico Versículo por Versículo — Clase ${day}`;
   }
 
   // Generate a majestic automatic name combining a verb and a noun

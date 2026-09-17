@@ -18,23 +18,23 @@ export function ReadingToolbar({
   onOpenBibleViewer
 }: ReadingToolbarProps) {
   return (
-    <div className="sticky top-16 z-10 bg-white/95 backdrop-blur border-b border-[#E0D7C6] px-4 md:px-8 py-2.5 flex items-center justify-between shadow-xs transition-colors font-sans">
+    <div className="sticky top-16 z-10 bg-white/95 dark:bg-slate-900/95 backdrop-blur border-b border-[#E0D7C6] dark:border-slate-800 px-4 md:px-8 py-2.5 flex items-center justify-between shadow-xs transition-colors font-sans">
       {/* Scroll Progress Indicator & Bible Viewer Quick Action */}
       <div className="flex items-center gap-3">
-        <div className="w-24 md:w-36 bg-stone-200 rounded-full h-1.5 overflow-hidden">
+        <div className="w-24 md:w-36 bg-stone-200 dark:bg-slate-800 rounded-full h-1.5 overflow-hidden">
           <div
-            className="bg-[#7F1D1D] h-full rounded-full transition-all duration-150"
+            className="bg-[#7F1D1D] dark:bg-amber-500 h-full rounded-full transition-all duration-150"
             style={{ width: `${Math.min(100, Math.max(0, scrollProgress))}%` }}
           />
         </div>
-        <span className="text-[11px] font-mono text-gray-500 font-medium">
+        <span className="text-[11px] font-mono text-gray-500 dark:text-slate-400 font-medium">
           {Math.round(scrollProgress)}% leído
         </span>
 
         {onOpenBibleViewer && (
           <button
             onClick={onOpenBibleViewer}
-            className="ml-2 px-2.5 py-1 rounded-md bg-amber-50 hover:bg-amber-100 border border-[#D1B17F]/60 text-[#7F1D1D] text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer shadow-2xs"
+            className="ml-2 px-2.5 py-1 rounded-md bg-amber-50 dark:bg-amber-950/60 hover:bg-amber-100 dark:hover:bg-amber-900/80 border border-[#D1B17F]/60 dark:border-amber-800/60 text-[#7F1D1D] dark:text-amber-300 text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer shadow-2xs"
             title="Abrir la Biblia completa con todas sus características en segunda pantalla"
           >
             <BookOpen size={13} />
@@ -46,11 +46,11 @@ export function ReadingToolbar({
       {/* Reader Controls */}
       <div className="flex items-center gap-3">
         {/* Font Size Selector */}
-        <div className="flex items-center bg-stone-100 p-0.5 rounded-lg border border-stone-200">
+        <div className="flex items-center bg-stone-100 dark:bg-slate-800 p-0.5 rounded-lg border border-stone-200 dark:border-slate-700">
           <button
             onClick={() => setFontSize('normal')}
             className={`px-2 py-1 text-xs font-bold rounded transition-all cursor-pointer ${
-              fontSize === 'normal' ? 'bg-white shadow-xs text-[#1A2533]' : 'text-gray-500 hover:text-black'
+              fontSize === 'normal' ? 'bg-white dark:bg-slate-700 shadow-xs text-[#1A2533] dark:text-slate-100' : 'text-gray-500 dark:text-slate-400 hover:text-black dark:hover:text-white'
             }`}
             title="Texto Estándar"
           >
@@ -59,7 +59,7 @@ export function ReadingToolbar({
           <button
             onClick={() => setFontSize('large')}
             className={`px-2 py-1 text-sm font-bold rounded transition-all cursor-pointer ${
-              fontSize === 'large' ? 'bg-white shadow-xs text-[#1A2533]' : 'text-gray-500 hover:text-black'
+              fontSize === 'large' ? 'bg-white dark:bg-slate-700 shadow-xs text-[#1A2533] dark:text-slate-100' : 'text-gray-500 dark:text-slate-400 hover:text-black dark:hover:text-white'
             }`}
             title="Texto Grande"
           >
@@ -68,7 +68,7 @@ export function ReadingToolbar({
           <button
             onClick={() => setFontSize('xlarge')}
             className={`px-2 py-1 text-base font-bold rounded transition-all cursor-pointer ${
-              fontSize === 'xlarge' ? 'bg-white shadow-xs text-[#1A2533]' : 'text-gray-500 hover:text-black'
+              fontSize === 'xlarge' ? 'bg-white dark:bg-slate-700 shadow-xs text-[#1A2533] dark:text-slate-100' : 'text-gray-500 dark:text-slate-400 hover:text-black dark:hover:text-white'
             }`}
             title="Texto Extra Grande"
           >
@@ -77,11 +77,11 @@ export function ReadingToolbar({
         </div>
 
         {/* Paper Theme Selector */}
-        <div className="hidden sm:flex items-center bg-stone-100 p-0.5 rounded-lg border border-stone-200">
+        <div className="hidden sm:flex items-center bg-stone-100 dark:bg-slate-800 p-0.5 rounded-lg border border-stone-200 dark:border-slate-700">
           <button
             onClick={() => setReadingTheme('paper')}
             className={`px-2 py-1 text-[11px] font-medium rounded transition-all cursor-pointer ${
-              readingTheme === 'paper' ? 'bg-white shadow-xs text-[#1A2533]' : 'text-gray-500 hover:text-black'
+              readingTheme === 'paper' ? 'bg-white dark:bg-slate-700 shadow-xs text-[#1A2533] dark:text-slate-100' : 'text-gray-500 dark:text-slate-400 hover:text-black dark:hover:text-white'
             }`}
             title="Fondo Blanco Natural"
           >
@@ -90,7 +90,7 @@ export function ReadingToolbar({
           <button
             onClick={() => setReadingTheme('sepia')}
             className={`px-2 py-1 text-[11px] font-medium rounded transition-all cursor-pointer ${
-              readingTheme === 'sepia' ? 'bg-[#F4ECD8] shadow-xs text-[#5B4636]' : 'text-gray-500 hover:text-black'
+              readingTheme === 'sepia' ? 'bg-[#F4ECD8] shadow-xs text-[#5B4636]' : 'text-gray-500 dark:text-slate-400 hover:text-black dark:hover:text-white'
             }`}
             title="Fondo Sepia Papiro"
           >
@@ -99,7 +99,7 @@ export function ReadingToolbar({
           <button
             onClick={() => setReadingTheme('contrast')}
             className={`px-2 py-1 text-[11px] font-medium rounded transition-all cursor-pointer ${
-              readingTheme === 'contrast' ? 'bg-[#1A2533] shadow-xs text-white' : 'text-gray-500 hover:text-black'
+              readingTheme === 'contrast' ? 'bg-[#1A2533] shadow-xs text-white' : 'text-gray-500 dark:text-slate-400 hover:text-black dark:hover:text-white'
             }`}
             title="Alto Contraste"
           >

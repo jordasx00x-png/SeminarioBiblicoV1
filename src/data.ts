@@ -37,19 +37,38 @@ export const mockDatabase: Database = {
   ]
 };
 
+const BIBLE_STUDY_LESSON_COUNTS: Record<string, number> = {
+  pentateuco: 5852,
+  historicos: 7018,
+  poeticos: 4785,
+  profetas: 5490,
+  evangelios: 4786,
+  pablo: 3576,
+  'cartas-pascuales-pablo': 3576
+};
+
 // Pad all courses with expected lessons and ensure every lesson has rich, high-fidelity content
 mockDatabase.courses.forEach(course => {
-  const expectedLessons = course.durationMonths ? course.durationMonths * 30 : 90;
+  const expectedLessons = course.type === 'BIBLE_STUDY' 
+    ? (BIBLE_STUDY_LESSON_COUNTS[course.id] || 90)
+    : (course.durationMonths ? course.durationMonths * 30 : 90);
   
   // 1. Upgrade/Enrich existing sparse lessons (e.g., manual stubs with minimal text)
   course.lessons = course.lessons.map(lesson => {
+    const isAcademicOrBibleStudy = course.type === 'SPECIALIZED' || 
+                                   course.type === 'BIBLE_STUDY' ||
+                                   course.type === 'LICENCIATURA' ||
+                                   course.type === 'MAESTRIA' ||
+                                   course.type === 'DOCTORADO';
     const firstBlock = lesson.blocks && lesson.blocks[0];
-    const isFirstBlockShort = firstBlock && 'content' in firstBlock && typeof firstBlock.content === 'string' && firstBlock.content.length < 200;
+    const isFirstBlockShort = firstBlock && 'content' in firstBlock && typeof firstBlock.content === 'string' && firstBlock.content.length < 250;
+    const totalTextLength = lesson.blocks.reduce((acc, b) => acc + ('content' in b && typeof b.content === 'string' ? b.content.length : 0), 0);
     const isSparse = !lesson.baseVerse || 
                      !lesson.finalExam || 
                      lesson.finalExam.length === 0 || 
-                     lesson.blocks.length <= 1 || 
-                     isFirstBlockShort;
+                     lesson.blocks.length <= 2 || 
+                     isFirstBlockShort ||
+                     (isAcademicOrBibleStudy && totalTextLength < 2200);
     if (isSparse) {
       return generateLessonForDay(course.id, lesson.day, lesson.title, course.type);
     }

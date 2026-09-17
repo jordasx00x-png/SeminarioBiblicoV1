@@ -27,8 +27,8 @@ export function DailyVerseNotification() {
   if (!isVisible) return null;
 
   return (
-    <div className="fixed bottom-6 right-6 z-50 animate-in slide-in-from-bottom-10 fade-in duration-500">
-      <div className="bg-white dark:bg-zinc-900 border border-[#E0D7C6] dark:border-zinc-700 shadow-xl rounded-lg p-5 w-80 flex flex-col gap-3">
+    <div className="fixed bottom-20 left-4 md:bottom-6 md:left-6 z-30 animate-in slide-in-from-bottom-10 fade-in duration-500 max-w-[calc(100vw-2rem)] sm:w-80">
+      <div className="bg-white dark:bg-zinc-900 border border-[#E0D7C6] dark:border-zinc-700 shadow-xl rounded-xl p-4 sm:p-5 flex flex-col gap-2.5">
         <div className="flex justify-between items-start">
           <div className="flex items-center gap-2 text-[#7F1D1D] dark:text-red-400">
             <BookOpen size={16} />

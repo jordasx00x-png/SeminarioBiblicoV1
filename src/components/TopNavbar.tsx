@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { BookOpen, GraduationCap, Calendar as CalendarIcon, Award, Edit3, Home, Settings, User as UserIcon, LogOut, Menu, Sparkles, Flame, CheckCircle2, ChevronDown } from 'lucide-react';
+import { BookOpen, GraduationCap, Calendar as CalendarIcon, Award, Edit3, Home, Settings, User as UserIcon, LogOut, Menu, Sparkles, Flame, CheckCircle2, ChevronDown, Moon, Sun } from 'lucide-react';
 import { User } from 'firebase/auth';
 import { UserProgress } from '../types';
 
@@ -13,6 +13,8 @@ interface TopNavbarProps {
   onSignOut?: () => void;
   onToggleSidebar?: () => void;
   isSidebarOpen?: boolean;
+  darkMode?: boolean;
+  onToggleDarkMode?: () => void;
 }
 
 export function TopNavbar({
@@ -23,7 +25,9 @@ export function TopNavbar({
   progress,
   onOpenProfile,
   onSignOut,
-  onToggleSidebar
+  onToggleSidebar,
+  darkMode,
+  onToggleDarkMode
 }: TopNavbarProps) {
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
 
@@ -94,6 +98,18 @@ export function TopNavbar({
         {/* Right: Quick Stats, Profile & Settings Menu */}
         <div className="flex items-center gap-2 sm:gap-3 shrink-0">
           
+          {/* Quick Dark Mode Toggle Button */}
+          {onToggleDarkMode && (
+            <button
+              onClick={onToggleDarkMode}
+              className="p-2 rounded-xl bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700/80 text-amber-400 hover:text-amber-300 transition-all cursor-pointer active:scale-95"
+              title={darkMode ? "Cambiar a Modo Claro" : "Cambiar a Modo Oscuro"}
+              aria-label={darkMode ? "Cambiar a Modo Claro" : "Cambiar a Modo Oscuro"}
+            >
+              {darkMode ? <Sun size={17} className="text-amber-400 fill-amber-400/20" /> : <Moon size={17} className="text-slate-300" />}
+            </button>
+          )}
+
           {/* Streak & Progress Pills */}
           <div className="hidden lg:flex items-center gap-2 bg-slate-900/80 border border-slate-800 px-3 py-1.5 rounded-xl text-xs">
             <span className="flex items-center gap-1 font-bold text-amber-400">
@@ -141,6 +157,23 @@ export function TopNavbar({
                   <Settings size={15} className="text-slate-400" />
                   <span>Configurar Perfil</span>
                 </button>
+
+                {onToggleDarkMode && (
+                  <button
+                    onClick={() => {
+                      onToggleDarkMode();
+                    }}
+                    className="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-medium hover:bg-slate-800 hover:text-white transition-colors text-left"
+                  >
+                    <div className="flex items-center gap-2">
+                      {darkMode ? <Sun size={15} className="text-amber-400" /> : <Moon size={15} className="text-slate-400" />}
+                      <span>Modo Oscuro</span>
+                    </div>
+                    <span className="text-[10px] bg-slate-800 text-slate-300 px-1.5 py-0.5 rounded font-mono uppercase">
+                      {darkMode ? 'ON' : 'OFF'}
+                    </span>
+                  </button>
+                )}
 
                 {onSignOut && (
                   <button

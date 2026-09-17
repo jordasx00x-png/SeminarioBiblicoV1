@@ -1,55 +1,66 @@
 import React, { useState, useEffect } from 'react';
 import { Save, FileText, Trash2, Edit3, Plus, Search, Check, X as CloseIcon } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import { safeStorage } from '../utils/safeStorage';
-
-interface Note {
-  id: string;
-  title: string;
-  content: string;
-  updatedAt: number;
-}
+import { useAuth } from '../hooks/useAuth';
+import { 
+  UserNote, 
+  getUserNotes, 
+  saveUserNote, 
+  deleteUserNote, 
+  subscribeToUserNotes,
+  syncNotesFromFirestore 
+} from '../utils/userNotesStorage';
 
 export function DigitalNotebook({ isModal = false }: { isModal?: boolean }) {
-  const [notes, setNotes] = useState<Note[]>(() => {
-    const saved = safeStorage.getItem('digital_notebook_notes');
-    if (!saved) return [];
-    try {
-      return JSON.parse(saved);
-    } catch {
-      return [];
-    }
-  });
-  
+  const { user } = useAuth();
+  const userId = user?.uid || 'invitado_seminario';
+
+  const [notes, setNotes] = useState<UserNote[]>(() => getUserNotes(userId));
   const [activeNoteId, setActiveNoteId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [isDeleting, setIsDeleting] = useState<string | null>(null);
-  
-  const activeNote = notes.find(n => n.id === activeNoteId);
 
   useEffect(() => {
-    safeStorage.setItem('digital_notebook_notes', JSON.stringify(notes));
-  }, [notes]);
+    setNotes(getUserNotes(userId));
+    syncNotesFromFirestore(userId).then(updated => {
+      setNotes(updated);
+    });
+
+    const unsubscribe = subscribeToUserNotes(() => {
+      setNotes(getUserNotes(userId));
+    });
+
+    return () => unsubscribe();
+  }, [userId]);
+
+  const activeNote = notes.find(n => n.id === activeNoteId);
 
   const handleCreateNote = () => {
-    const newNote: Note = {
-      id: Date.now().toString(),
-      title: 'Nueva Notación',
+    const created = saveUserNote(userId, {
+      title: 'Nueva Notación Teológica',
       content: '',
-      updatedAt: Date.now()
-    };
-    setNotes([newNote, ...notes]);
-    setActiveNoteId(newNote.id);
+      userName: user?.displayName || 'Estudiante',
+      userEmail: user?.email || undefined
+    });
+    setActiveNoteId(created.id);
   };
 
-  const handleUpdateNote = (id: string, updates: Partial<Note>) => {
-    setNotes(notes.map(n => 
-      n.id === id ? { ...n, ...updates, updatedAt: Date.now() } : n
-    ));
+  const handleUpdateNote = (id: string, updates: Partial<UserNote>) => {
+    if (!activeNote) return;
+    const newTitle = updates.title !== undefined ? updates.title : activeNote.title;
+    const newContent = updates.content !== undefined ? updates.content : activeNote.content;
+
+    saveUserNote(userId, {
+      id,
+      title: newTitle,
+      content: newContent,
+      userName: user?.displayName || 'Estudiante',
+      userEmail: user?.email || undefined
+    });
   };
 
   const handleDeleteNote = (id: string) => {
-    setNotes(notes.filter(n => n.id !== id));
+    deleteUserNote(userId, id);
     if (activeNoteId === id) {
       setActiveNoteId(null);
     }

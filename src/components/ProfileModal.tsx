@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Save, User as UserIcon, Phone, Mail, Bell, Clock, Trash2, AlertTriangle, Check } from 'lucide-react';
+import { X, Save, User as UserIcon, Phone, Mail, Bell, Clock, Trash2, AlertTriangle, Check, Moon, Sun, Palette } from 'lucide-react';
 import { User } from 'firebase/auth';
 import { motion } from 'motion/react';
 import { safeStorage } from '../utils/safeStorage';
@@ -17,9 +17,11 @@ interface ProfileModalProps {
   onClose: () => void;
   onSave?: (data: UserProfileData) => void;
   onResetAllAccounts?: () => void;
+  darkMode?: boolean;
+  onToggleDarkMode?: () => void;
 }
 
-export function ProfileModal({ user, onClose, onSave, onResetAllAccounts }: ProfileModalProps) {
+export function ProfileModal({ user, onClose, onSave, onResetAllAccounts, darkMode, onToggleDarkMode }: ProfileModalProps) {
   const [profile, setProfile] = useState<UserProfileData>({
     fullName: user?.displayName || '',
     phoneNumber: '',
@@ -164,11 +166,47 @@ export function ProfileModal({ user, onClose, onSave, onResetAllAccounts }: Prof
           </div>
 
           <div className="space-y-4">
-            <h3 className="text-sm font-bold text-[#1A2533] uppercase tracking-widest border-b pb-2 flex items-center gap-2">
-              <Bell size={16} /> Recordatorios
+            <h3 className="text-sm font-bold text-[#1A2533] dark:text-stone-100 uppercase tracking-widest border-b border-[#E0D7C6] dark:border-zinc-800 pb-2 flex items-center gap-2">
+              <Palette size={16} className="text-[#7F1D1D] dark:text-amber-400" /> Apariencia e Interfaz
             </h3>
             
-            <label className="flex items-center gap-3 cursor-pointer p-3 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors">
+            <div className="p-3.5 rounded-xl border border-gray-200 dark:border-zinc-700 bg-gray-50/70 dark:bg-zinc-800/80 flex items-center justify-between gap-4 transition-colors">
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-lg bg-amber-500/10 dark:bg-amber-400/20 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0">
+                  {darkMode ? <Moon size={20} /> : <Sun size={20} />}
+                </div>
+                <div>
+                  <span className="text-sm font-bold text-gray-800 dark:text-stone-100 font-sans block">
+                    Modo Oscuro
+                  </span>
+                  <span className="text-xs text-gray-500 dark:text-zinc-400 font-sans block">
+                    {darkMode ? 'Interfaz nocturna de alta legibilidad para lecturas prolongadas' : 'Interfaz clara ejecutiva estándar'}
+                  </span>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={onToggleDarkMode}
+                className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                  darkMode ? 'bg-amber-600' : 'bg-gray-300'
+                }`}
+              >
+                <span
+                  className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out ${
+                    darkMode ? 'translate-x-5' : 'translate-x-0'
+                  }`}
+                />
+              </button>
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            <h3 className="text-sm font-bold text-[#1A2533] dark:text-stone-100 uppercase tracking-widest border-b border-[#E0D7C6] dark:border-zinc-800 pb-2 flex items-center gap-2">
+              <Bell size={16} className="text-[#7F1D1D] dark:text-amber-400" /> Recordatorios
+            </h3>
+            
+            <label className="flex items-center gap-3 cursor-pointer p-3 rounded-lg border border-gray-200 dark:border-zinc-700 dark:bg-zinc-800/50 hover:bg-gray-50 dark:hover:bg-zinc-800 transition-colors">
               <input 
                 type="checkbox" 
                 checked={!!profile.studyReminderEnabled}
@@ -176,23 +214,23 @@ export function ProfileModal({ user, onClose, onSave, onResetAllAccounts }: Prof
                 className="w-4 h-4 text-[#7F1D1D] rounded focus:ring-[#7F1D1D]"
               />
               <div className="flex-1 flex flex-col">
-                <span className="text-sm font-bold text-gray-800 font-sans">Activar recordatorio de estudio</span>
-                <span className="text-xs text-gray-500 font-sans">Recibe una notificación diaria a la hora que elijas</span>
+                <span className="text-sm font-bold text-gray-800 dark:text-stone-100 font-sans">Activar recordatorio de estudio</span>
+                <span className="text-xs text-gray-500 dark:text-zinc-400 font-sans">Recibe una notificación diaria a la hora que elijas</span>
               </div>
             </label>
             
             {profile.studyReminderEnabled && (
               <div className="space-y-1.5 animate-in fade-in slide-in-from-top-2 duration-300">
-                <label className="text-xs font-bold text-gray-500 uppercase tracking-widest font-sans">
+                <label className="text-xs font-bold text-gray-500 dark:text-zinc-400 uppercase tracking-widest font-sans">
                   Hora del Recordatorio
                 </label>
                 <div className="relative">
-                  <Clock size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                  <Clock size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-zinc-500" />
                   <input
                     type="time"
                     value={profile.studyReminderTime || '08:00'}
                     onChange={e => setProfile({...profile, studyReminderTime: e.target.value})}
-                    className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-[#E0D7C6] rounded outline-none focus:border-[#7F1D1D] focus:ring-1 focus:ring-[#7F1D1D] transition-all font-sans text-sm"
+                    className="w-full pl-10 pr-4 py-2.5 bg-gray-50 dark:bg-zinc-800 border border-[#E0D7C6] dark:border-zinc-700 dark:text-stone-100 rounded outline-none focus:border-[#7F1D1D] dark:focus:border-zinc-500 focus:ring-1 focus:ring-[#7F1D1D] transition-all font-sans text-sm"
                   />
                 </div>
               </div>

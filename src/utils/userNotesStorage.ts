@@ -20,15 +20,30 @@ export interface UserNote {
 
 const LISTENERS = new Set<() => void>();
 
-export function subscribeToUserNotes(callback: () => void): () => void {
-  LISTENERS.add(callback);
-  return () => {
-    LISTENERS.delete(callback);
-  };
+export function subscribeToUserNotes(
+  arg1: string | (() => void),
+  arg2?: () => void
+): () => void {
+  const cb = typeof arg1 === 'function' ? arg1 : arg2;
+  if (typeof cb === 'function') {
+    LISTENERS.add(cb);
+    return () => {
+      LISTENERS.delete(cb);
+    };
+  }
+  return () => {};
 }
 
 function notifyListeners() {
-  LISTENERS.forEach(cb => cb());
+  LISTENERS.forEach(cb => {
+    if (typeof cb === 'function') {
+      try {
+        cb();
+      } catch (err) {
+        console.error('Error executing user notes listener:', err);
+      }
+    }
+  });
 }
 
 export function getAccountKey(userId: string | undefined | null): string {

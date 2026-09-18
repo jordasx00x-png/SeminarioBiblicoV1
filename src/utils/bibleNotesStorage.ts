@@ -19,14 +19,25 @@ const STORAGE_KEY = 'seminario_bible_highlights_notes_v1';
 const LISTENERS: Set<() => void> = new Set();
 
 export function subscribeToBibleNotes(callback: () => void): () => void {
-  LISTENERS.add(callback);
-  return () => {
-    LISTENERS.delete(callback);
-  };
+  if (typeof callback === 'function') {
+    LISTENERS.add(callback);
+    return () => {
+      LISTENERS.delete(callback);
+    };
+  }
+  return () => {};
 }
 
 function notifyListeners() {
-  LISTENERS.forEach(cb => cb());
+  LISTENERS.forEach(cb => {
+    if (typeof cb === 'function') {
+      try {
+        cb();
+      } catch (err) {
+        console.error('Error executing bible notes listener:', err);
+      }
+    }
+  });
 }
 
 export function getAllBibleNotes(): BibleHighlightNote[] {

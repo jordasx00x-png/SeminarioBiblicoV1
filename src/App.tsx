@@ -61,14 +61,18 @@ export default function App() {
   const [notesLayout, setNotesLayout] = useState<{
     isOpen: boolean;
     isMinimized: boolean;
+    isDocked: boolean;
     width: number;
     rightOffset: number;
   }>({
     isOpen: false,
     isMinimized: false,
+    isDocked: true,
     width: 0,
     rightOffset: 0
   });
+
+  const isDockedDesktop = notesLayout.isOpen && !notesLayout.isMinimized && notesLayout.isDocked && typeof window !== 'undefined' && window.innerWidth >= 768;
 
   const [darkMode, setDarkMode] = useState<boolean>(() => {
     return safeStorage.getItem('darkMode') === 'true';
@@ -159,7 +163,13 @@ export default function App() {
         zoomLevel={zoomLevel}
       />
 
-      <div className="flex-1 flex flex-col w-full relative max-w-7xl mx-auto px-2 sm:px-4 md:px-6 pt-4">
+      <div 
+        className={`flex-1 flex flex-col w-full relative pt-4 transition-all duration-300 ease-out ${
+          notesLayout.isOpen && !notesLayout.isMinimized
+            ? 'lg:max-w-[calc(100vw-550px)] xl:max-w-[calc(100vw-560px)] lg:ml-0 lg:mr-auto pl-0 sm:pl-2 pr-2'
+            : 'max-w-7xl mx-auto px-2 sm:px-4 md:px-6'
+        }`}
+      >
         <AnimatePresence>
         {showProfile && (
           <ProfileModal 
@@ -177,11 +187,6 @@ export default function App() {
            <div 
              ref={scrollContainerRef}
              className="w-full custom-scrollbar pb-24 md:pb-12 transition-all duration-300 ease-out"
-             style={{
-               paddingRight: notesLayout.isOpen && !notesLayout.isMinimized && typeof window !== 'undefined' && window.innerWidth >= 768
-                 ? `${notesLayout.rightOffset}px`
-                 : '0px'
-             }}
            >
            <AnimatePresence mode="wait">
              {activeLesson && activeCourse ? (

@@ -3,6 +3,7 @@ import { Lesson, Course, UserProgress } from '../types';
 import { FinalExam } from './FinalExam';
 import { ReinforcementVerses } from './ReinforcementVerses';
 import { LessonAssignments } from './LessonAssignments';
+import { NotebookActivities } from './NotebookActivities';
 import { FormattedContent, VerseContext } from './FormattedContent';
 import { InteractiveCheckpoint } from './InteractiveCheckpoint';
 import { LessonAudioPlayer } from './LessonAudioPlayer';
@@ -384,6 +385,12 @@ export function LessonViewer({ lesson, course, progress, onComplete, onBack }: L
               )}
 
             </article>
+
+            {/* Notebook / Physical Cuaderno Activities Section */}
+            <NotebookActivities 
+              lesson={lesson} 
+              courseTitle={course.title} 
+            />
 
             {/* Reinforcement Verses */}
             {lesson.verses && lesson.verses.length > 0 && (

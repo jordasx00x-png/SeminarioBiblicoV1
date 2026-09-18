@@ -70,7 +70,7 @@ export function HomePanel({ user, customProfile, courses, progress, onNavigateTa
   };
 
   return (
-    <div className="p-4 sm:p-6 md:p-10 max-w-7xl mx-auto font-sans text-slate-800 pb-28 space-y-8">
+    <div className="p-4 sm:p-6 md:p-10 w-full max-w-7xl mx-auto font-sans text-slate-800 pb-28 space-y-8">
       
       {/* 1. Dynamic Time-aware Welcome Hero Banner */}
       <div className="relative rounded-3xl p-6 sm:p-8 md:p-10 text-white overflow-hidden shadow-2xl hero-gradient border border-slate-700/60">

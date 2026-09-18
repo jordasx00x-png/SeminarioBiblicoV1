@@ -77,7 +77,7 @@ export function Dashboard({ user, courses, progress, customProfile, onSelectCour
   const isDoctoradoUnlocked = allMaestriaCompleted || bypassUnlocked;
 
   return (
-    <div className="p-4 sm:p-6 md:p-10 max-w-7xl mx-auto font-sans text-slate-800 pb-28">
+    <div className="p-4 sm:p-6 md:p-10 w-full max-w-7xl mx-auto font-sans text-slate-800 pb-28">
       {/* Hero Header */}
       <div className="relative mb-8 rounded-3xl bg-gradient-to-r from-[#0F172A] via-[#1E293B] to-[#1E1B4B] p-6 md:p-10 text-white overflow-hidden shadow-xl border border-slate-700/60">
         <div className="absolute top-0 right-0 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none" />

@@ -86,10 +86,13 @@ export function FloatingNotesWidget({
   }, [isOpen, isMinimized, winPos]);
 
   // Report widget open & width metrics to parent layout
+  const lastEmittedRef = React.useRef<string>('');
+
   useEffect(() => {
     if (onLayoutChange) {
+      let nextState;
       if (!isOpen || isMinimized) {
-        onLayoutChange({ isOpen: false, isMinimized: !!isMinimized, width: 0, rightOffset: 0 });
+        nextState = { isOpen: false, isMinimized: !!isMinimized, width: 0, rightOffset: 0 };
       } else {
         const currentW = sizeMode === 'full' ? window.innerWidth : (winPos ? winPos.width : 520);
         const rightOff = sizeMode === 'full' 
@@ -97,7 +100,13 @@ export function FloatingNotesWidget({
           : winPos 
             ? Math.max(0, window.innerWidth - winPos.left) 
             : 540;
-        onLayoutChange({ isOpen: true, isMinimized: false, width: currentW, rightOffset: rightOff });
+        nextState = { isOpen: true, isMinimized: false, width: currentW, rightOffset: rightOff };
+      }
+      
+      const nextStateStr = JSON.stringify(nextState);
+      if (lastEmittedRef.current !== nextStateStr) {
+        lastEmittedRef.current = nextStateStr;
+        onLayoutChange(nextState);
       }
     }
   }, [isOpen, isMinimized, sizeMode, winPos, onLayoutChange]);

@@ -74,6 +74,27 @@ export default function App() {
     return safeStorage.getItem('darkMode') === 'true';
   });
 
+  const [zoomLevel, setZoomLevel] = useState<number>(() => {
+    const savedZoom = safeStorage.getItem('zoomLevel');
+    return savedZoom ? parseInt(savedZoom, 10) : 100;
+  });
+
+  const handleZoomIn = () => {
+    setZoomLevel(prev => {
+      const next = Math.min(150, prev + 10);
+      safeStorage.setItem('zoomLevel', next.toString());
+      return next;
+    });
+  };
+
+  const handleZoomOut = () => {
+    setZoomLevel(prev => {
+      const next = Math.max(50, prev - 10);
+      safeStorage.setItem('zoomLevel', next.toString());
+      return next;
+    });
+  };
+
   useEffect(() => {
     if (darkMode) {
       document.documentElement.classList.add('dark');
@@ -108,7 +129,10 @@ export default function App() {
   const activeLesson = activeCourse?.lessons.find(l => l.id === activeLessonId);
 
   return (
-    <div className="min-h-screen bg-slate-50/80 dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-sans flex flex-col relative transition-colors duration-300">
+    <div 
+      className="min-h-screen bg-slate-50/80 dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-sans flex flex-col relative transition-colors duration-300"
+      style={{ zoom: `${zoomLevel}%` } as React.CSSProperties}
+    >
       <DailyVerseNotification />
 
       {/* Full-width Top Interactive Header */}
@@ -130,6 +154,9 @@ export default function App() {
           setActiveCourseId(null);
           setActiveLessonId(null);
         }}
+        onZoomIn={handleZoomIn}
+        onZoomOut={handleZoomOut}
+        zoomLevel={zoomLevel}
       />
 
       <div className="flex-1 flex flex-col w-full relative max-w-7xl mx-auto px-2 sm:px-4 md:px-6 pt-4">

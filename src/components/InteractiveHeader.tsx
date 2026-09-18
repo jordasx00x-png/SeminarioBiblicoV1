@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Home, BookOpen, Edit3, Calendar, Award, Moon, Sun, Flame, CheckCircle2, User, Settings, LogOut, ChevronDown, Sparkles, Download } from 'lucide-react';
+import { Home, BookOpen, Edit3, Calendar, Award, Moon, Sun, Flame, CheckCircle2, User, Settings, LogOut, ChevronDown, Sparkles, Download, ZoomIn, ZoomOut } from 'lucide-react';
 import { User as FirebaseUser } from 'firebase/auth';
 import { UserProgress } from '../types';
 import { motion, AnimatePresence } from 'motion/react';
@@ -16,6 +16,9 @@ interface InteractiveHeaderProps {
   darkMode?: boolean;
   onToggleDarkMode?: () => void;
   onResetCourseSelection?: () => void;
+  onZoomIn?: () => void;
+  onZoomOut?: () => void;
+  zoomLevel?: number;
 }
 
 export function InteractiveHeader({
@@ -28,7 +31,10 @@ export function InteractiveHeader({
   onSignOut,
   darkMode,
   onToggleDarkMode,
-  onResetCourseSelection
+  onResetCourseSelection,
+  onZoomIn,
+  onZoomOut,
+  zoomLevel = 100
 }: InteractiveHeaderProps) {
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [showProgressTooltip, setShowProgressTooltip] = useState(false);
@@ -51,7 +57,7 @@ export function InteractiveHeader({
 
   return (
     <header className="sticky top-0 z-50 w-full transition-all duration-300 bg-[#0F172A]/95 dark:bg-[#0A0F1D]/95 backdrop-blur-2xl border-b border-slate-700/80 shadow-2xl">
-      <div className="max-w-[1400px] mx-auto px-2 sm:px-4 md:px-6 py-2.5 sm:py-3 flex items-center justify-between gap-2 md:gap-4 text-white">
+      <div className="w-full px-2 sm:px-4 md:px-6 lg:px-8 py-2.5 sm:py-3 flex items-center justify-between text-white">
         
         {/* Left: Brand Logo Pill */}
         <button
@@ -61,7 +67,7 @@ export function InteractiveHeader({
           <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-red-700 via-amber-800 to-amber-600 flex items-center justify-center shadow-md border border-amber-500/40 group-hover:scale-105 transition-transform">
             <span className="font-serif font-extrabold text-white text-xs tracking-widest leading-none">STD</span>
           </div>
-          <div className="hidden sm:flex flex-col text-left leading-tight">
+          <div className="hidden md:flex flex-col text-left leading-tight">
             <span className="text-xs font-bold tracking-tight text-white font-sans flex items-center gap-1">
               SEMINARIO
               <span className="text-[8px] bg-amber-500/20 text-amber-300 border border-amber-500/30 px-1.5 py-0.2 rounded uppercase tracking-wider font-semibold">DIGITAL</span>
@@ -71,7 +77,7 @@ export function InteractiveHeader({
         </button>
 
         {/* Center: Main Interactive Floating Tab Bar */}
-        <nav className="flex items-center gap-1 sm:gap-1.5 md:gap-2 overflow-x-auto px-1 py-1 max-w-full justify-center flex-1 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+        <nav className="flex items-center gap-1 sm:gap-2 md:gap-4 overflow-x-auto px-1 py-1 w-full justify-center flex-1 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
           {navTabs.map((tab) => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.id;
@@ -80,7 +86,7 @@ export function InteractiveHeader({
               <button
                 key={tab.id}
                 onClick={() => handleTabClick(tab.id)}
-                className={`relative flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 lg:px-4 py-2 sm:py-2.5 rounded-xl sm:rounded-2xl text-xs sm:text-sm font-bold font-sans transition-all duration-200 cursor-pointer whitespace-nowrap active:scale-95 ${
+                className={`relative flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 lg:px-5 py-2 sm:py-2.5 rounded-xl sm:rounded-2xl text-xs sm:text-sm font-bold font-sans transition-all duration-200 cursor-pointer whitespace-nowrap active:scale-95 ${
                   isActive
                     ? 'text-white'
                     : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
@@ -222,6 +228,31 @@ export function InteractiveHeader({
               </div>
             )}
           </div>
+          
+          {/* Zoom Controls */}
+          {(onZoomIn || onZoomOut) && (
+            <div className="hidden sm:flex items-center gap-0.5 bg-slate-800/50 border border-slate-700/80 rounded-xl p-0.5 ml-1">
+              <button
+                onClick={onZoomOut}
+                disabled={zoomLevel <= 50}
+                className="p-1.5 rounded-lg hover:bg-slate-700 text-slate-300 hover:text-white transition-colors cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
+                title="Alejar (Reducir tamaño)"
+              >
+                <ZoomOut size={16} />
+              </button>
+              <div className="w-10 text-center text-[10px] font-mono font-bold text-slate-400 select-none">
+                {zoomLevel}%
+              </div>
+              <button
+                onClick={onZoomIn}
+                disabled={zoomLevel >= 150}
+                className="p-1.5 rounded-lg hover:bg-slate-700 text-slate-300 hover:text-white transition-colors cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
+                title="Acercar (Aumentar tamaño)"
+              >
+                <ZoomIn size={16} />
+              </button>
+            </div>
+          )}
 
         </div>
       </div>

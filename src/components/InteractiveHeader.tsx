@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Home, BookOpen, Edit3, Calendar, Award, Moon, Sun, Flame, CheckCircle2, User, Settings, LogOut, ChevronDown, Sparkles, Download, ZoomIn, ZoomOut } from 'lucide-react';
+import { Home, BookOpen, Edit3, Calendar, Award, Moon, Sun, Flame, CheckCircle2, User, Settings, LogOut, ChevronDown, Sparkles, Download, ZoomIn, ZoomOut, Bot } from 'lucide-react';
 import { User as FirebaseUser } from 'firebase/auth';
 import { UserProgress } from '../types';
 import { motion, AnimatePresence } from 'motion/react';
@@ -19,6 +19,7 @@ interface InteractiveHeaderProps {
   onZoomIn?: () => void;
   onZoomOut?: () => void;
   zoomLevel?: number;
+  onOpenAIAssistant?: () => void;
 }
 
 export function InteractiveHeader({
@@ -34,7 +35,8 @@ export function InteractiveHeader({
   onResetCourseSelection,
   onZoomIn,
   onZoomOut,
-  zoomLevel = 100
+  zoomLevel = 100,
+  onOpenAIAssistant
 }: InteractiveHeaderProps) {
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [showProgressTooltip, setShowProgressTooltip] = useState(false);
@@ -121,6 +123,18 @@ export function InteractiveHeader({
         {/* Right: Quick Controls, Streak & User Profile */}
         <div className="flex items-center gap-2 shrink-0">
           
+          {/* AI Tutor Assistant Toggle */}
+          {onOpenAIAssistant && (
+            <button
+              onClick={onOpenAIAssistant}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-2xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-950 font-bold text-xs shadow-md cursor-pointer transition-all active:scale-95 border border-amber-400 shrink-0"
+              title="Abrir Asistente Teológico IA"
+            >
+              <Bot size={15} />
+              <span className="hidden sm:inline">Tutor IA</span>
+            </button>
+          )}
+
           {/* Streak & Progress Interactive Pill */}
           <div className="relative">
             <button

@@ -19,7 +19,10 @@ import { GradesPanel } from './components/GradesPanel';
 import { HomePanel } from './components/HomePanel';
 import { OfflineBanner } from './components/OfflineBanner';
 import { FloatingNotesWidget } from './components/FloatingNotesWidget';
+import { AIAssistantWidget } from './components/AIAssistantWidget';
+import { getRemainingAIAttempts } from './utils/aiTutorQuota';
 import { AnimatePresence, motion } from 'motion/react';
+import { Bot } from 'lucide-react';
 
 export default function App() {
   const { user, isLoading: authLoading, authError, signInWithGoogle, signInAsGuest, signOut } = useAuth();
@@ -27,6 +30,7 @@ export default function App() {
   const [activeLessonId, setActiveLessonId] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'home' | 'courses' | 'academic' | 'calendar' | 'grades'>('home');
   const [showProfile, setShowProfile] = useState(false);
+  const [isAIAssistantOpen, setIsAIAssistantOpen] = useState(false);
   const { profile: customProfile, saveProfile, isLoading: profileLoading } = useProfile();
   const { progress, markCompleted, resetAllProgress, isLoading: progressLoading } = useProgress();
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -161,6 +165,7 @@ export default function App() {
         onZoomIn={handleZoomIn}
         onZoomOut={handleZoomOut}
         zoomLevel={zoomLevel}
+        onOpenAIAssistant={() => setIsAIAssistantOpen(true)}
       />
 
       <div 
@@ -206,6 +211,7 @@ export default function App() {
                    onBack={() => {
                      setActiveLessonId(null);
                    }}
+                   onOpenAIAssistant={() => setIsAIAssistantOpen(true)}
                  />
                </motion.div>
              ) : activeCourse ? (
@@ -332,6 +338,31 @@ export default function App() {
           }
         }}
         onLayoutChange={setNotesLayout}
+      />
+
+      {/* Floating AI Assistant Trigger Button (Positioned to the left of the Notas button) */}
+      {!isAIAssistantOpen && (
+        <button
+          onClick={() => setIsAIAssistantOpen(true)}
+          className="fixed bottom-20 right-[150px] md:bottom-6 md:right-[180px] z-40 px-3.5 py-3 bg-gradient-to-r from-slate-900 via-amber-950 to-slate-900 hover:from-amber-900 hover:to-slate-950 text-amber-300 hover:text-white rounded-full shadow-2xl border border-amber-500/50 flex items-center gap-2 font-sans text-xs font-bold transition-all cursor-pointer hover:scale-105 active:scale-95"
+          title="Abrir Asistente Teológico IA"
+        >
+          <div className="w-6 h-6 rounded-full bg-amber-500 text-slate-950 flex items-center justify-center font-bold shrink-0 shadow-xs">
+            <Bot size={15} />
+          </div>
+          <span>Tutor IA</span>
+          <span className="text-[10px] font-mono bg-amber-500/20 text-amber-300 px-1.5 py-0.5 rounded-full border border-amber-500/30">
+            {getRemainingAIAttempts()}/10
+          </span>
+        </button>
+      )}
+
+      {/* AI Assistant Widget Modal */}
+      <AIAssistantWidget 
+        currentLesson={activeLesson || undefined}
+        courseTitle={activeCourse?.title}
+        isOpen={isAIAssistantOpen}
+        onClose={() => setIsAIAssistantOpen(false)}
       />
 
       <OfflineBanner />

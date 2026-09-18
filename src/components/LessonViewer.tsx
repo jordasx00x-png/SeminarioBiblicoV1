@@ -3,13 +3,12 @@ import { Lesson, Course, UserProgress } from '../types';
 import { FinalExam } from './FinalExam';
 import { ReinforcementVerses } from './ReinforcementVerses';
 import { LessonAssignments } from './LessonAssignments';
-import { NotebookActivities } from './NotebookActivities';
 import { FormattedContent, VerseContext } from './FormattedContent';
 import { InteractiveCheckpoint } from './InteractiveCheckpoint';
 import { LessonAudioPlayer } from './LessonAudioPlayer';
 import { ReadingToolbar } from './ReadingToolbar';
 import { BibleVerseModal } from './BibleVerseModal';
-import { ArrowLeft, BookOpen, CheckCircle2, Clock, Target, ExternalLink, GraduationCap, Sparkles, BookMarked, Compass, ShieldCheck, Quote } from 'lucide-react';
+import { ArrowLeft, BookOpen, CheckCircle2, Clock, Target, ExternalLink, GraduationCap, Sparkles, BookMarked, Compass, ShieldCheck, Quote, Bot } from 'lucide-react';
 
 interface LessonViewerProps {
   key?: string | number;
@@ -18,9 +17,10 @@ interface LessonViewerProps {
   progress: UserProgress;
   onComplete: (score: number) => void;
   onBack: () => void;
+  onOpenAIAssistant?: (lesson?: Lesson) => void;
 }
 
-export function LessonViewer({ lesson, course, progress, onComplete, onBack }: LessonViewerProps) {
+export function LessonViewer({ lesson, course, progress, onComplete, onBack, onOpenAIAssistant }: LessonViewerProps) {
   const isPreviouslyCompleted = !!progress.completedLessons[lesson.id];
   const [fontSize, setFontSize] = useState<'normal' | 'large' | 'xlarge'>('normal');
   const [readingTheme, setReadingTheme] = useState<'paper' | 'sepia' | 'contrast'>('paper');
@@ -175,6 +175,28 @@ export function LessonViewer({ lesson, course, progress, onComplete, onBack }: L
 
               {/* Audio Lecturer */}
               <LessonAudioPlayer title={lesson.title} textToRead={fullTextToRead} />
+
+              {/* AI Theological Assistant Banner */}
+              {onOpenAIAssistant && (
+                <div className="bg-gradient-to-r from-slate-900 via-amber-950 to-slate-900 p-3.5 rounded-xl border border-amber-500/40 text-white flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-md my-2">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-9 h-9 rounded-lg bg-amber-500 text-slate-950 flex items-center justify-center font-bold shrink-0">
+                      <Bot size={20} />
+                    </div>
+                    <div>
+                      <h4 className="text-xs sm:text-sm font-bold text-amber-200">¿Tienes dudas o preguntas sobre esta clase?</h4>
+                      <p className="text-[11px] text-slate-300">Consulta a tu Tutor IA con todo el contexto de esta lección.</p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => onOpenAIAssistant(lesson)}
+                    className="px-4 py-2 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-xs shrink-0 active:scale-95"
+                  >
+                    <Sparkles size={14} />
+                    <span>Preguntar al Tutor IA</span>
+                  </button>
+                </div>
+              )}
 
               {/* Guía de Lectura Bíblica (Límite Máximo: 20 min) */}
               {(() => {
@@ -385,12 +407,6 @@ export function LessonViewer({ lesson, course, progress, onComplete, onBack }: L
               )}
 
             </article>
-
-            {/* Notebook / Physical Cuaderno Activities Section */}
-            <NotebookActivities 
-              lesson={lesson} 
-              courseTitle={course.title} 
-            />
 
             {/* Reinforcement Verses */}
             {lesson.verses && lesson.verses.length > 0 && (

@@ -71,7 +71,7 @@ export function InteractiveHeader({
         </button>
 
         {/* Center: Main Interactive Floating Tab Bar */}
-        <nav className="flex items-center gap-1 sm:gap-2 overflow-x-auto custom-scrollbar px-1 py-1 max-w-full justify-center flex-1">
+        <nav className="flex items-center gap-1 sm:gap-1.5 md:gap-2 overflow-x-auto px-1 py-1 max-w-full justify-center flex-1 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
           {navTabs.map((tab) => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.id;
@@ -80,7 +80,7 @@ export function InteractiveHeader({
               <button
                 key={tab.id}
                 onClick={() => handleTabClick(tab.id)}
-                className={`relative flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 md:px-5 py-2 sm:py-2.5 rounded-xl sm:rounded-2xl text-xs sm:text-sm font-bold font-sans transition-all duration-200 cursor-pointer whitespace-nowrap active:scale-95 ${
+                className={`relative flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 lg:px-4 py-2 sm:py-2.5 rounded-xl sm:rounded-2xl text-xs sm:text-sm font-bold font-sans transition-all duration-200 cursor-pointer whitespace-nowrap active:scale-95 ${
                   isActive
                     ? 'text-white'
                     : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
@@ -95,9 +95,9 @@ export function InteractiveHeader({
                 )}
                 
                 <span className="relative z-10 flex items-center gap-1.5 sm:gap-2">
-                  <Icon size={16} className={isActive ? 'text-amber-200' : 'text-slate-400'} />
-                  <span className="hidden lg:inline">{tab.label}</span>
-                  <span className="inline lg:hidden">{tab.id === 'home' ? 'Inicio' : tab.id === 'courses' ? 'Cursos' : tab.id === 'academic' ? 'Biblia' : tab.id === 'calendar' ? 'Plan' : 'Kardex'}</span>
+                  <Icon size={16} className={isActive ? 'text-amber-200' : 'text-slate-400 shrink-0'} />
+                  <span className="hidden xl:inline">{tab.label}</span>
+                  <span className="inline xl:hidden">{tab.id === 'home' ? 'Inicio' : tab.id === 'courses' ? 'Cursos' : tab.id === 'academic' ? 'Biblia' : tab.id === 'calendar' ? 'Plan' : 'Kardex'}</span>
 
                   {tab.badge && (
                     <span className={`hidden md:inline-flex text-[9px] px-1.5 py-0.2 rounded-md font-mono ${

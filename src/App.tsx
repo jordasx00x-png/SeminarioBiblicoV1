@@ -108,10 +108,10 @@ export default function App() {
   const activeLesson = activeCourse?.lessons.find(l => l.id === activeLessonId);
 
   return (
-    <div className="min-h-screen bg-slate-50/80 dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-sans flex flex-col relative transition-colors duration-300 pt-3">
+    <div className="min-h-screen bg-slate-50/80 dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-sans flex flex-col relative transition-colors duration-300">
       <DailyVerseNotification />
 
-      {/* Floating Interactive Header (No left sidebar, no top fixed navbar) */}
+      {/* Full-width Top Interactive Header */}
       <InteractiveHeader
         activeTab={activeTab}
         onSelectTab={(tab) => {

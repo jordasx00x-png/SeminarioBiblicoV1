@@ -1,11 +1,11 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { Lesson, Course, UserProgress } from '../types';
 import { FinalExam } from './FinalExam';
 import { ReinforcementVerses } from './ReinforcementVerses';
 import { LessonAssignments } from './LessonAssignments';
+import { NotebookActivities } from './NotebookActivities';
 import { FormattedContent, VerseContext } from './FormattedContent';
 import { InteractiveCheckpoint } from './InteractiveCheckpoint';
-import { LessonAudioPlayer } from './LessonAudioPlayer';
 import { ReadingToolbar } from './ReadingToolbar';
 import { BibleVerseModal } from './BibleVerseModal';
 import { ArrowLeft, BookOpen, CheckCircle2, Clock, Target, ExternalLink, GraduationCap, Sparkles, BookMarked, Compass, ShieldCheck, Quote, Bot } from 'lucide-react';
@@ -17,10 +17,10 @@ interface LessonViewerProps {
   progress: UserProgress;
   onComplete: (score: number) => void;
   onBack: () => void;
-  onOpenAIAssistant?: (lesson?: Lesson) => void;
+  onOpenAssistant?: () => void;
 }
 
-export function LessonViewer({ lesson, course, progress, onComplete, onBack, onOpenAIAssistant }: LessonViewerProps) {
+export function LessonViewer({ lesson, course, progress, onComplete, onBack, onOpenAssistant }: LessonViewerProps) {
   const isPreviouslyCompleted = !!progress.completedLessons[lesson.id];
   const [fontSize, setFontSize] = useState<'normal' | 'large' | 'xlarge'>('normal');
   const [readingTheme, setReadingTheme] = useState<'paper' | 'sepia' | 'contrast'>('paper');
@@ -40,20 +40,6 @@ export function LessonViewer({ lesson, course, progress, onComplete, onBack, onO
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
-
-  // Concatenate readable text for the audio reader
-  const fullTextToRead = useMemo(() => {
-    const parts: string[] = [];
-    if (lesson.baseVerse) {
-      parts.push(`Versículo base: ${lesson.baseVerse.text}. ${lesson.baseVerse.reference}.`);
-    }
-    lesson.blocks.forEach(block => {
-      if (block.type === 'text' || block.type === 'note') {
-        parts.push(block.content);
-      }
-    });
-    return parts.join(' ');
-  }, [lesson]);
 
   // Typography size classes
   const fontClass = {
@@ -102,6 +88,17 @@ export function LessonViewer({ lesson, course, progress, onComplete, onBack, onO
               >
                 <BookOpen size={14} />
                 <span>{lesson.baseVerse.reference}</span>
+              </button>
+            )}
+            {onOpenAssistant && (
+              <button
+                onClick={onOpenAssistant}
+                className="px-2.5 sm:px-3 py-2 rounded text-[10px] sm:text-xs font-bold uppercase tracking-wider bg-amber-100 hover:bg-amber-200 dark:bg-amber-950/70 dark:hover:bg-amber-900/80 text-amber-900 dark:text-amber-200 border border-amber-300 dark:border-amber-700/80 font-sans transition-all cursor-pointer flex items-center gap-1.5 shadow-2xs"
+                title="Hacer preguntas al Asistente Virtual sobre esta clase"
+              >
+                <Bot size={14} className="text-amber-700 dark:text-amber-400" />
+                <span className="hidden sm:inline">Preguntar al Asistente</span>
+                <span className="sm:hidden">Asistente</span>
               </button>
             )}
             <button 
@@ -172,31 +169,6 @@ export function LessonViewer({ lesson, course, progress, onComplete, onBack, onO
                   </div>
                 )}
               </div>
-
-              {/* Audio Lecturer */}
-              <LessonAudioPlayer title={lesson.title} textToRead={fullTextToRead} />
-
-              {/* AI Theological Assistant Banner */}
-              {onOpenAIAssistant && (
-                <div className="bg-gradient-to-r from-slate-900 via-amber-950 to-slate-900 p-3.5 rounded-xl border border-amber-500/40 text-white flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-md my-2">
-                  <div className="flex items-center gap-2.5">
-                    <div className="w-9 h-9 rounded-lg bg-amber-500 text-slate-950 flex items-center justify-center font-bold shrink-0">
-                      <Bot size={20} />
-                    </div>
-                    <div>
-                      <h4 className="text-xs sm:text-sm font-bold text-amber-200">¿Tienes dudas o preguntas sobre esta clase?</h4>
-                      <p className="text-[11px] text-slate-300">Consulta a tu Tutor IA con todo el contexto de esta lección.</p>
-                    </div>
-                  </div>
-                  <button
-                    onClick={() => onOpenAIAssistant(lesson)}
-                    className="px-4 py-2 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-xs shrink-0 active:scale-95"
-                  >
-                    <Sparkles size={14} />
-                    <span>Preguntar al Tutor IA</span>
-                  </button>
-                </div>
-              )}
 
               {/* Guía de Lectura Bíblica (Límite Máximo: 20 min) */}
               {(() => {
@@ -408,6 +380,12 @@ export function LessonViewer({ lesson, course, progress, onComplete, onBack, onO
 
             </article>
 
+            {/* Notebook / Physical Cuaderno Activities Section */}
+            <NotebookActivities 
+              lesson={lesson} 
+              courseTitle={course.title} 
+            />
+
             {/* Reinforcement Verses */}
             {lesson.verses && lesson.verses.length > 0 && (
               <ReinforcementVerses 
@@ -424,6 +402,32 @@ export function LessonViewer({ lesson, course, progress, onComplete, onBack, onO
                 assignments={lesson.assignments}
                 lessonTitle={lesson.title}
               />
+            )}
+
+            {/* Ask Virtual Assistant Contextual Banner */}
+            {onOpenAssistant && (
+              <div className="bg-gradient-to-r from-amber-500/10 via-amber-600/10 to-slate-900/10 dark:from-amber-950/40 dark:to-slate-900/80 border border-amber-500/30 rounded-xl p-4 sm:p-5 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-xs my-4">
+                <div className="flex items-center gap-3 text-left">
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-600 to-amber-800 text-white flex items-center justify-center shrink-0 shadow-md">
+                    <Bot size={22} />
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-sm text-slate-900 dark:text-amber-200 font-serif">
+                      ¿Tienes dudas o deseas profundizar en esta clase?
+                    </h4>
+                    <p className="text-xs text-stone-600 dark:text-slate-400 mt-0.5">
+                      Consulta a tu Asistente Virtual para aclarar pasajes bíblicos, términos en griego/hebreo o aplicaciones pastorales sobre <em>"{lesson.title}"</em>.
+                    </p>
+                  </div>
+                </div>
+                <button
+                  onClick={onOpenAssistant}
+                  className="px-4 py-2 bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-500 hover:to-amber-600 text-white text-xs font-bold rounded-lg shadow-sm flex items-center gap-2 shrink-0 transition-all cursor-pointer active:scale-95"
+                >
+                  <Bot size={15} />
+                  <span>Preguntar al Asistente</span>
+                </button>
+              </div>
             )}
 
             {/* Comprehensive Final Exam */}

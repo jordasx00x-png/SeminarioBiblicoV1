@@ -1,7 +1,7 @@
-import express from "express";
-import path from "path";
-import { createServer as createViteServer } from "vite";
-import { GoogleGenAI } from "@google/genai";
+import express from 'express';
+import path from 'path';
+import { createServer as createViteServer } from 'vite';
+import { GoogleGenAI } from '@google/genai';
 
 async function startServer() {
   const app = express();
@@ -9,112 +9,113 @@ async function startServer() {
 
   app.use(express.json({ limit: '10mb' }));
 
-  // Helper for lazy Gemini initialization
-  let aiClient: GoogleGenAI | null = null;
-  function getGeminiClient(): GoogleGenAI {
-    if (!aiClient) {
+  // API Health check
+  app.get('/api/health', (_req, res) => {
+    res.json({ 
+      status: 'ok', 
+      hasApiKey: Boolean(process.env.GEMINI_API_KEY) 
+    });
+  });
+
+  // Theological Virtual Assistant Chat Endpoint
+  app.post('/api/assistant/chat', async (req, res) => {
+    try {
+      const { messages, context } = req.body;
+
+      if (!messages || !Array.isArray(messages) || messages.length === 0) {
+        return res.status(400).json({ error: 'Se requiere al menos un mensaje.' });
+      }
+
       const apiKey = process.env.GEMINI_API_KEY;
       if (!apiKey) {
-        throw new Error("GEMINI_API_KEY no está configurada en las variables de entorno.");
+        return res.status(503).json({
+          error: 'El asistente requiere la clave de API (GEMINI_API_KEY). Por favor configúrela en Settings > Secrets.'
+        });
       }
-      aiClient = new GoogleGenAI({
+
+      const ai = new GoogleGenAI({
         apiKey,
         httpOptions: {
           headers: {
-            "User-Agent": "aistudio-build",
-          },
-        },
+            'User-Agent': 'aistudio-build',
+          }
+        }
       });
-    }
-    return aiClient;
-  }
 
-  // Health check
-  app.get("/api/health", (_req, res) => {
-    res.json({ status: "ok" });
-  });
+      let systemInstruction = `Eres el "Asistente Virtual Teológico y Pastoral" del Seminario Teológico Digital (STD Campus Interactivo). 
+Tu misión es asistir y responder todas las preguntas que los estudiantes, pastores y usuarios te hagan, ya sean sobre las clases del seminario, dudas bíblicas, teología sistemática, historia de la iglesia, exégesis bíblica o idiomas originales (griego/hebreo).
 
-  // AI Theological Assistant Endpoint
-  app.post("/api/chat", async (req, res) => {
-    try {
-      const { prompt, lessonContext, history } = req.body;
+Directrices para tus respuestas:
+1. Claridad y Pedagogía: Explica con sencillez sin perder profundidad académica ni rigor exegético.
+2. Fundamentación Bíblica: Cita versículos y pasajes clave de las Sagradas Escrituras (RVR 1960 u otras traducciones según convenga).
+3. Respaldo Histórico y Teológico: Puedes aludir al contexto del Antiguo y Nuevo Testamento, pactos, y la tradición cristiana histórica reformada.
+4. Idiomas originales: Si una palabra en griego koiné o hebreo bíblico arroja luz (ej. shalom, heshed, logos, agape, charis), inclúyela con su transliteración y significado.
+5. Formato: Utiliza Markdown limpio con negritas, listas o citas destacadas cuando sea pertinente. Sé conciso y claro pero completo.`;
 
-      if (!prompt || typeof prompt !== 'string') {
-        return res.status(400).json({ error: "El mensaje es requerido." });
+      if (context?.courseTitle || context?.lessonTitle) {
+        systemInstruction += `\n\nContexto actual del estudiante:\n- Curso en pantalla: ${context.courseTitle || 'No especificado'}\n- Lección en pantalla: ${context.lessonTitle || 'No especificada'}`;
       }
 
-      const ai = getGeminiClient();
+      const formattedContents = messages.map((m: { role: string; content: string }) => ({
+        role: m.role === 'assistant' || m.role === 'model' ? 'model' : 'user',
+        parts: [{ text: m.content }],
+      }));
 
-      const systemInstruction = `Eres un Asistente Teológico y Tutor Académico de excelencia para el Seminario Teológico Digital.
-Tu objetivo es responder dudas, explicar conceptos teológicos, pasajes bíblicos, hermenéutica, exégesis, historia de la iglesia, idiomas bíblicos (griego y hebreo) y aplicaciones doctrinales para los estudiantes.
+      const modelsToTry = ['gemini-flash-latest', 'gemini-3.1-flash-lite', 'gemini-3.8-flash'];
+      let replyText = '';
+      let lastError = null;
 
-Instrucciones clave:
-1. Mantén un tono sumamente respetuoso, reverente, académico, claro y pastoral.
-2. Si la consulta es sobre una clase o lección específica (Contexto provisto), utiliza los datos de esa clase para profundizar de forma muy precisa.
-3. Fundamenta tus respuestas en la Biblia y en la sana doctrina con referencias bíblicas claras (Libro Capítulo:Versículo).
-4. Sé directo, estructurado y educativo. Utiliza viñetas o párrafos cortos si la respuesta es extensa.
-5. Responde siempre en idioma Español.
-
-${lessonContext ? `CONTEXTO DE LA CLASE ACTUAL:
-- Título de la clase: "${lessonContext.title || 'N/A'}"
-- Curso: "${lessonContext.courseTitle || 'N/A'}"
-${lessonContext.textSnippet ? `- Fragmento/Resumen de la lección: "${lessonContext.textSnippet.substring(0, 1500)}"` : ''}` : ''}`;
-
-      // Build contents array with history if available
-      const contentsArray: any[] = [];
-
-      if (Array.isArray(history) && history.length > 0) {
-        for (const item of history.slice(-6)) {
-          contentsArray.push({
-            role: item.role === 'user' ? 'user' : 'model',
-            parts: [{ text: item.text }]
+      for (const modelName of modelsToTry) {
+        try {
+          const response = await ai.models.generateContent({
+            model: modelName,
+            contents: formattedContents,
+            config: {
+              systemInstruction,
+              temperature: 0.7,
+            },
           });
+          if (response.text) {
+            replyText = response.text;
+            break;
+          }
+        } catch (err: any) {
+          lastError = err;
+          console.warn(`Model ${modelName} encountered error, attempting fallback:`, err?.message);
         }
       }
 
-      contentsArray.push({
-        role: 'user',
-        parts: [{ text: prompt }]
-      });
+      if (!replyText) {
+        if (lastError) throw lastError;
+        replyText = 'Disculpa, no pude formular una respuesta en este momento. Por favor intenta de nuevo.';
+      }
 
-      const response = await ai.models.generateContent({
-        model: "gemini-3.8-flash",
-        contents: contentsArray,
-        config: {
-          systemInstruction,
-          temperature: 0.7,
-        },
-      });
-
-      const textResponse = response.text || "No se pudo generar una respuesta en este momento.";
-      return res.json({ response: textResponse });
-
-    } catch (error: any) {
-      console.error("Error en Gemini API (/api/chat):", error);
+      return res.json({ reply: replyText });
+    } catch (err: any) {
+      console.error('Error en /api/assistant/chat:', err);
       return res.status(500).json({
-        error: error.message || "Ocurrió un error al procesar tu consulta con la IA.",
-        isKeyMissing: !process.env.GEMINI_API_KEY
+        error: err?.message || 'Ocurrió un error al consultar el asistente virtual.'
       });
     }
   });
 
   // Vite middleware for development
-  if (process.env.NODE_ENV !== "production") {
+  if (process.env.NODE_ENV !== 'production') {
     const vite = await createViteServer({
       server: { middlewareMode: true },
-      appType: "spa",
+      appType: 'spa',
     });
     app.use(vite.middlewares);
   } else {
-    const distPath = path.join(process.cwd(), "dist");
+    const distPath = path.join(process.cwd(), 'dist');
     app.use(express.static(distPath));
-    app.get("*all", (_req, res) => {
-      res.sendFile(path.join(distPath, "index.html"));
+    app.get('*all', (_req, res) => {
+      res.sendFile(path.join(distPath, 'index.html'));
     });
   }
 
-  app.listen(PORT, "0.0.0.0", () => {
-    console.log(`Servidor ejecutándose en http://localhost:${PORT}`);
+  app.listen(PORT, '0.0.0.0', () => {
+    console.log(`Servidor iniciado en http://localhost:${PORT}`);
   });
 }
 

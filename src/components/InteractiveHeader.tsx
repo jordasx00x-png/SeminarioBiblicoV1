@@ -12,6 +12,7 @@ interface InteractiveHeaderProps {
   customProfile?: { fullName?: string; email?: string; phoneNumber?: string };
   progress: UserProgress;
   onOpenProfile: () => void;
+  onOpenAssistant?: () => void;
   onSignOut?: () => void;
   darkMode?: boolean;
   onToggleDarkMode?: () => void;
@@ -19,7 +20,6 @@ interface InteractiveHeaderProps {
   onZoomIn?: () => void;
   onZoomOut?: () => void;
   zoomLevel?: number;
-  onOpenAIAssistant?: () => void;
 }
 
 export function InteractiveHeader({
@@ -29,14 +29,14 @@ export function InteractiveHeader({
   customProfile,
   progress,
   onOpenProfile,
+  onOpenAssistant,
   onSignOut,
   darkMode,
   onToggleDarkMode,
   onResetCourseSelection,
   onZoomIn,
   onZoomOut,
-  zoomLevel = 100,
-  onOpenAIAssistant
+  zoomLevel = 100
 }: InteractiveHeaderProps) {
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [showProgressTooltip, setShowProgressTooltip] = useState(false);
@@ -123,18 +123,6 @@ export function InteractiveHeader({
         {/* Right: Quick Controls, Streak & User Profile */}
         <div className="flex items-center gap-2 shrink-0">
           
-          {/* AI Tutor Assistant Toggle */}
-          {onOpenAIAssistant && (
-            <button
-              onClick={onOpenAIAssistant}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-2xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-950 font-bold text-xs shadow-md cursor-pointer transition-all active:scale-95 border border-amber-400 shrink-0"
-              title="Abrir Asistente Teológico IA"
-            >
-              <Bot size={15} />
-              <span className="hidden sm:inline">Tutor IA</span>
-            </button>
-          )}
-
           {/* Streak & Progress Interactive Pill */}
           <div className="relative">
             <button
@@ -175,6 +163,19 @@ export function InteractiveHeader({
             )}
           </div>
 
+          {/* Virtual Assistant Button */}
+          {onOpenAssistant && (
+            <button
+              onClick={onOpenAssistant}
+              className="flex items-center gap-1.5 bg-gradient-to-r from-amber-700/90 to-amber-900/90 hover:from-amber-600 hover:to-amber-800 border border-amber-500/50 px-2.5 sm:px-3 py-1.5 rounded-2xl text-xs font-bold text-amber-100 transition-all cursor-pointer active:scale-95 shadow-sm"
+              title="Preguntar al Asistente Virtual Teológico"
+            >
+              <Bot size={15} className="text-amber-300 animate-pulse" />
+              <span className="hidden sm:inline">Asistente</span>
+              <span className="sm:hidden">IA</span>
+            </button>
+          )}
+
           {/* Dark Mode Toggle */}
           {onToggleDarkMode && (
             <button
@@ -211,6 +212,19 @@ export function InteractiveHeader({
                 </div>
 
                 <div className="py-1 space-y-1">
+                  {onOpenAssistant && (
+                    <button
+                      onClick={() => {
+                        setShowProfileMenu(false);
+                        onOpenAssistant();
+                      }}
+                      className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-bold text-amber-300 hover:bg-slate-800 hover:text-amber-200 transition-colors text-left cursor-pointer"
+                    >
+                      <Bot size={15} className="text-amber-400" />
+                      <span>Asistente Virtual (Tutor IA)</span>
+                    </button>
+                  )}
+
                   <button
                     onClick={() => {
                       setShowProfileMenu(false);

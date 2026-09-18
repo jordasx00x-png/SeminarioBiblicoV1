@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { BookOpen, GraduationCap, Calendar as CalendarIcon, Award, Edit3, Home, Settings, User as UserIcon, LogOut, Menu, Sparkles, Flame, CheckCircle2, ChevronDown, Moon, Sun, Bot } from 'lucide-react';
+import { BookOpen, GraduationCap, Calendar as CalendarIcon, Award, Edit3, Home, Settings, User as UserIcon, LogOut, Menu, Sparkles, Flame, CheckCircle2, ChevronDown, Moon, Sun } from 'lucide-react';
 import { User } from 'firebase/auth';
 import { UserProgress } from '../types';
 
@@ -15,7 +15,6 @@ interface TopNavbarProps {
   isSidebarOpen?: boolean;
   darkMode?: boolean;
   onToggleDarkMode?: () => void;
-  onOpenAIAssistant?: () => void;
 }
 
 export function TopNavbar({
@@ -28,8 +27,7 @@ export function TopNavbar({
   onSignOut,
   onToggleSidebar,
   darkMode,
-  onToggleDarkMode,
-  onOpenAIAssistant
+  onToggleDarkMode
 }: TopNavbarProps) {
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
 
@@ -100,18 +98,6 @@ export function TopNavbar({
         {/* Right: Quick Stats, Profile & Settings Menu */}
         <div className="flex items-center gap-2 sm:gap-3 shrink-0">
           
-          {/* AI Tutor Assistant Toggle */}
-          {onOpenAIAssistant && (
-            <button
-              onClick={onOpenAIAssistant}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-950 font-bold text-xs shadow-sm cursor-pointer transition-all active:scale-95 border border-amber-400"
-              title="Abrir Asistente Teológico IA"
-            >
-              <Bot size={16} />
-              <span className="hidden sm:inline">Tutor IA</span>
-            </button>
-          )}
-
           {/* Quick Dark Mode Toggle Button */}
           {onToggleDarkMode && (
             <button

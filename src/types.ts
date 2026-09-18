@@ -88,6 +88,13 @@ export type UserProgress = {
   completedBlockExams?: Record<string, { score: number; completedAt: string }>;
 };
 
+export type AssistantMessage = {
+  id: string;
+  role: 'user' | 'assistant';
+  content: string;
+  timestamp: string;
+};
+
 export type Database = {
   courses: Course[];
 };

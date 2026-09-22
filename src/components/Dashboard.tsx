@@ -22,6 +22,7 @@ export function Dashboard({ user, courses, progress, customProfile, onSelectCour
     doctorado: true
   });
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedDegreeTab, setSelectedDegreeTab] = useState<'all' | 'basic' | 'licenciatura' | 'maestria' | 'doctorado'>('all');
   
   const toggleSection = (section: string) => {
     setExpandedSections(prev => ({ ...prev, [section]: !prev[section] }));
@@ -77,75 +78,138 @@ export function Dashboard({ user, courses, progress, customProfile, onSelectCour
   const isDoctoradoUnlocked = allMaestriaCompleted || bypassUnlocked;
 
   return (
-    <div className="p-4 sm:p-6 md:p-10 w-full max-w-7xl mx-auto font-sans text-slate-800 pb-28">
-      {/* Hero Header */}
-      <div className="relative mb-8 rounded-3xl bg-gradient-to-r from-[#0F172A] via-[#1E293B] to-[#1E1B4B] p-6 md:p-10 text-white overflow-hidden shadow-xl border border-slate-700/60">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none" />
-        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
-          <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-400/10 text-amber-300 border border-amber-500/30 text-xs font-semibold uppercase tracking-wider mb-3">
-              <GraduationCap size={14} /> Oferta Académica Oficial
+    <div className="p-4 sm:p-6 md:p-8 w-full max-w-7xl mx-auto font-sans text-stone-800 dark:text-stone-100 pb-28">
+      {/* Academic Hero Header: Institutional Paper Style */}
+      <div className="mb-12 rounded-xl bg-[#FAF9F5] p-10 md:p-14 text-[#1A2533] shadow-sm border border-stone-300 relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-80 h-80 bg-[#7F1D1D]/5 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl pointer-events-none" />
+        
+        <div className="relative flex flex-col md:flex-row md:items-center justify-between gap-8">
+          <div className="max-w-2xl">
+            <div className="flex items-center gap-3 mb-4">
+              <span className="w-10 h-px bg-[#7F1D1D]" />
+              <span className="text-[10px] font-bold tracking-[0.3em] text-[#7F1D1D] uppercase">
+                Oferta Académica Vigente
+              </span>
             </div>
-            <h1 className="text-3xl md:text-5xl font-serif font-bold text-white tracking-tight mb-2">
-              Catálogo de Cursos
+            <h1 className="text-4xl md:text-6xl font-serif font-black text-[#1A2533] tracking-tight mb-4 leading-tight">
+              Catálogo de <br /> Especialidades
             </h1>
-            <p className="text-slate-300 text-sm md:text-base max-w-2xl leading-relaxed">
-              Bienvenido, <span className="font-bold text-amber-300">{customProfile?.fullName || user?.displayName || 'Estudioso'}</span>. Explora la malla curricular teológica y accede a las lecciones correspondientes.
+            <p className="text-stone-600 font-serif italic text-base md:text-lg leading-relaxed">
+              Bienvenido, <span className="font-bold text-[#1A2533] not-italic">{customProfile?.fullName || user?.displayName || 'Estudioso'}</span>. Explore la malla curricular teológica y acceda a los módulos de acreditación oficial.
             </p>
           </div>
 
-          <div className="flex gap-3 bg-slate-900/80 p-3.5 rounded-2xl border border-slate-700/80 backdrop-blur-md shrink-0">
-            <div className="text-center px-3 border-r border-slate-800">
-              <div className="text-2xl font-black text-amber-400 font-mono">{courses.length}</div>
-              <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Cursos</div>
+          <div className="flex gap-6 bg-white p-6 rounded-lg border border-stone-200 shrink-0 shadow-sm relative">
+            <div className="absolute top-0 left-0 w-full h-1 bg-[#7F1D1D]" />
+            <div className="text-center px-4 border-r border-stone-100">
+              <div className="text-3xl font-serif font-bold text-[#1A2533] tabular-nums">{courses.length}</div>
+              <div className="text-[9px] font-bold text-stone-400 uppercase tracking-widest mt-1">Materias</div>
             </div>
-            <div className="text-center px-3">
-              <div className="text-2xl font-black text-emerald-400 font-mono">
+            <div className="text-center px-4">
+              <div className="text-3xl font-serif font-bold text-emerald-700 tabular-nums">
                 {Object.keys(progress.completedLessons || {}).length}
               </div>
-              <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Acreditados</div>
+              <div className="text-[9px] font-bold text-stone-400 uppercase tracking-widest mt-1">Acreditadas</div>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="space-y-12 mt-8">
+      <div className="space-y-8 mt-8">
         {/* Search Bar */}
-          <div className="relative">
-            <Search size={20} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
-            <input
-              type="text"
-              placeholder="Buscar por título, temática o palabra clave..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-12 pr-10 py-3.5 bg-white border border-slate-200 rounded-2xl outline-none focus:border-amber-600 focus:ring-2 focus:ring-amber-500/20 transition-all text-sm shadow-sm"
-            />
-            {searchQuery && (
-              <button 
-                onClick={() => setSearchQuery('')}
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 p-1"
-              >
-                ✕
-              </button>
-            )}
-          </div>
-
-          {filteredSpecialized.length === 0 && filteredBibleStudies.length === 0 && filteredLicenciatura.length === 0 && filteredMaestria.length === 0 && query !== '' && (
-            <div className="text-center py-12 bg-white rounded-xl border border-[#E0D7C6]">
-              <p className="text-gray-500 font-sans">No se encontraron cursos que coincidan con la búsqueda.</p>
-            </div>
+        <div className="relative">
+          <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-stone-400" />
+          <input
+            type="text"
+            placeholder="Buscar por título, temática o palabra clave..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full pl-11 pr-10 py-3 bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 rounded-lg outline-none focus:border-[#D1B17F] focus:ring-1 focus:ring-[#D1B17F] transition-all text-sm shadow-xs"
+          />
+          {searchQuery && (
+            <button 
+              onClick={() => setSearchQuery('')}
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-700 dark:hover:text-stone-200 p-1 cursor-pointer"
+            >
+              ✕
+            </button>
           )}
+        </div>
 
-          {filteredSpecialized.length > 0 && (
+        {/* Degree Track Segmented Filter Control */}
+        <div className="flex items-center gap-1.5 p-1 bg-stone-100 dark:bg-stone-800/80 rounded-xl overflow-x-auto border border-stone-200 dark:border-stone-800 font-sans">
+          <button
+            onClick={() => setSelectedDegreeTab('all')}
+            className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-colors cursor-pointer ${
+              selectedDegreeTab === 'all'
+                ? 'bg-white dark:bg-stone-900 text-stone-900 dark:text-stone-100 shadow-xs'
+                : 'text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-200'
+            }`}
+          >
+            Todos los Grados ({courses.length})
+          </button>
+          <button
+            onClick={() => setSelectedDegreeTab('basic')}
+            className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-colors cursor-pointer ${
+              selectedDegreeTab === 'basic'
+                ? 'bg-white dark:bg-stone-900 text-stone-900 dark:text-stone-100 shadow-xs'
+                : 'text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-200'
+            }`}
+          >
+            Formación Básica & Bíblica ({basicCourses.length})
+          </button>
+          <button
+            onClick={() => setSelectedDegreeTab('licenciatura')}
+            className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-colors cursor-pointer ${
+              selectedDegreeTab === 'licenciatura'
+                ? 'bg-white dark:bg-stone-900 text-stone-900 dark:text-stone-100 shadow-xs'
+                : 'text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-200'
+            }`}
+          >
+            Licenciatura ({licenciaturaCourses.length})
+          </button>
+          <button
+            onClick={() => setSelectedDegreeTab('maestria')}
+            className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-colors cursor-pointer ${
+              selectedDegreeTab === 'maestria'
+                ? 'bg-white dark:bg-stone-900 text-stone-900 dark:text-stone-100 shadow-xs'
+                : 'text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-200'
+            }`}
+          >
+            Maestría ({maestriaCourses.length})
+          </button>
+          <button
+            onClick={() => setSelectedDegreeTab('doctorado')}
+            className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-colors cursor-pointer ${
+              selectedDegreeTab === 'doctorado'
+                ? 'bg-white dark:bg-stone-900 text-stone-900 dark:text-stone-100 shadow-xs'
+                : 'text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-200'
+            }`}
+          >
+            Doctorado ({doctoradoCourses.length})
+          </button>
+        </div>
+
+        {filteredSpecialized.length === 0 && filteredBibleStudies.length === 0 && filteredLicenciatura.length === 0 && filteredMaestria.length === 0 && query !== '' && (
+          <div className="text-center py-12 bg-white dark:bg-stone-900 rounded-lg border border-stone-200 dark:border-stone-800">
+            <p className="text-stone-500 font-sans">No se encontraron cursos que coincidan con la búsqueda.</p>
+          </div>
+        )}
+
+          {/* CURSOS ESPECIALIZADOS */}
+          {(selectedDegreeTab === 'all' || selectedDegreeTab === 'basic') && filteredSpecialized.length > 0 && (
             <section className="animate-in fade-in slide-in-from-bottom-8 duration-500">
               <div className="flex items-center justify-between gap-4 mb-6">
                 <div className="flex items-center gap-3">
-                  <Award className="text-[#7F1D1D]" size={24} />
-                  <h2 className="text-2xl font-bold text-[#1A2533]">Cursos Especializados</h2>
+                  <Award className="text-[#7F1D1D] dark:text-amber-400" size={24} />
+                  <div>
+                    <h2 className="text-2xl font-serif font-bold text-stone-900 dark:text-stone-100">Cursos Especializados</h2>
+                    <p className="text-xs text-stone-500 font-sans">Módulos avanzados de exégesis, apologética y hermenéutica bíblica.</p>
+                  </div>
                 </div>
                 <button
                   onClick={() => toggleSection('specialized')}
-                  className="text-xs font-bold text-gray-500 hover:text-[#1A2533] transition-colors flex items-center gap-1 uppercase tracking-widest"
+                  className="text-xs font-semibold text-stone-500 hover:text-stone-900 dark:hover:text-stone-200 transition-colors flex items-center gap-1 uppercase tracking-widest cursor-pointer"
                 >
                   {expandedSections.specialized ? <><ChevronUp size={14} /> Ocultar</> : <><ChevronDown size={14} /> Ver Cursos</>}
                 </button>
@@ -158,16 +222,20 @@ export function Dashboard({ user, courses, progress, customProfile, onSelectCour
             </section>
           )}
 
-          {filteredBibleStudies.length > 0 && (
-            <section className="animate-in fade-in slide-in-from-bottom-10 duration-500">
+          {/* ESTUDIO BÍBLICO */}
+          {(selectedDegreeTab === 'all' || selectedDegreeTab === 'basic') && filteredBibleStudies.length > 0 && (
+            <section className="animate-in fade-in slide-in-from-bottom-10 duration-500 pt-6 border-t border-stone-200 dark:border-stone-800">
               <div className="flex items-center justify-between gap-4 mb-6">
                 <div className="flex items-center gap-3">
-                  <BookOpen className="text-[#7F1D1D]" size={24} />
-                  <h2 className="text-2xl font-bold text-[#1A2533]">Estudio Bíblico</h2>
+                  <BookOpen className="text-[#7F1D1D] dark:text-amber-400" size={24} />
+                  <div>
+                    <h2 className="text-2xl font-serif font-bold text-stone-900 dark:text-stone-100">Estudio Bíblico y Fundamentos</h2>
+                    <p className="text-xs text-stone-500 font-sans">Formación integral en el texto canónico de las Sagradas Escrituras.</p>
+                  </div>
                 </div>
                 <button
                   onClick={() => toggleSection('bible')}
-                  className="text-xs font-bold text-gray-500 hover:text-[#1A2533] transition-colors flex items-center gap-1 uppercase tracking-widest"
+                  className="text-xs font-semibold text-stone-500 hover:text-stone-900 dark:hover:text-stone-200 transition-colors flex items-center gap-1 uppercase tracking-widest cursor-pointer"
                 >
                   {expandedSections.bible ? <><ChevronUp size={14} /> Ocultar</> : <><ChevronDown size={14} /> Ver Cursos</>}
                 </button>
@@ -181,86 +249,71 @@ export function Dashboard({ user, courses, progress, customProfile, onSelectCour
           )}
 
           {/* LICENCIATURA EN TEOLOGÍA SUPERIOR */}
-          {(query === '' || filteredLicenciatura.length > 0) && (
-          <section className="border-t border-[#E0D7C6]/60 pt-10 animate-in fade-in slide-in-from-bottom-12 duration-500 space-y-6">
+          {(selectedDegreeTab === 'all' || selectedDegreeTab === 'licenciatura') && (query === '' || filteredLicenciatura.length > 0) && (
+          <section className="border-t border-stone-200 dark:border-stone-800 pt-8 animate-in fade-in slide-in-from-bottom-12 duration-500 space-y-6">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
               <div className="flex items-center gap-3">
-                <GraduationCap className="text-[#D97706]" size={28} />
+                <GraduationCap className="text-[#D97706] dark:text-amber-400" size={28} />
                 <div>
-                  <h2 className="text-2xl font-serif font-bold text-[#1A2533]">Licenciatura en Teología Superior</h2>
-                  <p className="text-xs text-gray-500 font-sans mt-0.5">Grado avanzado formal para profundizar en idiomas bíblicos y teología dogmática.</p>
+                  <h2 className="text-2xl font-serif font-bold text-stone-900 dark:text-stone-100">Licenciatura en Teología Superior</h2>
+                  <p className="text-xs text-stone-500 font-sans mt-0.5">Grado avanzado formal para profundizar en idiomas bíblicos y teología dogmática.</p>
                 </div>
               </div>
               
-              <div className="flex items-center gap-2 self-start md:self-auto">
-                <div className={`px-2.5 py-1 rounded-full text-xs font-bold font-sans flex items-center gap-1.5 border transition-all ${
-                  isLicenciaturaUnlocked 
-                    ? 'bg-amber-50 text-[#92400E] border-amber-200 shadow-xs' 
-                    : 'bg-gray-100 text-gray-500 border-gray-200'
-                }`}>
-                  {isLicenciaturaUnlocked ? (
-                    <>
-                      <Unlock size={12} className="text-[#D97706] animate-pulse" />
-                      GRADO DESBLOQUEADO
-                    </>
-                  ) : (
-                    <>
-                      <Lock size={12} className="text-gray-400" />
-                      LICENCIATURA BLOQUEADA
-                    </>
-                  )}
+              <div className="flex items-center gap-3 self-start md:self-auto">
+                <div className="flex items-center gap-2 text-xs font-semibold">
+                  <span className={`w-2 h-2 rounded-full ${isLicenciaturaUnlocked ? 'bg-emerald-500' : 'bg-stone-400'}`} />
+                  <span className={isLicenciaturaUnlocked ? 'text-emerald-700 dark:text-emerald-400' : 'text-stone-500 dark:text-stone-400'}>
+                    {isLicenciaturaUnlocked ? 'Grado Desbloqueado' : 'Prerrequisitos Requeridos'}
+                  </span>
                 </div>
                 
                 <button
                   onClick={() => toggleSection('licenciatura')}
-                  className="text-[10px] font-bold font-sans px-2.5 py-1 rounded-md border transition-colors bg-white text-gray-700 border-gray-300 hover:bg-gray-50 shadow-xs cursor-pointer flex items-center gap-1 uppercase tracking-widest"
+                  className="text-xs font-semibold text-stone-600 dark:text-stone-300 hover:text-stone-900 dark:hover:text-white px-3 py-1.5 rounded-lg border border-stone-200 dark:border-stone-800 transition-colors cursor-pointer flex items-center gap-1"
                 >
-                  {expandedSections.licenciatura ? <><ChevronUp size={12} /> Ocultar</> : <><ChevronDown size={12} /> Ver Cursos</>}
+                  {expandedSections.licenciatura ? <><ChevronUp size={14} /> Ocultar</> : <><ChevronDown size={14} /> Ver Cursos</>}
                 </button>
                 <button
                   onClick={handleToggleBypass}
-                  className={`text-[10px] font-bold font-sans px-2.5 py-1 rounded-md border transition-colors ${
-                    bypassUnlocked 
-                      ? 'bg-red-50 text-red-700 border-red-200 hover:bg-red-100 shadow-xs' 
-                      : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50 shadow-xs cursor-pointer'
-                  }`}
-                  title="Permite convalidar/forzar el desbloqueo instantáneo con fines evaluativos"
+                  className="text-[11px] font-mono text-stone-400 hover:text-stone-600 dark:hover:text-stone-300 px-2 py-1 rounded border border-stone-200 dark:border-stone-800 transition-colors cursor-pointer"
+                  title="Convalidar requisitos con fines evaluativos"
                 >
-                  {bypassUnlocked ? "Restaurar Bloqueo Real" : "⚡ Forzar Desbloqueo (Pruebas)"}
+                  {bypassUnlocked ? "Restaurar" : "⚡ Convalidar"}
                 </button>
               </div>
             </div>
 
             {!isLicenciaturaUnlocked ? (
-              <div className="bg-[#FAF9F6] border border-[#E0D7C6] rounded-xl p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-6 font-sans">
+              <div className="bg-stone-50/70 dark:bg-stone-900/60 border border-stone-200 dark:border-stone-800 rounded-xl p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-6 font-sans">
                 <div className="space-y-1.5 flex-1">
-                  <h4 className="text-sm font-bold text-[#7F1D1D] flex items-center gap-1.5">
-                    <Lock size={16} /> Prerrequisito: Cumplir Formación Básica
+                  <h4 className="text-sm font-semibold text-[#7F1D1D] dark:text-rose-400 flex items-center gap-1.5">
+                    <Lock size={15} /> Prerrequisito: Concluir Formación Básica
                   </h4>
-                  <p className="text-xs text-gray-600 leading-relaxed max-w-2xl">
-                    Las asignaturas avanzadas de Licenciatura exigen haber acreditado la totalidad de los cursos de la formación básica del Seminario ({completedBasicLessons}/{totalBasicLessons} lecciones completadas). Su boleta del grado de Bachillerato debe estar totalmente firmada para tramitar la admisión al posgrado.
+                  <p className="text-xs text-stone-600 dark:text-stone-400 leading-relaxed max-w-2xl">
+                    Las asignaturas avanzadas de Licenciatura exigen haber acreditado la totalidad de los cursos de la formación básica del Seminario ({completedBasicLessons}/{totalBasicLessons} lecciones completadas). Su boleta del grado de Bachillerato debe estar totalmente aprobada para tramitar la admisión al posgrado.
                   </p>
                 </div>
                 
                 <div className="shrink-0 text-center md:text-right space-y-1.5">
-                  <div className="text-[10px] font-bold text-gray-400 uppercase tracking-widest leading-none">Acreditación Básica</div>
-                  <div className="text-2xl font-serif font-black text-[#1A2533]">
-                    {completedBasicLessons} <span className="text-sm text-gray-400 font-normal">/ {totalBasicLessons} Clases</span>
+                  <div className="text-[10px] font-semibold text-stone-400 uppercase tracking-widest leading-none">Acreditación Básica</div>
+                  <div className="text-2xl font-serif font-bold text-stone-900 dark:text-stone-100 tabular-nums">
+                    {completedBasicLessons} <span className="text-sm text-stone-400 font-normal">/ {totalBasicLessons} Clases</span>
                   </div>
-                  <div className="w-36 h-1.5 bg-gray-200 rounded-full overflow-hidden mx-auto md:ml-auto">
-                    <div className="h-full bg-[#7F1D1D]" style={{ width: `${totalBasicLessons > 0 ? (completedBasicLessons / totalBasicLessons) * 100 : 0}%` }} />
+                  <div className="w-36 h-1.5 bg-stone-200 dark:bg-stone-800 rounded-full overflow-hidden mx-auto md:ml-auto">
+                    <div className="h-full bg-[#7F1D1D] dark:bg-amber-500 rounded-full" style={{ width: `${totalBasicLessons > 0 ? (completedBasicLessons / totalBasicLessons) * 100 : 0}%` }} />
                   </div>
                 </div>
               </div>
             ) : (
-              <div className="bg-emerald-50/40 border border-emerald-200 rounded-xl p-5 md:p-6 flex items-center gap-4 animate-in zoom-in-95 duration-500 font-sans">
-                <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600 shrink-0 select-none">
+              <div className="bg-emerald-50/50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-800/60 rounded-xl p-5 md:p-6 flex items-center gap-4 animate-in zoom-in-95 duration-500 font-sans">
+                <div className="w-10 h-10 rounded-full bg-emerald-100 dark:bg-emerald-900/50 flex items-center justify-center text-emerald-600 dark:text-emerald-400 shrink-0 select-none">
                   <ShieldCheck size={22} strokeWidth={1.7} />
                 </div>
                 <div className="space-y-0.5">
-                  <div className="text-[10px] font-bold text-emerald-700 uppercase tracking-widest">Sede Académica de Grado</div>
-                  <h4 className="text-sm font-bold text-[#1a2533]">¡Requisitos Acreditados Exitosamente!</h4>
-                  <p className="text-xs text-gray-600 leading-relaxed">
+                  <div className="text-[10px] font-semibold text-emerald-700 dark:text-emerald-400 uppercase tracking-widest">Sede Académica de Grado</div>
+                  <h4 className="text-sm font-semibold text-stone-900 dark:text-stone-100">¡Requisitos Acreditados Exitosamente!</h4>
+                  <p className="text-xs text-stone-600 dark:text-stone-400 leading-relaxed">
                     Usted ha sido admitido formalmente a la Licenciatura en Teología Superior. Puede cursar las materias, resolver los desafíos y evaluar su rendimiento a continuación.
                   </p>
                 </div>
@@ -284,76 +337,63 @@ export function Dashboard({ user, courses, progress, customProfile, onSelectCour
           )}
 
           {/* MAESTRÍA */}
-          {(query === '' || filteredMaestria.length > 0) && (
-          <section className="border-t border-[#E0D7C6]/60 pt-10 animate-in fade-in slide-in-from-bottom-12 duration-500 space-y-6">
+          {(selectedDegreeTab === 'all' || selectedDegreeTab === 'maestria') && (query === '' || filteredMaestria.length > 0) && (
+          <section className="border-t border-stone-200 dark:border-stone-800 pt-8 animate-in fade-in slide-in-from-bottom-12 duration-500 space-y-6">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded bg-[#1A2533] text-[#FDE68A] flex items-center justify-center shrink-0 shadow-sm border border-[#3E5C76]">
-                   <Award size={18} />
-                </div>
+                <Award className="text-blue-700 dark:text-blue-400" size={28} />
                 <div>
-                  <h2 className="text-2xl font-serif font-bold text-[#1A2533]">Maestría en Divinidades</h2>
-                  <p className="text-xs text-gray-500 font-sans mt-0.5">Grado de posgrado máximo para erudición y liderazgo formativo global.</p>
+                  <h2 className="text-2xl font-serif font-bold text-stone-900 dark:text-stone-100">Maestría en Divinidades</h2>
+                  <p className="text-xs text-stone-500 font-sans mt-0.5">Grado de posgrado formal para erudición bíblica y magisterio formativo global.</p>
                 </div>
               </div>
               
-              <div className="flex items-center gap-2 self-start md:self-auto">
-                <div className={`px-2.5 py-1 rounded-full text-xs font-bold font-sans flex items-center gap-1.5 border transition-all ${
-                  isMaestriaUnlocked 
-                    ? 'bg-blue-50 text-blue-900 border-blue-200 shadow-xs' 
-                    : 'bg-gray-100 text-gray-500 border-gray-200'
-                }`}>
-                  {isMaestriaUnlocked ? (
-                    <>
-                      <Unlock size={12} className="text-blue-700 animate-pulse" />
-                      POSGRADO DESBLOQUEADO
-                    </>
-                  ) : (
-                    <>
-                      <Lock size={12} className="text-gray-400" />
-                      MAESTRÍA BLOQUEADA
-                    </>
-                  )}
+              <div className="flex items-center gap-3 self-start md:self-auto">
+                <div className="flex items-center gap-2 text-xs font-semibold">
+                  <span className={`w-2 h-2 rounded-full ${isMaestriaUnlocked ? 'bg-blue-500' : 'bg-stone-400'}`} />
+                  <span className={isMaestriaUnlocked ? 'text-blue-700 dark:text-blue-400' : 'text-stone-500 dark:text-stone-400'}>
+                    {isMaestriaUnlocked ? 'Posgrado Desbloqueado' : 'Requiere Licenciatura'}
+                  </span>
                 </div>
                 <button
                   onClick={() => toggleSection('maestria')}
-                  className="text-[10px] font-bold font-sans px-2.5 py-1 rounded-md border transition-colors bg-white text-gray-700 border-gray-300 hover:bg-gray-50 shadow-xs cursor-pointer flex items-center gap-1 uppercase tracking-widest"
+                  className="text-xs font-semibold text-stone-600 dark:text-stone-300 hover:text-stone-900 dark:hover:text-white px-3 py-1.5 rounded-lg border border-stone-200 dark:border-stone-800 transition-colors cursor-pointer flex items-center gap-1"
                 >
-                  {expandedSections.maestria ? <><ChevronUp size={12} /> Ocultar</> : <><ChevronDown size={12} /> Ver Cursos</>}
+                  {expandedSections.maestria ? <><ChevronUp size={14} /> Ocultar</> : <><ChevronDown size={14} /> Ver Cursos</>}
                 </button>
               </div>
             </div>
 
             {!isMaestriaUnlocked ? (
-              <div className="bg-[#FAF9F6] border border-[#E0D7C6] rounded-xl p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-6 font-sans">
+              <div className="bg-stone-50/70 dark:bg-stone-900/60 border border-stone-200 dark:border-stone-800 rounded-xl p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-6 font-sans">
                 <div className="space-y-1.5 flex-1">
-                  <h4 className="text-sm font-bold text-[#7F1D1D] flex items-center gap-1.5">
-                    <Lock size={16} /> Prerrequisito: Cumplir Licenciatura Previa
+                  <h4 className="text-sm font-semibold text-[#7F1D1D] dark:text-rose-400 flex items-center gap-1.5">
+                    <Lock size={15} /> Prerrequisito: Cumplir Licenciatura Previa
                   </h4>
-                  <p className="text-xs text-gray-600 leading-relaxed max-w-2xl">
-                    Las materias del programa de Maestría están reservadas para alumnos que hayan acreditado holgadamente su grado de Licenciatura íntegro ({completedLicenciaturaLessons}/{totalLicenciaturaLessons} lecciones completadas) y dispongan del rigor dogmático requerido. No hay excepciones evaluativas para la postulación magisterial.
+                  <p className="text-xs text-stone-600 dark:text-stone-400 leading-relaxed max-w-2xl">
+                    Las materias del programa de Maestría están reservadas para alumnos que hayan acreditado holgadamente su grado de Licenciatura íntegro ({completedLicenciaturaLessons}/{totalLicenciaturaLessons} lecciones completadas) y dispongan del rigor dogmático requerido.
                   </p>
                 </div>
                 
                 <div className="shrink-0 text-center md:text-right space-y-1.5">
-                  <div className="text-[10px] font-bold text-gray-400 uppercase tracking-widest leading-none">Avance Licenciatura</div>
-                  <div className="text-2xl font-serif font-black text-[#1A2533]">
-                    {completedLicenciaturaLessons} <span className="text-sm text-gray-400 font-normal">/ {totalLicenciaturaLessons} Clases</span>
+                  <div className="text-[10px] font-semibold text-stone-400 uppercase tracking-widest leading-none">Avance Licenciatura</div>
+                  <div className="text-2xl font-serif font-bold text-stone-900 dark:text-stone-100 tabular-nums">
+                    {completedLicenciaturaLessons} <span className="text-sm text-stone-400 font-normal">/ {totalLicenciaturaLessons} Clases</span>
                   </div>
-                  <div className="w-36 h-1.5 bg-gray-200 rounded-full overflow-hidden mx-auto md:ml-auto">
-                    <div className="h-full bg-blue-900" style={{ width: `${totalLicenciaturaLessons > 0 ? (completedLicenciaturaLessons / totalLicenciaturaLessons) * 100 : 0}%` }} />
+                  <div className="w-36 h-1.5 bg-stone-200 dark:bg-stone-800 rounded-full overflow-hidden mx-auto md:ml-auto">
+                    <div className="h-full bg-blue-700 dark:bg-blue-500 rounded-full" style={{ width: `${totalLicenciaturaLessons > 0 ? (completedLicenciaturaLessons / totalLicenciaturaLessons) * 100 : 0}%` }} />
                   </div>
                 </div>
               </div>
             ) : (
-              <div className="bg-blue-50/40 border border-blue-200 rounded-xl p-5 md:p-6 flex items-center gap-4 animate-in zoom-in-95 duration-500 font-sans">
-                <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 shrink-0 select-none">
+              <div className="bg-blue-50/50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800/60 rounded-xl p-5 md:p-6 flex items-center gap-4 animate-in zoom-in-95 duration-500 font-sans">
+                <div className="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900/50 flex items-center justify-center text-blue-700 dark:text-blue-400 shrink-0 select-none">
                   <ShieldCheck size={22} strokeWidth={1.7} />
                 </div>
                 <div className="space-y-0.5">
-                  <div className="text-[10px] font-bold text-blue-800 uppercase tracking-widest">Admisión de Posgrado</div>
-                  <h4 className="text-sm font-bold text-[#1a2533]">¡Estatus de Maestro Reconocido!</h4>
-                  <p className="text-xs text-gray-600 leading-relaxed">
+                  <div className="text-[10px] font-semibold text-blue-800 dark:text-blue-300 uppercase tracking-widest">Admisión de Posgrado</div>
+                  <h4 className="text-sm font-semibold text-stone-900 dark:text-stone-100">¡Estatus de Maestro Reconocido!</h4>
+                  <p className="text-xs text-stone-600 dark:text-stone-400 leading-relaxed">
                     Felicidades por su graduación previa. Usted pertenece al cuadro de honor autorizado para cursar las altas ramas teológicas de la Maestría dogmática para edificación eclesial avanzada.
                   </p>
                 </div>
@@ -377,76 +417,63 @@ export function Dashboard({ user, courses, progress, customProfile, onSelectCour
           )}
 
           {/* DOCTORADO */}
-          {(query === '' || filteredDoctorado.length > 0) && (
-          <section className="border-t border-[#E0D7C6]/60 pt-10 animate-in fade-in slide-in-from-bottom-12 duration-500 space-y-6">
+          {(selectedDegreeTab === 'all' || selectedDegreeTab === 'doctorado') && (query === '' || filteredDoctorado.length > 0) && (
+          <section className="border-t border-stone-200 dark:border-stone-800 pt-8 animate-in fade-in slide-in-from-bottom-12 duration-500 space-y-6">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded bg-[#7F1D1D] text-white flex items-center justify-center shrink-0 shadow-sm border border-red-900">
-                   <ShieldCheck size={18} />
-                </div>
+                <ShieldCheck className="text-[#7F1D1D] dark:text-rose-400" size={28} />
                 <div>
-                  <h2 className="text-2xl font-serif font-bold text-[#1A2533]">Doctorado en Divinidades</h2>
-                  <p className="text-xs text-gray-500 font-sans mt-0.5">Máximo nivel de excelencia académica para la investigación teológica y el magisterio eclesial.</p>
+                  <h2 className="text-2xl font-serif font-bold text-stone-900 dark:text-stone-100">Doctorado en Divinidades</h2>
+                  <p className="text-xs text-stone-500 font-sans mt-0.5">Máximo nivel de excelencia académica para la investigación teológica y el magisterio eclesial.</p>
                 </div>
               </div>
               
-              <div className="flex items-center gap-2 self-start md:self-auto">
-                <div className={`px-2.5 py-1 rounded-full text-xs font-bold font-sans flex items-center gap-1.5 border transition-all ${
-                  isDoctoradoUnlocked 
-                    ? 'bg-red-50 text-red-900 border-red-200 shadow-xs' 
-                    : 'bg-gray-100 text-gray-500 border-gray-200'
-                }`}>
-                  {isDoctoradoUnlocked ? (
-                    <>
-                      <Unlock size={12} className="text-red-700 animate-pulse" />
-                      GRADO CUMBRE DESBLOQUEADO
-                    </>
-                  ) : (
-                    <>
-                      <Lock size={12} className="text-gray-400" />
-                      DOCTORADO BLOQUEADO
-                    </>
-                  )}
+              <div className="flex items-center gap-3 self-start md:self-auto">
+                <div className="flex items-center gap-2 text-xs font-semibold">
+                  <span className={`w-2 h-2 rounded-full ${isDoctoradoUnlocked ? 'bg-red-500' : 'bg-stone-400'}`} />
+                  <span className={isDoctoradoUnlocked ? 'text-red-700 dark:text-rose-400' : 'text-stone-500 dark:text-stone-400'}>
+                    {isDoctoradoUnlocked ? 'Nivel Doctoral Desbloqueado' : 'Requiere Maestría Previa'}
+                  </span>
                 </div>
                 <button
                   onClick={() => toggleSection('doctorado')}
-                  className="text-[10px] font-bold font-sans px-2.5 py-1 rounded-md border transition-colors bg-white text-gray-700 border-gray-300 hover:bg-gray-50 shadow-xs cursor-pointer flex items-center gap-1 uppercase tracking-widest"
+                  className="text-xs font-semibold text-stone-600 dark:text-stone-300 hover:text-stone-900 dark:hover:text-white px-3 py-1.5 rounded-lg border border-stone-200 dark:border-stone-800 transition-colors cursor-pointer flex items-center gap-1"
                 >
-                  {expandedSections.doctorado ? <><ChevronUp size={12} /> Ocultar</> : <><ChevronDown size={12} /> Ver Cursos</>}
+                  {expandedSections.doctorado ? <><ChevronUp size={14} /> Ocultar</> : <><ChevronDown size={14} /> Ver Cursos</>}
                 </button>
               </div>
             </div>
 
             {!isDoctoradoUnlocked ? (
-              <div className="bg-[#FAF9F6] border border-[#E0D7C6] rounded-xl p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-6 font-sans">
+              <div className="bg-stone-50/70 dark:bg-stone-900/60 border border-stone-200 dark:border-stone-800 rounded-xl p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-6 font-sans">
                 <div className="space-y-1.5 flex-1">
-                  <h4 className="text-sm font-bold text-[#7F1D1D] flex items-center gap-1.5">
-                    <Lock size={16} /> Prerrequisito: Cumplir Maestría Previa
+                  <h4 className="text-sm font-semibold text-[#7F1D1D] dark:text-rose-400 flex items-center gap-1.5">
+                    <Lock size={15} /> Prerrequisito: Cumplir Maestría Previa
                   </h4>
-                  <p className="text-xs text-gray-600 leading-relaxed max-w-2xl">
+                  <p className="text-xs text-stone-600 dark:text-stone-400 leading-relaxed max-w-2xl">
                     El ingreso al Doctorado requiere haber completado satisfactoriamente el grado de Maestría ({completedMaestriaLessons}/{totalMaestriaLessons} lecciones completadas). Este nivel está reservado para el estudio crítico y la producción de conocimiento teológico original.
                   </p>
                 </div>
                 
                 <div className="shrink-0 text-center md:text-right space-y-1.5">
-                  <div className="text-[10px] font-bold text-gray-400 uppercase tracking-widest leading-none">Avance Maestría</div>
-                  <div className="text-2xl font-serif font-black text-[#1A2533]">
-                    {completedMaestriaLessons} <span className="text-sm text-gray-400 font-normal"> / {totalMaestriaLessons} Clases</span>
+                  <div className="text-[10px] font-semibold text-stone-400 uppercase tracking-widest leading-none">Avance Maestría</div>
+                  <div className="text-2xl font-serif font-bold text-stone-900 dark:text-stone-100 tabular-nums">
+                    {completedMaestriaLessons} <span className="text-sm text-stone-400 font-normal"> / {totalMaestriaLessons} Clases</span>
                   </div>
-                  <div className="w-36 h-1.5 bg-gray-200 rounded-full overflow-hidden mx-auto md:ml-auto">
-                    <div className="h-full bg-red-900" style={{ width: `${totalMaestriaLessons > 0 ? (completedMaestriaLessons / totalMaestriaLessons) * 100 : 0}%` }} />
+                  <div className="w-36 h-1.5 bg-stone-200 dark:bg-stone-800 rounded-full overflow-hidden mx-auto md:ml-auto">
+                    <div className="h-full bg-red-700 dark:bg-rose-500 rounded-full" style={{ width: `${totalMaestriaLessons > 0 ? (completedMaestriaLessons / totalMaestriaLessons) * 100 : 0}%` }} />
                   </div>
                 </div>
               </div>
             ) : (
-              <div className="bg-red-50/40 border border-red-200 rounded-xl p-5 md:p-6 flex items-center gap-4 animate-in zoom-in-95 duration-500 font-sans">
-                <div className="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center text-red-700 shrink-0 select-none">
+              <div className="bg-red-50/50 dark:bg-rose-950/20 border border-red-200 dark:border-rose-800/60 rounded-xl p-5 md:p-6 flex items-center gap-4 animate-in zoom-in-95 duration-500 font-sans">
+                <div className="w-10 h-10 rounded-full bg-red-100 dark:bg-rose-900/50 flex items-center justify-center text-red-700 dark:text-rose-400 shrink-0 select-none">
                   <ShieldCheck size={22} strokeWidth={1.7} />
                 </div>
                 <div className="space-y-0.5">
-                  <div className="text-[10px] font-bold text-red-800 uppercase tracking-widest">Admisión Doctoral</div>
-                  <h4 className="text-sm font-bold text-[#1a2533]">¡Bienvenido al Nivel Doctoral!</h4>
-                  <p className="text-xs text-gray-600 leading-relaxed">
+                  <div className="text-[10px] font-semibold text-red-800 dark:text-rose-300 uppercase tracking-widest">Admisión Doctoral</div>
+                  <h4 className="text-sm font-semibold text-stone-900 dark:text-stone-100">¡Bienvenido al Nivel Doctoral!</h4>
+                  <p className="text-xs text-stone-600 dark:text-stone-400 leading-relaxed">
                     Su trayectoria académica lo ha traído hasta aquí. Usted forma parte de la élite de investigadores autorizados para cursar las ramas doctorales del Seminario.
                   </p>
                 </div>
@@ -478,79 +505,86 @@ function CourseCard({ course, progress, onSelectCourse, isLocked = false }: { ke
   const completedReal = course.lessons.filter(l => progress.completedLessons[l.id]).length;
   const percentage = total > 0 ? Math.round((completedReal / total) * 100) : 0;
   
+  const degreeLabel = course.type === 'LICENCIATURA' 
+    ? 'Licenciatura' 
+    : course.type === 'MAESTRIA'
+    ? 'Maestría'
+    : course.type === 'DOCTORADO'
+    ? 'Doctorado'
+    : 'Curso Académico';
+
+  const durationLabel = course.durationMonths 
+    ? `${course.durationMonths} Meses` 
+    : '3 Meses';
+
   return (
     <motion.button 
-      whileHover={isLocked ? {} : { y: -4, scale: 1.01 }}
-      whileTap={isLocked ? {} : { scale: 0.98 }}
+      whileHover={isLocked ? {} : { y: -2 }}
+      whileTap={isLocked ? {} : { scale: 0.99 }}
       onClick={() => !isLocked && onSelectCourse(course.id)}
       disabled={isLocked}
-      className={`bg-white rounded-3xl overflow-hidden transition-all duration-300 flex flex-col h-full group text-left w-full border ${
+      className={`bg-white dark:bg-stone-900 rounded-lg overflow-hidden transition-all flex flex-col h-full group text-left w-full border ${
         isLocked 
-          ? 'opacity-60 bg-slate-50/80 border-slate-200 cursor-not-allowed select-none' 
-          : 'border-slate-200/90 shadow-sm hover:shadow-xl hover:border-amber-500/40 cursor-pointer'
+          ? 'opacity-60 bg-stone-50 dark:bg-stone-950 border-stone-200 dark:border-stone-800 cursor-not-allowed grayscale' 
+          : 'border-stone-200 dark:border-stone-800 shadow-sm hover:border-[#7F1D1D] hover:shadow-lg cursor-pointer'
       }`}
     >
-      <div className="p-6 md:p-8 flex-1 w-full relative flex flex-col">
-         <div className="text-[10px] md:text-xs font-sans uppercase tracking-widest mb-3 flex items-center justify-between gap-2">
-            <span className={`px-3 py-1 rounded-full font-bold border flex items-center gap-1.5 ${
-              course.type === 'LICENCIATURA' 
-                ? 'text-amber-800 bg-amber-50 border-amber-200/80' 
-                : course.type === 'MAESTRIA' 
-                ? 'text-indigo-800 bg-indigo-50 border-indigo-200/80' 
-                : course.type === 'DOCTORADO' 
-                ? 'text-rose-900 bg-rose-50 border-rose-200/80' 
-                : 'text-amber-900 bg-amber-50/80 border-amber-200/60'
-            }`}>
-              <BookOpen size={12} />
-              {course.type === 'LICENCIATURA' 
-                ? `Licenciatura • ${course.durationMonths || 6} Meses` 
-                : course.type === 'MAESTRIA'
-                ? `Maestría • ${course.durationMonths || 12} Meses`
-                : course.type === 'DOCTORADO'
-                ? `Doctorado • ${course.durationMonths || 18} Meses`
-                : 'Mínimo 3 Meses'}
-            </span>
+      <div className="p-7 md:p-9 flex-1 w-full relative flex flex-col">
+         {/* Unboxed Metadata Line */}
+         <div className="text-[10px] font-bold uppercase tracking-[0.2em] mb-5 flex items-center justify-between gap-2">
+            <div className="flex items-center gap-3">
+              <span className="text-[#7F1D1D] dark:text-amber-500">
+                {degreeLabel}
+              </span>
+              <span className="w-1 h-1 rounded-full bg-stone-300" />
+              <span className="text-stone-400">{durationLabel}</span>
+            </div>
+
             {isLocked && (
-              <span className="flex items-center gap-1 text-amber-900 font-bold bg-amber-100/80 px-2.5 py-1 rounded-full text-[10px] border border-amber-200/80">
-                <Lock size={10} /> BLOQUEADO
+              <span className="flex items-center gap-1.5 text-[#7F1D1D] dark:text-rose-400">
+                <Lock size={12} strokeWidth={2.5} /> Restringido
               </span>
             )}
          </div>
-         <h3 className={`text-xl font-serif font-bold mb-2 transition-colors ${
-           isLocked ? 'text-slate-400' : 'text-slate-900 group-hover:text-amber-700'
+
+         <h3 className={`text-xl md:text-2xl font-serif font-black mb-3 transition-colors leading-tight ${
+           isLocked ? 'text-stone-400' : 'text-[#1A2533] dark:text-stone-100 group-hover:text-[#7F1D1D] dark:group-hover:text-amber-400'
          }`}>{course.title}</h3>
-         <p className="text-slate-500 text-sm leading-relaxed mb-6 font-sans line-clamp-3">
+
+         <p className="text-stone-600 dark:text-stone-400 text-sm leading-relaxed mb-8 font-serif italic line-clamp-3">
            {course.description}
          </p>
          
-          <div className="space-y-2 mb-2 mt-auto">
-           <div className="flex justify-between items-end font-sans">
-              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Progreso ({completedReal.toLocaleString('es-ES')}/{total.toLocaleString('es-ES')} Clases)</span>
-              <span className="text-xs font-bold text-slate-900">{percentage}%</span>
+         <div className="space-y-1.5 mb-2 mt-auto">
+           <div className="flex justify-between items-end font-sans text-xs">
+              <span className="text-stone-400 tabular-nums">Avance: {completedReal} de {total} clases</span>
+              <span className="font-semibold text-stone-800 dark:text-stone-200 tabular-nums">{percentage}%</span>
            </div>
-           <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden p-0.5">
-             <div className={`h-full rounded-full transition-all duration-500 ${
-               course.type === 'LICENCIATURA' ? 'bg-amber-600' : course.type === 'MAESTRIA' ? 'bg-indigo-600' : course.type === 'DOCTORADO' ? 'bg-rose-700' : 'bg-amber-700'
-             }`} style={{ width: `${percentage}%` }}></div>
+           <div className="h-1.5 w-full bg-stone-100 dark:bg-stone-800 rounded-full overflow-hidden">
+             <div 
+               className="h-full rounded-full transition-all duration-500 bg-[#D1B17F]"
+               style={{ width: `${percentage}%` }}
+             />
            </div>
          </div>
       </div>
       
-      <div className={`border-t p-4 flex justify-between items-center px-6 md:px-8 transition-colors w-full font-sans ${
+      <div className={`border-t p-4 flex justify-between items-center px-6 md:px-7 transition-colors w-full font-sans text-xs ${
         isLocked 
-          ? 'bg-slate-100/50 border-slate-200' 
-          : 'bg-slate-50/70 border-slate-100 group-hover:bg-amber-500/5'
+          ? 'bg-stone-100/60 dark:bg-stone-950 border-stone-200 dark:border-stone-800' 
+          : 'bg-stone-50/60 dark:bg-stone-800/40 border-stone-100 dark:border-stone-800 group-hover:bg-[#D1B17F]/5'
       }`}>
-         <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-            {total.toLocaleString('es-ES')} Clases {isLocked ? 'por habilitar' : '+ Evaluaciones'}
+         <div className="text-stone-400 tabular-nums">
+            {total} Lecciones Oficiales
          </div>
          {isLocked ? (
-           <div className="text-amber-900 text-[10px] md:text-xs leading-none font-bold tracking-widest uppercase flex items-center gap-1">
+           <div className="text-[#7F1D1D] dark:text-rose-400 font-semibold tracking-wider uppercase flex items-center gap-1">
              Requisitos Previos <Lock size={12} />
            </div>
          ) : (
-           <div className="flex items-center gap-2 text-slate-800 group-hover:text-amber-800 font-bold text-xs uppercase tracking-wider transition-all">
-              Ver Módulo <PlayCircle size={16} className="text-amber-600 group-hover:translate-x-1 transition-transform" />
+           <div className="flex items-center gap-1.5 text-stone-800 dark:text-stone-200 group-hover:text-[#7F1D1D] dark:group-hover:text-amber-400 font-semibold transition-colors">
+              <span>Ingresar al Curso</span>
+              <PlayCircle size={15} className="text-[#7F1D1D] dark:text-amber-400 group-hover:translate-x-0.5 transition-transform" />
            </div>
          )}
       </div>

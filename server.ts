@@ -1,4 +1,5 @@
 import express from 'express';
+import http from 'http';
 import path from 'path';
 import { createServer as createViteServer } from 'vite';
 import { GoogleGenAI } from '@google/genai';
@@ -6,6 +7,7 @@ import { GoogleGenAI } from '@google/genai';
 async function startServer() {
   const app = express();
   const PORT = 3000;
+  const httpServer = http.createServer(app);
 
   app.use(express.json({ limit: '10mb' }));
 
@@ -102,7 +104,10 @@ Directrices para tus respuestas:
   // Vite middleware for development
   if (process.env.NODE_ENV !== 'production') {
     const vite = await createViteServer({
-      server: { middlewareMode: true },
+      server: { 
+        middlewareMode: true,
+        hmr: false
+      },
       appType: 'spa',
     });
     app.use(vite.middlewares);
@@ -114,7 +119,7 @@ Directrices para tus respuestas:
     });
   }
 
-  app.listen(PORT, '0.0.0.0', () => {
+  httpServer.listen(PORT, '0.0.0.0', () => {
     console.log(`Servidor iniciado en http://localhost:${PORT}`);
   });
 }

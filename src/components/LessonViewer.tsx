@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { motion } from 'motion/react';
 import { Lesson, Course, UserProgress } from '../types';
 import { FinalExam } from './FinalExam';
 import { ReinforcementVerses } from './ReinforcementVerses';
@@ -8,7 +9,7 @@ import { FormattedContent, VerseContext } from './FormattedContent';
 import { InteractiveCheckpoint } from './InteractiveCheckpoint';
 import { ReadingToolbar } from './ReadingToolbar';
 import { BibleVerseModal } from './BibleVerseModal';
-import { ArrowLeft, BookOpen, CheckCircle2, Clock, Target, ExternalLink, GraduationCap, Sparkles, BookMarked, Compass, ShieldCheck, Quote, Bot } from 'lucide-react';
+import { ArrowLeft, BookOpen, CheckCircle2, Clock, Target, ExternalLink, GraduationCap, Sparkles, BookMarked, Compass, ShieldCheck, Quote } from 'lucide-react';
 
 interface LessonViewerProps {
   key?: string | number;
@@ -84,21 +85,10 @@ export function LessonViewer({ lesson, course, progress, onComplete, onBack, onO
               <button
                 onClick={() => setActiveBibleVerse({ reference: lesson.baseVerse!.reference, text: lesson.baseVerse!.text })}
                 className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded text-xs font-bold bg-[#D1B17F]/20 hover:bg-[#D1B17F]/30 text-[#E0D7C6] border border-[#D1B17F]/40 transition-all font-sans cursor-pointer"
-                title="Abrir versículo en la segunda pantalla de estudio"
+                title="Ver versículo en el visor bíblico"
               >
                 <BookOpen size={14} />
                 <span>{lesson.baseVerse.reference}</span>
-              </button>
-            )}
-            {onOpenAssistant && (
-              <button
-                onClick={onOpenAssistant}
-                className="px-2.5 sm:px-3 py-2 rounded text-[10px] sm:text-xs font-bold uppercase tracking-wider bg-amber-100 hover:bg-amber-200 dark:bg-amber-950/70 dark:hover:bg-amber-900/80 text-amber-900 dark:text-amber-200 border border-amber-300 dark:border-amber-700/80 font-sans transition-all cursor-pointer flex items-center gap-1.5 shadow-2xs"
-                title="Hacer preguntas al Asistente Virtual sobre esta clase"
-              >
-                <Bot size={14} className="text-amber-700 dark:text-amber-400" />
-                <span className="hidden sm:inline">Preguntar al Asistente</span>
-                <span className="sm:hidden">Asistente</span>
               </button>
             )}
             <button 
@@ -137,13 +127,14 @@ export function LessonViewer({ lesson, course, progress, onComplete, onBack, onO
               
               {/* Header metadata */}
               <div className="border-b border-[#E0D7C6]/60 dark:border-slate-800 pb-5">
-                <div className="flex flex-wrap items-center gap-2.5 text-xs font-sans font-bold uppercase tracking-widest text-[#7F1D1D] dark:text-amber-400 mb-3">
-                  <span className="px-2.5 py-1 rounded bg-[#7F1D1D]/10 dark:bg-amber-400/10 border border-[#7F1D1D]/20 dark:border-amber-400/20">
-                    Día {lesson.day} de Estudio
+                <div className="flex items-center gap-2 text-xs font-sans text-stone-500 dark:text-stone-400 mb-2">
+                  <span className="font-semibold text-[#7F1D1D] dark:text-amber-400 uppercase tracking-widest text-[11px]">
+                    Día {lesson.day}
                   </span>
-                  <span className="flex items-center gap-1 text-gray-500 dark:text-slate-400 font-normal">
-                    <Clock size={14} />
-                    {lesson.estimatedMinutes || 45} minutos de formación
+                  <span>·</span>
+                  <span className="flex items-center gap-1">
+                    <Clock size={13} />
+                    {lesson.estimatedMinutes || 45} min de formación
                   </span>
                 </div>
 
@@ -153,14 +144,14 @@ export function LessonViewer({ lesson, course, progress, onComplete, onBack, onO
 
                 {/* Objectives */}
                 {lesson.objectives && lesson.objectives.length > 0 && (
-                  <div className="mt-4 p-4 rounded-lg bg-stone-50/80 dark:bg-slate-800/80 border border-stone-200/80 dark:border-slate-700 font-sans">
-                    <div className="flex items-center gap-1.5 text-xs font-bold text-[#1A2533] dark:text-slate-100 uppercase tracking-wider mb-2">
+                  <div className="mt-4 p-4 rounded-lg bg-stone-50 dark:bg-stone-900 border border-stone-200 dark:border-stone-800 font-sans">
+                    <div className="flex items-center gap-1.5 text-xs font-semibold text-stone-800 dark:text-stone-200 uppercase tracking-wider mb-2">
                       <Target size={14} className="text-[#7F1D1D] dark:text-amber-400" />
                       <span>Objetivos Pedagógicos de la Clase</span>
                     </div>
                     <ul className="space-y-1.5">
                       {lesson.objectives.map((obj, i) => (
-                        <li key={i} className="text-xs md:text-sm text-gray-700 dark:text-slate-300 flex items-start gap-2">
+                        <li key={i} className="text-xs md:text-sm text-stone-700 dark:text-stone-300 flex items-start gap-2">
                           <span className="text-[#7F1D1D] dark:text-amber-400 font-bold mt-0.5">•</span>
                           <span>{obj}</span>
                         </li>
@@ -174,28 +165,32 @@ export function LessonViewer({ lesson, course, progress, onComplete, onBack, onO
               {(() => {
                 const bibleReadingTime = lesson.bibleReadingTimeMinutes || (lesson.bibleReadingPlan?.totalReadingTimeMinutes) || 13;
                 return (
-                  <div className="bg-gradient-to-r from-amber-50 to-amber-100/60 dark:from-amber-950/40 dark:to-slate-900 border border-amber-300/80 dark:border-amber-800/60 rounded-xl p-4 font-sans flex flex-col md:flex-row md:items-center justify-between gap-3 shadow-xs my-1">
+                  <div className="bg-stone-50 dark:bg-stone-900 border border-stone-200 dark:border-stone-800 rounded-lg p-4 font-sans flex flex-col md:flex-row md:items-center justify-between gap-3 shadow-xs my-1">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-lg bg-[#7F1D1D] dark:bg-amber-600 text-white flex items-center justify-center shrink-0 shadow-xs">
-                        <Clock size={20} />
+                      <div className="w-9 h-9 rounded-lg bg-[#7F1D1D] text-amber-200 flex items-center justify-center shrink-0">
+                        <BookOpen size={17} />
                       </div>
                       <div>
                         <div className="flex items-center gap-2 flex-wrap">
-                          <h4 className="text-xs font-bold uppercase tracking-wider text-[#7F1D1D] dark:text-amber-300">Plan de Lectura Bíblica Dirigido</h4>
-                          <span className="bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 text-[10px] font-bold px-2.5 py-0.5 rounded-full border border-emerald-300 dark:border-emerald-800">
-                            ⏱️ Lectura Bíblica ~{bibleReadingTime} min (Límite Máx. 20 min)
+                          <h4 className="text-xs font-semibold uppercase tracking-wider text-stone-900 dark:text-stone-100">
+                            Plan de Lectura Bíblica Dirigido
+                          </h4>
+                          <span className="text-stone-500 text-xs">
+                            · ~{bibleReadingTime} min de lectura (máx. 20 min)
                           </span>
                         </div>
-                        <p className="text-xs text-stone-700 dark:text-amber-100/80 font-medium mt-0.5">
-                          Lectura estructurada para no exceder los 20 minutos de lectura bíblica por clase (Versículo Principal + Complementarios).
+                        <p className="text-xs text-stone-600 dark:text-stone-400 mt-0.5">
+                          Lectura estructurada del texto sagrado: versículo principal y pasajes complementarios de soporte.
                         </p>
                       </div>
                     </div>
                     {lesson.baseVerse && (
-                      <div className="flex items-center gap-2 text-xs font-semibold text-amber-900 dark:text-amber-200 bg-white/90 dark:bg-slate-800/90 px-3 py-1.5 rounded-lg border border-amber-200/90 dark:border-slate-700 shrink-0">
-                        <BookOpen size={14} className="text-[#7F1D1D] dark:text-amber-400" />
-                        <span>Pasaje Principal: <strong>{lesson.baseVerse.reference}</strong></span>
-                      </div>
+                      <button
+                        onClick={() => setActiveBibleVerse({ reference: lesson.baseVerse!.reference, text: lesson.baseVerse!.text })}
+                        className="flex items-center gap-1.5 text-xs font-semibold text-[#7F1D1D] dark:text-amber-400 hover:underline shrink-0 cursor-pointer"
+                      >
+                        <span>Pasaje: <strong>{lesson.baseVerse.reference}</strong></span>
+                      </button>
                     )}
                   </div>
                 );
@@ -206,30 +201,30 @@ export function LessonViewer({ lesson, course, progress, onComplete, onBack, onO
                 <div className="space-y-4 my-2">
                   <div 
                     onClick={() => setActiveBibleVerse({ reference: lesson.baseVerse!.reference, text: lesson.baseVerse!.text })}
-                    className="bg-[#FAF9F6] dark:bg-slate-800/80 border-l-4 border-[#7F1D1D] dark:border-amber-400 p-6 rounded-r-xl shadow-xs hover:shadow-md hover:bg-amber-50/70 dark:hover:bg-slate-800 border border-[#D1B17F]/30 dark:border-slate-700 transition-all cursor-pointer group relative"
-                    title="Haga clic para abrir este versículo en la segunda pantalla de estudio"
+                    className="bg-stone-50/70 dark:bg-stone-900 border-l-2 border-[#7F1D1D] dark:border-amber-400 p-6 rounded-r-lg shadow-xs hover:bg-stone-50 dark:hover:bg-stone-850 border border-stone-200/80 dark:border-stone-800 transition-colors cursor-pointer group relative"
+                    title="Haga clic para consultar este versículo en el visor bíblico"
                   >
                     <div className="flex items-center justify-between text-[#7F1D1D] dark:text-amber-400 mb-3 font-sans">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <BookMarked size={18} />
-                        <span className="text-xs font-bold uppercase tracking-widest">Versículo Principal de la Clase</span>
-                        <span className="text-[10px] font-bold text-amber-900 dark:text-amber-200 bg-amber-100/90 dark:bg-amber-950/80 px-2.5 py-0.5 rounded-full border border-amber-200 dark:border-amber-800">
-                          ~{lesson.baseVerse.readingTimeMinutes || 5} min de lectura
+                        <BookMarked size={16} />
+                        <span className="text-xs font-semibold uppercase tracking-wider">Versículo Principal</span>
+                        <span className="text-xs text-stone-500 dark:text-stone-400">
+                          · ~{lesson.baseVerse.readingTimeMinutes || 5} min de lectura
                         </span>
                       </div>
-                      <span className="text-xs font-bold text-[#7F1D1D] dark:text-amber-300 bg-white dark:bg-slate-900 px-2.5 py-1 rounded-md border border-[#7F1D1D]/20 dark:border-amber-500/30 group-hover:bg-[#7F1D1D] dark:group-hover:bg-amber-600 group-hover:text-white transition-colors flex items-center gap-1 shadow-2xs">
-                        <span>Abrir en Segunda Pantalla</span>
+                      <span className="text-xs font-semibold text-[#7F1D1D] dark:text-amber-300 flex items-center gap-1 group-hover:underline">
+                        <span>Ver pasaje</span>
                         <ExternalLink size={12} />
                       </span>
                     </div>
-                    <p className="text-xl md:text-2xl font-serif italic text-[#1A2533] dark:text-stone-100 mb-3 leading-relaxed">
-                      "{lesson.baseVerse.text}"
+                    <p className="text-xl md:text-2xl font-serif italic text-stone-900 dark:text-stone-100 mb-3 leading-relaxed">
+                      &ldquo;{lesson.baseVerse.text}&rdquo;
                     </p>
-                    <div className="flex items-center justify-between font-sans pt-2 border-t border-[#E0D7C6]/50 dark:border-slate-700">
-                      <span className="text-xs text-gray-500 dark:text-slate-400 italic">
+                    <div className="flex items-center justify-between font-sans pt-2 border-t border-stone-200/60 dark:border-stone-800">
+                      <span className="text-xs text-stone-500 dark:text-stone-400 italic">
                         Texto Bíblico Base para la Exégesis y Doctrina Central
                       </span>
-                      <p className="text-sm font-bold text-[#7F1D1D] dark:text-amber-400 uppercase tracking-widest font-sans">
+                      <p className="text-sm font-semibold text-[#7F1D1D] dark:text-amber-400 uppercase tracking-wider font-sans">
                         — {lesson.baseVerse.reference}
                       </p>
                     </div>
@@ -404,32 +399,6 @@ export function LessonViewer({ lesson, course, progress, onComplete, onBack, onO
               />
             )}
 
-            {/* Ask Virtual Assistant Contextual Banner */}
-            {onOpenAssistant && (
-              <div className="bg-gradient-to-r from-amber-500/10 via-amber-600/10 to-slate-900/10 dark:from-amber-950/40 dark:to-slate-900/80 border border-amber-500/30 rounded-xl p-4 sm:p-5 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-xs my-4">
-                <div className="flex items-center gap-3 text-left">
-                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-600 to-amber-800 text-white flex items-center justify-center shrink-0 shadow-md">
-                    <Bot size={22} />
-                  </div>
-                  <div>
-                    <h4 className="font-bold text-sm text-slate-900 dark:text-amber-200 font-serif">
-                      ¿Tienes dudas o deseas profundizar en esta clase?
-                    </h4>
-                    <p className="text-xs text-stone-600 dark:text-slate-400 mt-0.5">
-                      Consulta a tu Asistente Virtual para aclarar pasajes bíblicos, términos en griego/hebreo o aplicaciones pastorales sobre <em>"{lesson.title}"</em>.
-                    </p>
-                  </div>
-                </div>
-                <button
-                  onClick={onOpenAssistant}
-                  className="px-4 py-2 bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-500 hover:to-amber-600 text-white text-xs font-bold rounded-lg shadow-sm flex items-center gap-2 shrink-0 transition-all cursor-pointer active:scale-95"
-                >
-                  <Bot size={15} />
-                  <span>Preguntar al Asistente</span>
-                </button>
-              </div>
-            )}
-
             {/* Comprehensive Final Exam */}
             {lesson.finalExam && lesson.finalExam.length > 0 ? (
                <div id="final-exam-section" className="mt-8 mb-20 animate-in fade-in duration-700 slide-in-from-bottom-6">
@@ -465,6 +434,35 @@ export function LessonViewer({ lesson, course, progress, onComplete, onBack, onO
             )}
           </div>
         </div>
+
+        {/* Floating Bible Action Button (Positioned above Floating Notes) */}
+        <motion.div 
+          className="fixed bottom-[9rem] right-4 md:bottom-[5.5rem] md:right-6 z-40"
+          initial={{ scale: 0, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ type: 'spring', stiffness: 260, damping: 20, delay: 0.1 }}
+        >
+          <button
+            onClick={() => setActiveBibleVerse({ 
+              reference: lesson.baseVerse?.reference || 'Juan 1:1', 
+              text: lesson.baseVerse?.text 
+            })}
+            className="group relative flex items-center gap-2.5 px-3.5 py-2.5 bg-[#111827] hover:bg-[#182330] text-stone-100 rounded-lg shadow-xl border border-stone-700/90 hover:border-[#D1B17F] transition-all duration-200 cursor-pointer active:scale-95"
+            title="Abrir la Biblia completa y visor de pasajes (cuadro móvil)"
+          >
+            <div className="w-6 h-6 rounded bg-[#7F1D1D] flex items-center justify-center text-amber-200 shrink-0">
+              <BookOpen size={14} />
+            </div>
+            <div className="flex flex-col text-left">
+              <span className="font-serif text-xs font-bold tracking-wide text-stone-100">
+                Biblia
+              </span>
+              <span className="font-sans text-[10px] text-[#D1B17F] font-semibold -mt-0.5">
+                Ventana Móvil
+              </span>
+            </div>
+          </button>
+        </motion.div>
 
         {/* Dedicated Secondary Bible Verse Reader Screen */}
         <BibleVerseModal

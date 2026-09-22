@@ -323,20 +323,11 @@ export function FloatingNotesWidget({
               setIsOpen(true);
               setIsMinimized(false);
             }}
-            className="group relative flex items-center gap-2.5 px-4 py-3 bg-slate-900 hover:bg-slate-800 text-amber-300 rounded-full shadow-2xl border border-amber-500/40 hover:border-amber-400 transition-all duration-300 cursor-pointer active:scale-95"
+            className="group relative flex items-center gap-3 px-5 py-3.5 bg-[#1A2533] hover:bg-black text-white rounded-full shadow-2xl border border-stone-700 transition-all duration-300 cursor-pointer active:scale-95"
             title="Abrir mis notas de clase"
           >
-            <div className="relative">
-              <Edit3 size={19} className="text-amber-400 group-hover:rotate-12 transition-transform duration-300" />
-              {notes.length > 0 && (
-                <span className="absolute -top-2 -right-2 w-4 h-4 rounded-full bg-amber-500 text-slate-950 text-[10px] font-black flex items-center justify-center border border-slate-900 shadow-sm">
-                  {notes.length}
-                </span>
-              )}
-            </div>
-            <span className="font-sans text-xs font-bold uppercase tracking-wider text-amber-200">
-              Notas ({notes.length})
-            </span>
+            <Edit3 size={22} strokeWidth={1.5} className="text-amber-200" />
+            <span className="text-[10px] font-bold uppercase tracking-[0.2em] hidden md:inline">Bitácora de Estudio</span>
           </button>
         </motion.div>
       )}
@@ -348,28 +339,25 @@ export function FloatingNotesWidget({
             initial={{ opacity: 0, y: 30, scale: 0.9 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 30, scale: 0.9 }}
-            className="fixed bottom-20 right-4 md:bottom-6 md:right-6 z-[60] bg-slate-900 text-white border border-amber-500/50 rounded-2xl shadow-2xl p-3 flex items-center gap-3 max-w-xs sm:max-w-md font-sans"
+            className="fixed bottom-20 right-4 md:bottom-6 md:right-6 z-[60] bg-white dark:bg-zinc-900 text-[#1A2533] dark:text-stone-100 border border-stone-200 dark:border-stone-800 rounded shadow-2xl p-4 flex items-center gap-4 font-sans max-w-xs sm:max-w-md"
           >
-            <div className="p-2 bg-amber-500/20 border border-amber-500/40 text-amber-300 rounded-xl shrink-0">
-              <Edit3 size={18} />
+            <div className="p-2 bg-[#FAF9F5] dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-[#7F1D1D] dark:text-amber-500 rounded shrink-0">
+              <Edit3 size={20} strokeWidth={1.5} />
             </div>
             <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2">
-                <span className="text-xs font-bold text-amber-200 truncate">
-                  {activeNote ? activeNote.title : 'Notas'}
-                </span>
-              </div>
-              <p className="text-[11px] text-slate-300 truncate mt-0.5">
-                {activeNote ? (activeNote.content || 'Sin contenido aún') : `${notes.length} notas en cuenta`}
+              <span className="text-[10px] font-black text-[#1A2533] dark:text-stone-100 uppercase tracking-widest truncate block">
+                {activeNote ? activeNote.title : 'Bitácora'}
+              </span>
+              <p className="text-[10px] text-stone-400 uppercase tracking-widest mt-0.5 truncate font-bold">
+                {activeNote ? (activeNote.content || 'Sin contenido') : `${notes.length} Apuntes`}
               </p>
             </div>
-            <div className="flex items-center gap-1.5 shrink-0">
+            <div className="flex items-center gap-2 shrink-0">
               <button
                 onClick={() => setIsMinimized(false)}
-                className="px-2.5 py-1.5 bg-amber-500 hover:bg-amber-400 text-slate-950 rounded-lg font-bold transition-all cursor-pointer flex items-center gap-1 text-xs shadow-md"
+                className="px-3 py-1.5 bg-[#7F1D1D] hover:bg-black text-white rounded text-[9px] font-black uppercase tracking-[0.2em] transition-all cursor-pointer shadow-sm active:scale-95"
               >
-                <ChevronUp size={15} />
-                <span>Restaurar</span>
+                Abrir
               </button>
               <button
                 onClick={() => {
@@ -403,47 +391,44 @@ export function FloatingNotesWidget({
                     height: winPos ? `${winPos.height}px` : undefined,
                   }
             }
-            className={`fixed z-[60] bg-white dark:bg-slate-900 shadow-2xl border border-slate-200 dark:border-slate-800 rounded-2xl flex flex-col font-sans transition-all duration-150 ${
+            className={`fixed z-[60] bg-white dark:bg-zinc-950 shadow-[0_30px_60px_rgba(0,0,0,0.2)] border border-stone-200 dark:border-stone-800 rounded flex flex-col font-sans transition-all duration-150 ${
               isFullScreen
-                ? 'inset-2 sm:inset-6 w-auto h-auto rounded-2xl'
+                ? 'inset-2 sm:inset-6 w-auto h-auto rounded'
                 : !winPos
-                  ? 'inset-x-2 bottom-4 top-14 sm:inset-x-auto sm:top-16 sm:right-4 sm:left-auto sm:bottom-auto sm:w-[520px] sm:max-w-[92vw] sm:h-[600px] sm:max-h-[85vh] rounded-2xl'
+                  ? 'inset-x-2 bottom-4 top-14 sm:inset-x-auto sm:top-16 sm:right-4 sm:left-auto sm:bottom-auto sm:w-[560px] sm:max-w-[92vw] sm:h-[650px] sm:max-h-[85vh] rounded'
                   : ''
             }`}
             onClick={e => e.stopPropagation()}
           >
-            {/* 8-DIRECTION RESIZABLE HANDLES (Desktop only) */}
+            {/* 8-DIRECTION RESIZABLE HANDLES */}
             {!isFullScreen && (
               <div className="hidden sm:block">
                 <div onMouseDown={e => handleResizeStart(e, 'top')} className="absolute -top-1.5 left-3 right-3 h-3 cursor-ns-resize z-30" />
                 <div onMouseDown={e => handleResizeStart(e, 'bottom')} className="absolute -bottom-1.5 left-3 right-3 h-3 cursor-ns-resize z-30" />
                 <div onMouseDown={e => handleResizeStart(e, 'left')} className="absolute top-3 -left-1.5 bottom-3 w-3 cursor-ew-resize z-30" />
                 <div onMouseDown={e => handleResizeStart(e, 'right')} className="absolute top-3 -right-1.5 bottom-3 w-3 cursor-ew-resize z-30" />
-                <div onMouseDown={e => handleResizeStart(e, 'top-left')} className="absolute -top-1.5 -left-1.5 w-4 h-4 cursor-nwse-resize z-30" />
-                <div onMouseDown={e => handleResizeStart(e, 'top-right')} className="absolute -top-1.5 -right-1.5 w-4 h-4 cursor-nesw-resize z-30" />
-                <div onMouseDown={e => handleResizeStart(e, 'bottom-left')} className="absolute -bottom-1.5 -left-1.5 w-4 h-4 cursor-nesw-resize z-30" />
-                <div onMouseDown={e => handleResizeStart(e, 'bottom-right')} className="absolute -bottom-1.5 -right-1.5 w-4 h-4 cursor-nwse-resize z-30" />
               </div>
             )}
 
-            {/* HEADER BAR */}
+            {/* HEADER BAR: Institutional Paper Style */}
             <div 
               onMouseDown={!isFullScreen ? handleHeaderDragStart : undefined}
               onTouchStart={!isFullScreen ? handleHeaderDragStart : undefined}
-              className={`bg-slate-900 border-slate-800 text-white px-3.5 py-3 border-b flex items-center justify-between shrink-0 select-none rounded-t-2xl ${
+              className={`bg-white dark:bg-stone-900 border-stone-200 dark:border-stone-800 text-[#1A2533] dark:text-stone-100 px-5 py-4 border-b flex items-center justify-between shrink-0 select-none relative ${
                 !isFullScreen ? 'cursor-grab active:cursor-grabbing' : ''
               }`}
             >
-              <div className="flex items-center gap-2.5 min-w-0">
-                <div className="p-1.5 bg-amber-500/20 text-amber-400 rounded-lg shrink-0 border border-amber-500/30">
-                  <FileText size={17} />
+              <div className="absolute top-0 left-0 w-full h-1 bg-[#1A2533]" />
+              <div className="flex items-center gap-4 min-w-0">
+                <div className="p-2 bg-[#FAF9F5] dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-[#1A2533] dark:text-amber-500 rounded shrink-0">
+                  <FileText size={20} strokeWidth={1.5} />
                 </div>
                 <div className="min-w-0">
-                  <h3 className="text-xs sm:text-sm font-bold text-white truncate flex items-center gap-1.5">
-                    Mis Notas de Clase
+                  <h3 className="text-sm font-serif font-black text-[#1A2533] dark:text-stone-100 uppercase tracking-tight truncate">
+                    Bitácora Académica
                   </h3>
-                  <p className="text-[10px] text-slate-400 truncate">
-                    {userName} • {notes.length} {notes.length === 1 ? 'nota' : 'notas'} guardadas
+                  <p className="text-[10px] font-bold text-stone-400 uppercase tracking-widest mt-0.5 truncate">
+                    {userName} • {notes.length} Apuntes Registrados
                   </p>
                 </div>
               </div>
@@ -452,82 +437,83 @@ export function FloatingNotesWidget({
                 {/* New Note Button */}
                 <button
                   onClick={handleCreateNew}
-                  className="px-2.5 py-1 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-lg text-xs flex items-center gap-1 transition-all cursor-pointer shadow-xs mr-1"
-                  title="Crear una nueva nota"
+                  className="px-4 py-2 bg-[#7F1D1D] hover:bg-black text-white font-black rounded text-[9px] uppercase tracking-[0.2em] flex items-center gap-2 transition-all cursor-pointer shadow-sm mr-2 active:scale-95"
+                  title="Registrar nueva nota"
                 >
-                  <Plus size={14} />
-                  <span className="hidden sm:inline">Nueva</span>
+                  <Plus size={14} strokeWidth={2.5} />
+                  <span className="hidden sm:inline">Nuevo Apunte</span>
                 </button>
 
                 {/* Sidebar Toggle Button */}
                 <button
                   onClick={() => setShowSidebar(prev => !prev)}
-                  className={`p-1.5 rounded-lg transition-colors cursor-pointer ${
+                  className={`p-2 rounded transition-colors cursor-pointer ${
                     showSidebar
-                      ? 'bg-slate-800 text-amber-300'
-                      : 'text-slate-400 hover:text-white hover:bg-slate-800'
+                      ? 'bg-stone-100 dark:bg-stone-800 text-[#7F1D1D] dark:text-amber-500'
+                      : 'text-stone-400 hover:text-[#1A2533] dark:hover:text-white hover:bg-stone-50 dark:hover:bg-stone-800'
                   }`}
-                  title={showSidebar ? "Ocultar lista de notas para enfocar el editor" : "Mostrar lista de notas"}
+                  title={showSidebar ? "Enfocar Escritorio" : "Mostrar Archivo"}
                 >
-                  {showSidebar ? <PanelLeftClose size={16} /> : <PanelLeftOpen size={16} />}
+                  {showSidebar ? <PanelLeftClose size={18} /> : <PanelLeftOpen size={18} />}
                 </button>
 
                 {/* Minimize Button */}
                 <button
                   onClick={() => setIsMinimized(true)}
-                  className="p-1.5 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-colors cursor-pointer"
-                  title="Minimizar notas"
+                  className="p-2 text-stone-400 hover:text-[#1A2533] hover:bg-stone-50 dark:hover:bg-stone-800 rounded transition-colors cursor-pointer"
+                  title="Minimizar"
                 >
-                  <Minus size={16} />
+                  <Minus size={18} />
                 </button>
 
                 {/* Fullscreen Button */}
                 <button
                   onClick={() => setIsFullScreen(prev => !prev)}
-                  className="p-1.5 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-colors cursor-pointer"
-                  title={isFullScreen ? 'Restaurar tamaño normal' : 'Maximizar a pantalla completa'}
+                  className="p-2 text-stone-400 hover:text-[#1A2533] hover:bg-stone-50 dark:hover:bg-stone-800 rounded transition-colors cursor-pointer"
+                  title={isFullScreen ? 'Restaurar' : 'Maximizar'}
                 >
-                  {isFullScreen ? <Minimize2 size={16} /> : <Maximize2 size={16} />}
+                  {isFullScreen ? <Minimize2 size={18} /> : <Maximize2 size={18} />}
                 </button>
 
                 {/* Close Button */}
                 <button
                   onClick={() => setIsOpen(false)}
-                  className="p-1.5 text-slate-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors cursor-pointer ml-0.5"
-                  title="Cerrar notas"
+                  className="p-2 text-stone-400 hover:text-[#7F1D1D] hover:bg-[#7F1D1D]/5 rounded transition-colors cursor-pointer ml-1"
+                  title="Cerrar Bitácora"
                 >
-                  <X size={16} />
+                  <X size={20} />
                 </button>
               </div>
             </div>
 
             {/* BODY: SPLIT VIEW OR FULL EDITOR */}
-            <div className="flex-1 flex overflow-hidden min-h-0 rounded-b-2xl bg-slate-50 dark:bg-slate-950">
+            <div className="flex-1 flex overflow-hidden min-h-0 bg-white dark:bg-zinc-950">
               
               {/* LEFT SIDEBAR: NOTE LIST */}
               {showSidebar && (
-                <div className={`w-full sm:w-52 md:w-56 border-r flex flex-col shrink-0 bg-white dark:bg-slate-900 border-slate-200/80 dark:border-slate-800/80 ${
+                <div className={`w-full sm:w-64 md:w-72 border-r flex flex-col shrink-0 bg-[#FAF9F5] dark:bg-stone-900/50 border-stone-200 dark:border-stone-800 ${
                   activeNoteId ? 'hidden sm:flex' : 'flex'
                 }`}>
                   {/* Search bar */}
-                  <div className="p-2.5 border-b bg-slate-50/50 dark:bg-slate-900 border-slate-200 dark:border-slate-800">
+                  <div className="p-4 border-b border-stone-200 dark:border-stone-800">
                     <div className="relative">
-                      <Search size={13} className="absolute left-2.5 top-2.5 text-slate-400" />
+                      <Search size={14} className="absolute left-3 top-2.5 text-stone-400" />
                       <input
                         type="text"
                         value={searchQuery}
                         onChange={e => setSearchQuery(e.target.value)}
-                        placeholder="Buscar notas..."
-                        className="w-full pl-8 pr-2.5 py-1.5 text-xs rounded-lg outline-none transition-colors bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-200 focus:border-amber-500/60"
+                        placeholder="Buscar en el archivo..."
+                        className="w-full pl-9 pr-3 py-2 text-[10px] font-bold uppercase tracking-widest rounded bg-white dark:bg-stone-950 border border-stone-300 dark:border-stone-800 text-stone-800 dark:text-stone-200 outline-none focus:border-[#7F1D1D] transition-colors"
                       />
                     </div>
                   </div>
 
                   {/* Notes List */}
-                  <div className="flex-1 overflow-y-auto custom-scrollbar p-1.5 space-y-1">
+                  <div className="flex-1 overflow-y-auto custom-scrollbar p-3 space-y-2">
                     {filteredNotes.length === 0 ? (
-                      <div className="p-4 text-center text-slate-400 dark:text-slate-500 text-xs">
-                        No hay notas que coincidan.
+                      <div className="p-8 text-center space-y-2">
+                        <Search size={24} className="mx-auto text-stone-200" />
+                        <p className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">Sin resultados</p>
                       </div>
                     ) : (
                       filteredNotes.map(n => {
@@ -540,27 +526,27 @@ export function FloatingNotesWidget({
                               setTitle(n.title);
                               setContent(n.content);
                             }}
-                            className={`p-2.5 rounded-xl cursor-pointer transition-all border ${
+                            className={`p-4 rounded border transition-all cursor-pointer ${
                               isActive
-                                ? 'bg-amber-50 dark:bg-amber-950/40 border-amber-300 dark:border-amber-700/60 shadow-2xs'
-                                : 'bg-transparent border-transparent hover:bg-slate-100 dark:hover:bg-slate-800/60'
+                                ? 'bg-white dark:bg-stone-800 border-[#7F1D1D] shadow-sm relative after:absolute after:left-0 after:top-0 after:bottom-0 after:w-1 after:bg-[#7F1D1D]'
+                                : 'bg-transparent border-transparent hover:bg-white hover:border-stone-200'
                             }`}
                           >
-                            <h4 className={`text-xs font-bold truncate ${
-                              isActive ? 'text-amber-900 dark:text-amber-200' : 'text-slate-800 dark:text-slate-200'
+                            <h4 className={`text-xs font-serif font-black mb-1 truncate ${
+                              isActive ? 'text-[#7F1D1D] dark:text-amber-500' : 'text-[#1A2533] dark:text-stone-200'
                             }`}>
                               {n.title || 'Sin título'}
                             </h4>
-                            <p className="text-[11px] text-slate-500 dark:text-slate-400 truncate mt-0.5">
-                              {n.content || 'Nota vacía...'}
+                            <p className="text-[10px] text-stone-500 dark:text-stone-400 truncate line-clamp-1 mb-2">
+                              {n.content || 'Sin contenido adicional...'}
                             </p>
-                            <div className="flex items-center justify-between gap-1 mt-1.5">
-                              <span className="text-[9px] text-slate-400 flex items-center gap-1 font-mono">
-                                <Clock size={9} />
+                            <div className="flex items-center justify-between">
+                              <span className="text-[9px] font-black text-stone-400 uppercase tracking-widest flex items-center gap-1.5">
+                                <Clock size={10} />
                                 {new Date(n.updatedAt).toLocaleDateString('es-ES', { month: 'short', day: 'numeric' })}
                               </span>
                               {n.lessonTitle && (
-                                <span className="text-[9px] text-amber-700 dark:text-amber-300 bg-amber-100/80 dark:bg-amber-950/80 px-1.5 py-0.2 rounded truncate max-w-[100px]">
+                                <span className="text-[8px] font-black text-[#7F1D1D] dark:text-amber-500 bg-[#7F1D1D]/5 dark:bg-amber-950/40 px-1.5 py-0.5 rounded uppercase tracking-tighter truncate max-w-[80px]">
                                   {n.lessonTitle}
                                 </span>
                               )}
@@ -574,56 +560,51 @@ export function FloatingNotesWidget({
               )}
 
               {/* RIGHT EDITOR */}
-              <div className={`flex-1 min-w-0 flex flex-col bg-white dark:bg-slate-900 ${
+              <div className={`flex-1 min-w-0 flex flex-col bg-white dark:bg-zinc-950 ${
                 !activeNoteId && showSidebar ? 'hidden sm:flex' : 'flex'
               }`}>
                 {activeNote ? (
                   <div className="flex-1 flex flex-col h-full overflow-hidden min-w-0">
                     {/* Editor Toolbar */}
-                    <div className="px-3.5 py-2 border-b bg-slate-50/70 dark:bg-slate-900/90 border-slate-200 dark:border-slate-800 flex items-center justify-between gap-2 shrink-0">
-                      <div className="flex items-center gap-2 min-w-0">
+                    <div className="px-5 py-3 border-b bg-[#FAF9F5] dark:bg-stone-900 border-stone-200 dark:border-stone-800 flex items-center justify-between gap-3 shrink-0">
+                      <div className="flex items-center gap-3 min-w-0">
                         {showSidebar && (
                           <button
                             onClick={() => setActiveNoteId(null)}
-                            className="text-xs text-amber-600 dark:text-amber-400 font-bold items-center gap-1 cursor-pointer sm:hidden flex"
+                            className="text-[9px] font-black uppercase tracking-[0.2em] text-[#7F1D1D] dark:text-amber-500 flex items-center gap-1.5 cursor-pointer sm:hidden"
                           >
-                            ← Lista
+                            ← Volver al Archivo
                           </button>
                         )}
-                        <span className="text-[11px] text-slate-400 font-medium truncate">
-                          {isSaving ? (
-                            <span className="text-amber-500 font-bold flex items-center gap-1 animate-pulse">
-                              <Sparkles size={11} /> Guardando...
-                            </span>
-                          ) : (
-                            <span className="text-emerald-600 dark:text-emerald-400 font-bold flex items-center gap-1">
-                              <Check size={11} /> Guardado
-                            </span>
-                          )}
-                        </span>
+                        <div className="flex items-center gap-2">
+                          <div className={`w-2 h-2 rounded-full ${isSaving ? 'bg-amber-500 animate-pulse' : 'bg-emerald-500'}`} />
+                          <span className="text-[9px] font-black text-stone-400 uppercase tracking-widest">
+                            {isSaving ? 'Sincronizando...' : 'Anotación Acreditada'}
+                          </span>
+                        </div>
                       </div>
 
-                      <div className="flex items-center gap-1 text-xs shrink-0">
+                      <div className="flex items-center gap-2 shrink-0">
                         <button
                           onClick={() => handleCopy(`${title}\n\n${content}`, activeNote.id)}
-                          className="p-1.5 text-slate-500 hover:text-slate-900 dark:hover:text-white rounded hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors cursor-pointer"
-                          title="Copiar nota al portapapeles"
+                          className="p-2 text-stone-400 hover:text-[#1A2533] dark:hover:text-white rounded hover:bg-white dark:hover:bg-stone-800 transition-colors cursor-pointer border border-transparent hover:border-stone-200"
+                          title="Copiar contenido"
                         >
-                          {copiedId === activeNote.id ? <Check size={14} className="text-emerald-500" /> : <Copy size={14} />}
+                          {copiedId === activeNote.id ? <Check size={16} className="text-emerald-600" /> : <Copy size={16} />}
                         </button>
 
                         {isDeletingId === activeNote.id ? (
-                          <div className="flex items-center gap-1 bg-red-500/10 border border-red-500/30 px-1.5 py-0.5 rounded-lg">
-                            <span className="text-[10px] text-red-500 font-bold">¿Borrar?</span>
+                          <div className="flex items-center gap-2 bg-[#FAF9F5] border border-stone-300 px-3 py-1 rounded">
+                            <span className="text-[9px] text-[#7F1D1D] font-black uppercase tracking-widest">¿Eliminar?</span>
                             <button
                               onClick={() => handleDelete(activeNote.id)}
-                              className="px-1.5 py-0.5 bg-red-600 text-white rounded text-[10px] font-bold"
+                              className="px-2 py-0.5 bg-[#7F1D1D] text-white rounded text-[9px] font-black uppercase tracking-widest"
                             >
                               Sí
                             </button>
                             <button
                               onClick={() => setIsDeletingId(null)}
-                              className="px-1.5 py-0.5 bg-slate-700 text-white rounded text-[10px]"
+                              className="px-2 py-0.5 bg-stone-100 text-stone-600 rounded text-[9px] font-black uppercase tracking-widest"
                             >
                               No
                             </button>
@@ -631,54 +612,55 @@ export function FloatingNotesWidget({
                         ) : (
                           <button
                             onClick={() => setIsDeletingId(activeNote.id)}
-                            className="p-1.5 text-slate-400 hover:text-red-500 rounded hover:bg-red-50 dark:hover:bg-red-950/40 transition-colors cursor-pointer"
-                            title="Eliminar nota"
+                            className="p-2 text-stone-400 hover:text-[#7F1D1D] rounded hover:bg-[#7F1D1D]/5 transition-colors cursor-pointer border border-transparent hover:border-[#7F1D1D]/20"
+                            title="Eliminar del archivo"
                           >
-                            <Trash2 size={14} />
+                            <Trash2 size={16} />
                           </button>
                         )}
                       </div>
                     </div>
 
                     {/* Editor Form Inputs */}
-                    <div className="p-4 sm:p-5 flex-1 min-w-0 flex flex-col gap-3 overflow-y-auto custom-scrollbar">
-                      <input
-                        type="text"
-                        value={title}
-                        onChange={e => {
-                          setTitle(e.target.value);
-                          handleAutoSave(e.target.value, content);
-                        }}
-                        placeholder="Título de la nota..."
-                        className="w-full text-lg sm:text-xl font-bold font-serif text-slate-900 dark:text-slate-100 bg-transparent outline-none border-b border-slate-200/60 dark:border-slate-800 focus:border-amber-500/80 pb-2 transition-colors min-w-0"
-                      />
+                    <div className="p-6 sm:p-10 flex-1 min-w-0 flex flex-col gap-6 overflow-y-auto custom-scrollbar">
+                      <div className="space-y-4">
+                        <input
+                          type="text"
+                          value={title}
+                          onChange={e => {
+                            setTitle(e.target.value);
+                            handleAutoSave(e.target.value, content);
+                          }}
+                          placeholder="Encabezado del Apunte..."
+                          className="w-full text-2xl sm:text-3xl font-serif font-black text-[#1A2533] dark:text-stone-100 bg-transparent outline-none border-b border-stone-200 dark:border-stone-800 focus:border-[#7F1D1D] pb-3 transition-colors min-w-0"
+                        />
 
-                      {(() => {
-                        const linkedTitle = activeNote?.lessonTitle || (activeNote?.lessonId === lessonId ? activeLessonTitle : undefined) || activeLessonTitle;
-                        const targetCId = activeNote?.courseId || courseId;
-                        const targetLId = activeNote?.lessonId || lessonId;
+                        {(() => {
+                          const linkedTitle = activeNote?.lessonTitle || (activeNote?.lessonId === lessonId ? activeLessonTitle : undefined) || activeLessonTitle;
+                          const targetCId = activeNote?.courseId || courseId;
+                          const targetLId = activeNote?.lessonId || lessonId;
 
-                        if (!linkedTitle && !targetLId) return null;
+                          if (!linkedTitle && !targetLId) return null;
 
-                        return (
-                          <button
-                            type="button"
-                            onClick={() => {
-                              if (targetLId && onNavigateToLesson) {
-                                onNavigateToLesson(targetCId || '', targetLId);
-                              }
-                            }}
-                            className="group flex items-center gap-1.5 text-xs font-bold text-amber-900 dark:text-amber-200 bg-amber-50 dark:bg-amber-950/60 hover:bg-amber-100 dark:hover:bg-amber-900/80 border border-amber-300/80 dark:border-amber-800/80 px-2.5 py-1 rounded-lg w-fit max-w-full transition-all cursor-pointer shadow-2xs shrink-0"
-                            title="Ir a esta clase"
-                          >
-                            <BookOpen size={12} className="text-amber-700 dark:text-amber-400 shrink-0" />
-                            <span className="truncate max-w-[240px] sm:max-w-[340px]">
-                              Clase: <span className="underline decoration-amber-500/60">{linkedTitle || 'Ver lección'}</span>
-                            </span>
-                            <ExternalLink size={11} className="text-amber-600 dark:text-amber-400 opacity-70 group-hover:opacity-100 shrink-0" />
-                          </button>
-                        );
-                      })()}
+                          return (
+                            <button
+                              type="button"
+                              onClick={() => {
+                                if (targetLId && onNavigateToLesson) {
+                                  onNavigateToLesson(targetCId || '', targetLId);
+                                }
+                              }}
+                              className="group flex items-center gap-2.5 text-[10px] font-black text-[#1A2533] dark:text-stone-200 bg-[#FAF9F5] dark:bg-stone-900 hover:bg-white dark:hover:bg-stone-800 border border-stone-300 dark:border-stone-800 px-4 py-2 rounded uppercase tracking-widest w-fit max-w-full transition-all cursor-pointer shadow-sm active:scale-95 shrink-0"
+                            >
+                              <BookOpen size={14} className="text-[#7F1D1D] dark:text-amber-500 shrink-0" strokeWidth={2.5} />
+                              <span className="truncate">
+                                Vinculado: <span className="underline decoration-[#7F1D1D]/40 font-black">{linkedTitle || 'Ver lección'}</span>
+                              </span>
+                              <ExternalLink size={12} className="text-stone-400 group-hover:text-[#7F1D1D] shrink-0" />
+                            </button>
+                          );
+                        })()}
+                      </div>
 
                       <textarea
                         value={content}
@@ -686,26 +668,38 @@ export function FloatingNotesWidget({
                           setContent(e.target.value);
                           handleAutoSave(title, e.target.value);
                         }}
-                        placeholder="Escriba aquí sus anotaciones, pasajes bíblicos o puntos clave de la lección..."
-                        className="w-full flex-1 min-h-[260px] font-sans text-sm sm:text-base leading-relaxed text-slate-800 dark:text-slate-200 bg-transparent outline-none resize-none custom-scrollbar placeholder:text-slate-400 dark:placeholder:text-slate-600 min-w-0"
+                        placeholder="Redacte aquí sus observaciones exegéticas, notas de clase o citas bíblicas de interés..."
+                        className="w-full flex-1 min-h-[300px] font-serif italic text-base sm:text-lg leading-relaxed text-stone-700 dark:text-stone-300 bg-transparent outline-none resize-none custom-scrollbar placeholder:text-stone-300 dark:placeholder:text-stone-700 min-w-0"
                       />
                     </div>
 
                     {/* Footer word count info */}
-                    <div className="px-4 py-2 border-t text-[11px] flex items-center justify-between shrink-0 bg-slate-50/80 dark:bg-slate-900/80 border-slate-200 dark:border-slate-800 text-slate-400">
-                      <span>{wordCount} {wordCount === 1 ? 'palabra' : 'palabras'} • {content.length} caracteres</span>
-                      <span className="text-[10px] text-slate-400">Autoguardado en tiempo real</span>
+                    <div className="px-6 py-3 border-t text-[9px] font-black uppercase tracking-[0.2em] flex items-center justify-between shrink-0 bg-[#FAF9F5] dark:bg-stone-900 border-stone-200 dark:border-stone-800 text-stone-400">
+                      <div className="flex items-center gap-4">
+                        <span>{wordCount} Unidades Léxicas</span>
+                        <span>{content.length} Caracteres</span>
+                      </div>
+                      <span className="flex items-center gap-1.5">
+                        <Check size={12} className="text-emerald-600" strokeWidth={3} />
+                        Sincronización Permanente Activa
+                      </span>
                     </div>
                   </div>
                 ) : (
-                  <div className="flex-1 flex flex-col items-center justify-center p-8 text-center text-slate-400">
-                    <FileText size={32} className="text-slate-300 dark:text-slate-700 mb-2" />
-                    <p className="text-xs">Selecciona o crea una nota para comenzar a escribir.</p>
+                  <div className="flex-1 flex flex-col items-center justify-center p-12 text-center space-y-6">
+                    <div className="w-24 h-24 rounded bg-[#FAF9F5] dark:bg-stone-900 flex items-center justify-center text-stone-200 dark:text-stone-800 border border-stone-100 dark:border-stone-800">
+                      <Edit3 size={48} strokeWidth={1} />
+                    </div>
+                    <div className="max-w-xs space-y-2">
+                      <h4 className="font-serif font-black text-xl text-[#1A2533] dark:text-stone-100 uppercase tracking-tight">Archivo de Apuntes</h4>
+                      <p className="text-[11px] font-bold text-stone-400 uppercase tracking-widest leading-relaxed">Seleccione un registro del archivo o inicie una nueva bitácora de estudio para este módulo.</p>
+                    </div>
                     <button
                       onClick={handleCreateNew}
-                      className="mt-3 px-3 py-1.5 bg-amber-500 text-slate-950 font-bold rounded-lg text-xs hover:bg-amber-400 transition-colors cursor-pointer"
+                      className="px-8 py-3 bg-[#7F1D1D] hover:bg-black text-white font-black rounded text-[10px] uppercase tracking-[0.2em] shadow-lg transition-all cursor-pointer active:scale-95 flex items-center gap-3"
                     >
-                      + Crear Nota
+                      <Plus size={16} strokeWidth={3} />
+                      Nueva Bitácora
                     </button>
                   </div>
                 )}

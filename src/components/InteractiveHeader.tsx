@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Home, BookOpen, Edit3, Calendar, Award, Moon, Sun, Flame, CheckCircle2, User, Settings, LogOut, ChevronDown, Sparkles, Download, ZoomIn, ZoomOut, Bot } from 'lucide-react';
+import { Home, BookOpen, Edit3, Calendar, Award, Moon, Sun, Flame, CheckCircle2, User, Settings, LogOut, ChevronDown, Sparkles, Download, ZoomIn, ZoomOut, Bot, GraduationCap } from 'lucide-react';
 import { User as FirebaseUser } from 'firebase/auth';
 import { UserProgress } from '../types';
 import { motion, AnimatePresence } from 'motion/react';
@@ -45,11 +45,11 @@ export function InteractiveHeader({
   const completedLessonsCount = Object.keys(progress.completedLessons || {}).length;
 
   const navTabs = [
-    { id: 'home', label: 'Inicio', icon: Home, badge: null },
-    { id: 'courses', label: 'Cursos & Malla', icon: BookOpen, badge: '29' },
-    { id: 'academic', label: 'Biblia & Exégesis', icon: Edit3, badge: 'RVR60' },
-    { id: 'calendar', label: 'Cronograma', icon: Calendar, badge: '3M' },
-    { id: 'grades', label: 'Kardex', icon: Award, badge: 'Boleta' },
+    { id: 'home', label: 'Inicio', icon: Home },
+    { id: 'courses', label: 'Cursos & Malla', icon: BookOpen },
+    { id: 'academic', label: 'Biblia & Exégesis', icon: Edit3 },
+    { id: 'calendar', label: 'Cronograma', icon: Calendar },
+    { id: 'grades', label: 'Kardex', icon: Award },
   ] as const;
 
   const handleTabClick = (tabId: 'home' | 'courses' | 'academic' | 'calendar' | 'grades') => {
@@ -58,28 +58,29 @@ export function InteractiveHeader({
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full transition-all duration-300 bg-[#0F172A]/95 dark:bg-[#0A0F1D]/95 backdrop-blur-2xl border-b border-slate-700/80 shadow-2xl">
-      <div className="w-full px-2 sm:px-4 md:px-6 lg:px-8 py-2.5 sm:py-3 flex items-center justify-between text-white">
+    <header className="sticky top-0 z-50 w-full bg-white dark:bg-zinc-950 text-[#1A2533] dark:text-stone-100 border-b border-stone-200 dark:border-stone-800 shadow-sm">
+      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
         
-        {/* Left: Brand Logo Pill */}
+        {/* Left: Brand Identity */}
         <button
           onClick={() => handleTabClick('home')}
-          className="flex items-center gap-2 sm:gap-2.5 px-1.5 sm:px-2 py-1.5 rounded-2xl hover:bg-slate-800/80 transition-all cursor-pointer group shrink-0 active:scale-95"
+          className="flex items-center gap-3 py-1 text-left transition-opacity hover:opacity-90 cursor-pointer group shrink-0"
         >
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-red-700 via-amber-800 to-amber-600 flex items-center justify-center shadow-md border border-amber-500/40 group-hover:scale-105 transition-transform">
-            <span className="font-serif font-extrabold text-white text-xs tracking-widest leading-none">STD</span>
+          <div className="w-10 h-10 rounded bg-[#7F1D1D] flex items-center justify-center text-amber-50 shadow-sm border border-[#7F1D1D]/10">
+            <GraduationCap size={22} strokeWidth={1.5} />
           </div>
-          <div className="flex flex-col text-left leading-tight">
-            <span className="text-xs font-bold tracking-tight text-white font-sans flex items-center gap-1">
-              SEMINARIO
-              <span className="text-[8px] bg-amber-500/20 text-amber-300 border border-amber-500/30 px-1 py-0.2 rounded uppercase tracking-wider font-semibold">DIGITAL</span>
+          <div className="flex flex-col text-left leading-none">
+            <span className="font-serif tracking-[0.1em] text-sm font-black text-[#1A2533] dark:text-stone-100 uppercase">
+              Seminario Digital
             </span>
-            <span className="text-[9px] font-sans text-slate-400 hidden sm:inline">Campus Teológico</span>
+            <span className="font-sans text-[10px] tracking-[0.2em] text-[#7F1D1D] dark:text-amber-500 uppercase font-bold mt-1">
+              Campus Teológico
+            </span>
           </div>
         </button>
 
-        {/* Center: Main Interactive Floating Tab Bar (Desktop only, mobile uses Bottom Nav) */}
-        <nav className="hidden md:flex items-center gap-1.5 lg:gap-3 px-1 py-1 justify-center flex-1">
+        {/* Center: Main Interactive Tab Bar */}
+        <nav className="hidden md:flex items-center gap-1 lg:gap-2 px-2 py-1 justify-center flex-1">
           {navTabs.map((tab) => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.id;
@@ -88,173 +89,124 @@ export function InteractiveHeader({
               <button
                 key={tab.id}
                 onClick={() => handleTabClick(tab.id)}
-                className={`relative flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 lg:px-5 py-2 sm:py-2.5 rounded-xl sm:rounded-2xl text-xs sm:text-sm font-bold font-sans transition-all duration-200 cursor-pointer whitespace-nowrap active:scale-95 ${
+                className={`relative flex items-center gap-2 px-3 lg:px-4 py-2 rounded text-xs lg:text-[11px] font-bold uppercase tracking-widest transition-all cursor-pointer whitespace-nowrap ${
                   isActive
-                    ? 'text-white'
-                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
+                    ? 'text-[#7F1D1D] dark:text-amber-400'
+                    : 'text-stone-500 hover:text-[#1A2533] dark:hover:text-white hover:bg-stone-50 dark:hover:bg-stone-900'
                 }`}
               >
+                <Icon size={16} strokeWidth={isActive ? 2.5 : 2} className={isActive ? 'text-[#7F1D1D]' : 'text-stone-400 shrink-0'} />
+                <span className="hidden lg:inline">{tab.label}</span>
+                <span className="inline lg:hidden">{tab.id === 'home' ? 'Inicio' : tab.id === 'courses' ? 'Cursos' : tab.id === 'academic' ? 'Biblia' : tab.id === 'calendar' ? 'Plan' : 'Kardex'}</span>
+                
                 {isActive && (
-                  <motion.div
-                    layoutId="activeTabBackground"
-                    className="absolute inset-0 bg-gradient-to-r from-amber-600 to-amber-700 rounded-xl sm:rounded-2xl shadow-md border border-amber-500/40"
-                    transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                  <motion.div 
+                    layoutId="activeHeaderTab"
+                    className="absolute -bottom-[13px] left-0 right-0 h-0.5 bg-[#7F1D1D]"
+                    transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                   />
                 )}
-                
-                <span className="relative z-10 flex items-center gap-1.5 sm:gap-2">
-                  <Icon size={16} className={isActive ? 'text-amber-200' : 'text-slate-400 shrink-0'} />
-                  <span className="hidden xl:inline">{tab.label}</span>
-                  <span className="inline xl:hidden">{tab.id === 'home' ? 'Inicio' : tab.id === 'courses' ? 'Cursos' : tab.id === 'academic' ? 'Biblia' : tab.id === 'calendar' ? 'Plan' : 'Kardex'}</span>
-
-                  {tab.badge && (
-                    <span className={`hidden md:inline-flex text-[9px] px-1.5 py-0.2 rounded-md font-mono ${
-                      isActive ? 'bg-amber-900/60 text-amber-200 border border-amber-400/40' : 'bg-slate-800 text-slate-400'
-                    }`}>
-                      {tab.badge}
-                    </span>
-                  )}
-                </span>
               </button>
             );
           })}
         </nav>
 
-        {/* Right: Quick Controls, Streak & User Profile */}
-        <div className="flex items-center gap-2 shrink-0">
+        {/* Right: Quick Controls & User Profile */}
+        <div className="flex items-center gap-3 shrink-0">
           
-          {/* Streak & Progress Interactive Pill */}
-          <div className="relative">
-            <button
-              onClick={() => setShowProgressTooltip(prev => !prev)}
-              className="hidden lg:flex items-center gap-2 bg-slate-900/90 hover:bg-slate-800 border border-slate-700/80 px-3 py-1.5 rounded-2xl text-xs font-bold text-slate-200 transition-all cursor-pointer active:scale-95"
-              title="Ver progreso de estudios"
-            >
-              <Flame size={15} className="text-amber-400 fill-amber-400/20 animate-pulse" />
-              <span className="text-amber-400 font-mono">{completedLessonsCount} Clases</span>
-            </button>
+          <div className="flex items-center gap-1 border-r border-stone-200 dark:border-stone-800 pr-3 mr-1">
+            {/* Zoom Controls */}
+            <div className="hidden lg:flex items-center rounded-md bg-stone-100 dark:bg-stone-900 border border-stone-200 dark:border-stone-800 p-0.5">
+              <button onClick={onZoomOut} className="p-1.5 hover:bg-white dark:hover:bg-stone-800 rounded text-stone-500 transition-colors" title="Zoom Out"><ZoomOut size={14} /></button>
+              <span className="text-[10px] font-bold px-1 text-stone-400 tabular-nums">{zoomLevel}%</span>
+              <button onClick={onZoomIn} className="p-1.5 hover:bg-white dark:hover:bg-stone-800 rounded text-stone-500 transition-colors" title="Zoom In"><ZoomIn size={14} /></button>
+            </div>
 
-            {/* Progress Tooltip Popup */}
-            {showProgressTooltip && (
-              <div 
-                className="absolute right-0 mt-2 w-64 bg-[#0A0F1D] border border-slate-700 rounded-2xl shadow-2xl p-4 z-50 animate-in fade-in slide-in-from-top-2 text-slate-200"
-                onMouseLeave={() => setShowProgressTooltip(false)}
+            {/* Dark Mode Toggle */}
+            {onToggleDarkMode && (
+              <button
+                onClick={onToggleDarkMode}
+                className="p-2 rounded-md hover:bg-stone-100 dark:hover:bg-stone-900 text-stone-500 hover:text-[#7F1D1D] transition-colors cursor-pointer"
+                title={darkMode ? "Modo Claro" : "Modo Oscuro"}
               >
-                <div className="flex items-center justify-between pb-2 border-b border-slate-800 mb-3">
-                  <span className="text-xs font-bold text-white flex items-center gap-1.5">
-                    <Sparkles size={14} className="text-amber-400" />
-                    Progreso Teológico
-                  </span>
-                  <span className="text-xs font-mono font-bold text-amber-400">{completedLessonsCount} Acreditadas</span>
-                </div>
-                <p className="text-[11px] text-slate-400 leading-relaxed mb-3">
-                  Sigue avanzando lección por lección para acreditar tus diplomas y certificados académicos.
-                </p>
-                <button
-                  onClick={() => {
-                    setShowProgressTooltip(false);
-                    handleTabClick('grades');
-                  }}
-                  className="w-full py-1.5 bg-gradient-to-r from-amber-600 to-amber-700 text-white font-bold text-xs rounded-xl hover:from-amber-700 hover:to-amber-800 transition-all text-center"
-                >
-                  Ver Boleta Oficial
-                </button>
-              </div>
+                {darkMode ? <Sun size={17} /> : <Moon size={17} />}
+              </button>
             )}
           </div>
 
-          {/* Virtual Assistant Button */}
-          {onOpenAssistant && (
-            <button
-              onClick={onOpenAssistant}
-              className="flex items-center gap-1.5 bg-gradient-to-r from-amber-700/90 to-amber-900/90 hover:from-amber-600 hover:to-amber-800 border border-amber-500/50 px-2.5 sm:px-3 py-1.5 rounded-2xl text-xs font-bold text-amber-100 transition-all cursor-pointer active:scale-95 shadow-sm"
-              title="Preguntar al Asistente Virtual Teológico"
-            >
-              <Bot size={15} className="text-amber-300 animate-pulse" />
-              <span className="hidden sm:inline">Asistente</span>
-              <span className="sm:hidden">IA</span>
-            </button>
-          )}
-
-          {/* Dark Mode Toggle */}
-          {onToggleDarkMode && (
-            <button
-              onClick={onToggleDarkMode}
-              className="p-2 rounded-2xl bg-slate-800/80 hover:bg-slate-700 border border-slate-700/80 text-amber-400 transition-all cursor-pointer active:scale-95"
-              title={darkMode ? "Modo Claro" : "Modo Oscuro"}
-            >
-              {darkMode ? <Sun size={17} className="text-amber-400 fill-amber-400/20" /> : <Moon size={17} className="text-slate-300" />}
-            </button>
-          )}
-
-          {/* User Profile Button & Dropdown Menu */}
+          {/* User Profile Button */}
           <div className="relative">
             <button
               onClick={() => setShowProfileMenu(prev => !prev)}
-              className="flex items-center gap-2 p-1.5 sm:px-2.5 sm:py-1.5 rounded-2xl bg-slate-800/90 hover:bg-slate-700 border border-slate-700/80 transition-all text-xs font-bold text-slate-200 cursor-pointer active:scale-95"
+              className="flex items-center gap-2 pl-1 pr-2 py-1 rounded-full border border-stone-200 dark:border-stone-800 hover:border-[#7F1D1D] transition-all cursor-pointer group"
             >
-              <div className="w-7 h-7 rounded-xl bg-gradient-to-tr from-amber-600 to-amber-700 text-white flex items-center justify-center font-bold font-serif shadow-xs border border-amber-400/30">
+              <div className="w-8 h-8 rounded-full bg-stone-100 dark:bg-stone-900 text-[#7F1D1D] flex items-center justify-center font-bold text-xs border border-stone-200 dark:border-stone-800 group-hover:bg-[#7F1D1D] group-hover:text-white transition-colors">
                 {displayName.charAt(0).toUpperCase()}
               </div>
-              <span className="hidden xl:inline max-w-[100px] truncate">{displayName}</span>
-              <ChevronDown size={14} className="text-slate-400 hidden sm:inline" />
+              <ChevronDown size={14} className="text-stone-400 group-hover:text-[#7F1D1D] transition-colors" />
             </button>
 
             {/* Profile Dropdown */}
-            {showProfileMenu && (
-              <div 
-                className="absolute right-0 mt-2 w-60 bg-[#0F172A] border border-slate-700 rounded-2xl shadow-2xl p-2 z-50 animate-in fade-in slide-in-from-top-2 text-slate-200"
-                onMouseLeave={() => setShowProfileMenu(false)}
-              >
-                <div className="p-3 border-b border-slate-800 space-y-0.5">
-                  <p className="text-xs font-bold text-white truncate">{displayName}</p>
-                  <p className="text-[10px] text-amber-400 font-medium">Estudiante Registrado</p>
-                </div>
+            <AnimatePresence>
+              {showProfileMenu && (
+                <motion.div 
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 10 }}
+                  className="absolute right-0 mt-3 w-72 bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 rounded-xl shadow-2xl p-2 z-50 text-stone-700"
+                  onMouseLeave={() => setShowProfileMenu(false)}
+                >
+                  <div className="p-4 border-b border-stone-100 dark:border-stone-800 space-y-1">
+                    <p className="text-sm font-serif font-black text-[#1A2533] dark:text-white truncate">{displayName}</p>
+                    <div className="flex items-center gap-2">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                      <p className="text-[10px] text-[#7F1D1D] dark:text-amber-500 font-bold uppercase tracking-widest">Alumno Matriculado</p>
+                    </div>
+                  </div>
 
-                <div className="py-1 space-y-1">
-                  {onOpenAssistant && (
+                  <div className="py-2 space-y-1">
+                    {onOpenAssistant && (
+                      <button
+                        onClick={() => {
+                          setShowProfileMenu(false);
+                          onOpenAssistant();
+                        }}
+                        className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-[11px] font-bold uppercase tracking-widest text-stone-600 hover:bg-[#7F1D1D] hover:text-white transition-all text-left cursor-pointer group"
+                      >
+                        <Bot size={16} className="text-[#7F1D1D] group-hover:text-white" />
+                        <span>Consultor Doctrinal</span>
+                      </button>
+                    )}
+
                     <button
                       onClick={() => {
                         setShowProfileMenu(false);
-                        onOpenAssistant();
+                        onOpenProfile();
                       }}
-                      className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-bold text-amber-300 hover:bg-slate-800 hover:text-amber-200 transition-colors text-left cursor-pointer"
+                      className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-[11px] font-bold uppercase tracking-widest text-stone-600 hover:bg-stone-50 dark:hover:bg-stone-800 transition-all text-left cursor-pointer"
                     >
-                      <Bot size={15} className="text-amber-400" />
-                      <span>Asistente Virtual (Tutor IA)</span>
+                      <User size={16} />
+                      <span>Expediente Personal</span>
                     </button>
-                  )}
 
-                  <button
-                    onClick={() => {
-                      setShowProfileMenu(false);
-                      onOpenProfile();
-                    }}
-                    className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium hover:bg-slate-800 hover:text-white transition-colors text-left cursor-pointer"
-                  >
-                    <Settings size={15} className="text-amber-400" />
-                    <span>Ajustes del Perfil</span>
-                  </button>
+                    <div className="px-2 py-1">
+                      <PWAInstallButton />
+                    </div>
 
-                  <div className="px-1 py-1">
-                    <PWAInstallButton />
+                    <button
+                      onClick={() => {
+                        setShowProfileMenu(false);
+                        onSignOut?.();
+                      }}
+                      className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-[11px] font-bold uppercase tracking-widest text-rose-600 hover:bg-rose-50 transition-all text-left cursor-pointer"
+                    >
+                      <LogOut size={16} />
+                      <span>Finalizar Sesión</span>
+                    </button>
                   </div>
-                </div>
-
-                {onSignOut && (
-                  <button
-                    onClick={() => {
-                      setShowProfileMenu(false);
-                      onSignOut();
-                    }}
-                    className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-bold text-red-400 hover:bg-red-500/10 transition-colors text-left mt-1 border-t border-slate-800 cursor-pointer"
-                  >
-                    <LogOut size={15} />
-                    <span>Cerrar Sesión</span>
-                  </button>
-                )}
-              </div>
-            )}
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
           
           {/* Zoom Controls */}

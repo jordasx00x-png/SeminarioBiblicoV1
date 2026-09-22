@@ -30,17 +30,6 @@ export function ReadingToolbar({
         <span className="text-[11px] font-mono text-gray-500 dark:text-slate-400 font-medium">
           {Math.round(scrollProgress)}% leído
         </span>
-
-        {onOpenBibleViewer && (
-          <button
-            onClick={onOpenBibleViewer}
-            className="ml-2 px-2.5 py-1 rounded-md bg-amber-50 dark:bg-amber-950/60 hover:bg-amber-100 dark:hover:bg-amber-900/80 border border-[#D1B17F]/60 dark:border-amber-800/60 text-[#7F1D1D] dark:text-amber-300 text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer shadow-2xs"
-            title="Abrir la Biblia completa con todas sus características en segunda pantalla"
-          >
-            <BookOpen size={13} />
-            <span className="hidden sm:inline">Segunda Pantalla (La Biblia)</span>
-          </button>
-        )}
       </div>
 
       {/* Reader Controls */}

@@ -12,7 +12,6 @@ import { CourseOverview } from './components/CourseOverview';
 import { LandingPage } from './components/LandingPage';
 import { ProfileModal } from './components/ProfileModal';
 import { WelcomePage } from './components/WelcomePage';
-import { DailyVerseNotification } from './components/DailyVerseNotification';
 import { AcademicPanel } from './components/AcademicPanel';
 import { StudyCalendar } from './components/StudyCalendar';
 import { GradesPanel } from './components/GradesPanel';
@@ -141,8 +140,6 @@ export default function App() {
       className="min-h-screen bg-slate-50/80 dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-sans flex flex-col relative transition-colors duration-300"
       style={{ zoom: `${zoomLevel}%` } as React.CSSProperties}
     >
-      <DailyVerseNotification isAssistantOpen={isAssistantOpen} />
-
       {/* Full-width Top Interactive Header */}
       <InteractiveHeader
         activeTab={activeTab}

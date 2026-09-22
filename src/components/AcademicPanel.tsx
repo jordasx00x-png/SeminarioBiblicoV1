@@ -235,22 +235,19 @@ export function AcademicPanel({
   };
 
   return (
-    <div className="min-h-screen bg-[#FDFBF7] dark:bg-zinc-950 text-[#1A2533] dark:text-zinc-100 flex flex-col">
-      <header className="bg-[#1A2533] text-white border-b border-[#2C3E50] px-4 lg:px-6 py-3 sticky top-0 z-30 shadow-md">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-3">
-          <div className="flex items-center gap-3 w-full md:w-auto justify-between md:justify-start">
-            <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-lg bg-[#7F1D1D] flex items-center justify-center border border-amber-500/30 text-amber-200 shadow-sm">
-                <BookOpen className="w-4 h-4" />
+    <div className="min-h-screen bg-[#FAF9F5] dark:bg-zinc-950 text-[#1A2533] dark:text-zinc-100 flex flex-col">
+      <header className="bg-white dark:bg-stone-900 border-b border-stone-200 dark:border-stone-800 px-4 lg:px-6 py-3 sticky top-0 z-30 shadow-sm">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-4 w-full md:w-auto justify-between md:justify-start">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded bg-[#7F1D1D] flex items-center justify-center text-amber-100 shadow-sm border border-[#7F1D1D]/20 shrink-0">
+                <BookOpen className="w-5 h-5" strokeWidth={1.5} />
               </div>
-              <div>
-                <h1 className="text-sm font-bold tracking-tight text-white flex items-center gap-2">
-                  <span>Seminario Teológico Digital</span>
-                  <span className="hidden sm:inline-block text-[9px] font-sans font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30">
-                    Biblia
-                  </span>
+              <div className="min-w-0">
+                <h1 className="text-xs font-bold tracking-[0.2em] uppercase text-[#7F1D1D] dark:text-amber-500 leading-none mb-1">
+                  Seminario Digital
                 </h1>
-                <p className="text-[10px] text-gray-300">
+                <p className="text-sm font-serif font-bold text-[#1A2533] dark:text-stone-100 truncate">
                   {currentBook.name} {selectedChapter}
                 </p>
               </div>
@@ -258,84 +255,81 @@ export function AcademicPanel({
           </div>
 
           <div className="flex items-center gap-2 w-full md:w-auto justify-end overflow-x-auto pb-1 md:pb-0">
-            <button
-              onClick={() => setIsNotesDrawerOpen(true)}
-              className="px-3 py-1.5 rounded-lg bg-amber-600 hover:bg-amber-500 text-white text-xs font-bold flex items-center gap-1.5 border border-amber-400/40 shadow-sm transition-all cursor-pointer shrink-0"
-              title="Ver todas mis notas y versículos subrayados"
-            >
-              <Highlighter className="w-3.5 h-3.5 text-amber-200" />
-              <span className="hidden sm:inline">Mis Notas</span>
-              <span className="sm:hidden">Notas</span>
-              {allNotes.length > 0 && (
-                <span className="px-1.5 py-0.5 rounded-full bg-black/40 text-[10px] font-mono text-amber-200">
-                  {allNotes.length}
-                </span>
-              )}
-            </button>
+            <div className="flex items-center gap-1.5 border-r border-stone-200 dark:border-stone-800 pr-2 mr-2">
+              <button
+                onClick={() => setIsBookDrawerOpen(true)}
+                className="px-3 py-1.5 rounded bg-stone-100 hover:bg-stone-200 dark:bg-stone-800 text-[#1A2533] dark:text-stone-200 text-xs font-bold flex items-center gap-2 border border-stone-200 dark:border-stone-700 transition-colors shadow-xs shrink-0"
+              >
+                <BookMarked className="w-3.5 h-3.5 text-[#7F1D1D]" />
+                <span>Libros</span>
+                <ChevronDown className="w-3 h-3 opacity-60" />
+              </button>
 
-            <button
-              onClick={() => setIsPhraseSearchOpen(true)}
-              className="px-3 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-stone-950 text-xs font-bold flex items-center gap-1.5 border border-amber-400 shadow-sm transition-all cursor-pointer shrink-0"
-              title="Buscar versículos por frase en toda la Biblia"
-            >
-              <Search className="w-3.5 h-3.5 text-stone-900" />
-              <span className="hidden sm:inline">Buscar por Frase</span>
-              <span className="sm:hidden">Frase</span>
-            </button>
+              <select
+                value={activeTranslation}
+                onChange={(e) => setActiveTranslation(e.target.value as any)}
+                className="px-2 py-1.5 rounded bg-stone-100 border border-stone-200 text-[#1A2533] text-xs font-bold focus:outline-none cursor-pointer"
+              >
+                <option value="rvr1960">RVR1960</option>
+                <option value="lbla">LBLA</option>
+                <option value="ntv">NTV</option>
+                <option value="nvi">NVI</option>
+              </select>
+            </div>
 
-            <button
-              onClick={() => setIsBookDrawerOpen(true)}
-              className="px-2.5 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white text-xs font-bold flex items-center gap-1.5 border border-white/20 transition-colors shadow-sm shrink-0"
-              title="Abrir selector rápido de libros"
-            >
-              <BookMarked className="w-3.5 h-3.5 text-amber-300" />
-              <span>{currentBook.name} {selectedChapter}</span>
-              <ChevronDown className="w-3 h-3 opacity-70" />
-            </button>
+            <div className="flex items-center gap-1.5 border-r border-stone-200 dark:border-stone-800 pr-2 mr-2">
+              <button
+                onClick={() => setIsNotesDrawerOpen(true)}
+                className="px-3 py-1.5 rounded bg-white hover:bg-stone-50 text-[#1A2533] text-xs font-bold flex items-center gap-2 border border-stone-200 shadow-xs transition-colors cursor-pointer shrink-0"
+              >
+                <Highlighter className="w-3.5 h-3.5 text-[#D1B17F]" />
+                <span>Notas</span>
+                {allNotes.length > 0 && (
+                  <span className="px-1.5 py-0.2 rounded bg-[#7F1D1D] text-[10px] font-mono text-white">
+                    {allNotes.length}
+                  </span>
+                )}
+              </button>
 
-            <select
-              value={activeTranslation}
-              onChange={(e) => setActiveTranslation(e.target.value as any)}
-              className="px-2 py-1.5 rounded-lg bg-black/30 border border-white/20 text-white text-xs font-bold focus:outline-none"
-            >
-              <option value="rvr1960">RVR1960</option>
-              <option value="lbla">LBLA</option>
-              <option value="ntv">NTV</option>
-              <option value="nvi">NVI</option>
-            </select>
+              <button
+                onClick={() => setIsPhraseSearchOpen(true)}
+                className="px-3 py-1.5 rounded bg-[#7F1D1D] hover:bg-red-800 text-white text-xs font-bold flex items-center gap-2 border border-[#7F1D1D] shadow-xs transition-colors cursor-pointer shrink-0"
+              >
+                <Search className="w-3.5 h-3.5" />
+                <span>Búsqueda</span>
+              </button>
+            </div>
 
-            <div className="flex items-center rounded-lg bg-black/20 border border-white/10 p-0.5">
+            <div className="flex items-center rounded-md bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 p-0.5">
               <button
                 onClick={handlePrevChapter}
-                className="p-1.5 hover:bg-white/10 rounded text-gray-300 hover:text-white transition-colors"
-                title="Capítulo anterior"
+                className="p-1.5 hover:bg-white dark:hover:bg-stone-700 rounded text-stone-600 dark:text-stone-400 hover:text-[#7F1D1D] transition-colors"
+                title="Anterior"
               >
                 <ArrowLeft className="w-3.5 h-3.5" />
               </button>
-              <span className="text-xs font-mono px-2 text-amber-200 font-bold">
+              <span className="text-[11px] font-bold px-2 text-[#1A2533] dark:text-stone-200 uppercase tracking-widest border-x border-stone-200 dark:border-stone-700 mx-1">
                 Cap. {selectedChapter}
               </span>
               <button
                 onClick={handleNextChapter}
-                className="p-1.5 hover:bg-white/10 rounded text-gray-300 hover:text-white transition-colors"
-                title="Capítulo siguiente"
+                className="p-1.5 hover:bg-white dark:hover:bg-stone-700 rounded text-stone-600 dark:text-stone-400 hover:text-[#7F1D1D] transition-colors"
+                title="Siguiente"
               >
                 <ArrowRight className="w-3.5 h-3.5" />
               </button>
             </div>
 
-            <div className="flex items-center rounded-lg bg-black/20 border border-white/10 p-0.5">
+            <div className="flex items-center rounded-md bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 p-0.5 ml-1">
               <button
                 onClick={() => setBibleFontSize(prev => prev === 'xl' ? 'lg' : prev === 'lg' ? 'base' : 'sm')}
-                className="px-2 py-1 text-[11px] font-bold text-gray-300 hover:text-white hover:bg-white/10 rounded"
-                title="Reducir fuente"
+                className="px-2 py-1 text-[10px] font-bold text-stone-600 hover:text-[#7F1D1D] hover:bg-white dark:hover:bg-stone-700 rounded"
               >
                 A-
               </button>
               <button
                 onClick={() => setBibleFontSize(prev => prev === 'sm' ? 'base' : prev === 'base' ? 'lg' : 'xl')}
-                className="px-2 py-1 text-[11px] font-bold text-gray-300 hover:text-white hover:bg-white/10 rounded"
-                title="Aumentar fuente"
+                className="px-2 py-1 text-[10px] font-bold text-stone-600 hover:text-[#7F1D1D] hover:bg-white dark:hover:bg-stone-700 rounded"
               >
                 A+
               </button>
@@ -446,27 +440,27 @@ export function AcademicPanel({
 
       <div className="flex-1 overflow-y-auto bg-white dark:bg-zinc-950 p-6 flex justify-center pb-24">
         <div className="max-w-4xl w-full">
-          {/* Quick Phrase Search Trigger Banner */}
-          <div className="mb-6 bg-[#FDFBF7] dark:bg-zinc-900 border border-[#E0D7C6] dark:border-zinc-800 rounded-2xl p-3.5 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-xs">
-            <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-lg bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0">
-                <Search className="w-4 h-4" />
+          {/* Quick Phrase Search Trigger Banner: Institutional Design */}
+          <div className="mb-10 bg-[#FAF9F5] border-2 border-[#7F1D1D]/10 rounded-lg p-6 flex flex-col sm:flex-row items-center justify-between gap-6 shadow-sm relative overflow-hidden group border-stone-200">
+            <div className="absolute top-0 left-0 w-1 h-full bg-[#7F1D1D]" />
+            <div className="flex items-center gap-5">
+              <div className="w-14 h-14 rounded bg-[#7F1D1D] text-white flex items-center justify-center shrink-0 shadow-md">
+                <Search className="w-7 h-7" strokeWidth={1.5} />
               </div>
               <div>
-                <p className="text-xs font-bold text-gray-800 dark:text-gray-200">
-                  ¿Buscas un versículo específico por frase o palabra clave?
-                </p>
-                <p className="text-[11px] text-gray-500 dark:text-gray-400">
-                  Busca frases exactas en los 66 libros del canon bíblico.
+                <h3 className="text-lg font-serif font-bold text-[#1A2533] dark:text-stone-100">
+                  Concordancia y Búsqueda Canónica
+                </h3>
+                <p className="text-xs text-stone-600 dark:text-stone-400 font-sans tracking-wide leading-relaxed max-w-md">
+                  Investigación textual exegética en los sesenta y seis libros del canon bíblico. Localice frases, términos léxicos y conceptos teológicos fundamentales.
                 </p>
               </div>
             </div>
             <button
               onClick={() => setIsPhraseSearchOpen(true)}
-              className="px-3.5 py-1.5 rounded-xl bg-[#1A2533] dark:bg-zinc-800 hover:bg-[#2C3E50] text-amber-200 text-xs font-bold flex items-center gap-1.5 border border-amber-500/30 transition-all cursor-pointer whitespace-nowrap"
+              className="px-8 py-3 bg-[#1A2533] hover:bg-black text-white text-[10px] font-bold uppercase tracking-[0.2em] rounded transition-all cursor-pointer shadow-md active:scale-95 whitespace-nowrap"
             >
-              <Sparkles className="w-3.5 h-3.5 text-amber-300" />
-              <span>Buscar Versículo por Frase</span>
+              Iniciar Búsqueda
             </button>
           </div>
 
@@ -925,86 +919,73 @@ export function AcademicPanel({
 
       {/* Phrase Search Modal */}
       {isPhraseSearchOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-3 sm:p-6 animate-in fade-in duration-200">
-          <div className="bg-[#FAF9F6] dark:bg-zinc-900 border border-[#E0D7C6] dark:border-zinc-700 w-full max-w-4xl h-[90vh] max-h-[820px] rounded-2xl shadow-2xl flex flex-col overflow-hidden font-sans">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-[#1A2533]/80 backdrop-blur-md p-4 animate-in fade-in">
+          <div className="bg-white dark:bg-zinc-950 border border-stone-200 dark:border-stone-800 w-full max-w-5xl max-h-[92vh] rounded flex flex-col overflow-hidden shadow-[0_30px_60px_rgba(0,0,0,0.4)]">
             
-            {/* Modal Header */}
-            <div className="p-4 sm:p-5 bg-[#1A2533] text-white flex items-center justify-between border-b border-[#2C3E50] shrink-0">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-[#7F1D1D] flex items-center justify-center border border-amber-500/30 text-amber-200 shadow-sm">
-                  <Search className="w-5 h-5" />
+            {/* Modal Header: Institutional Style */}
+            <div className="p-5 bg-white dark:bg-stone-900 border-b border-stone-200 dark:border-stone-800 flex items-center justify-between shrink-0 relative">
+              <div className="absolute top-0 left-0 w-full h-1 bg-[#7F1D1D]" />
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded bg-[#FAF9F5] dark:bg-stone-800 flex items-center justify-center border border-stone-200 dark:border-stone-700 text-[#7F1D1D] dark:text-amber-500 shadow-sm shrink-0">
+                  <Search size={24} strokeWidth={1.5} />
                 </div>
                 <div>
-                  <h3 className="font-serif font-bold text-base sm:text-lg text-white flex items-center gap-2">
-                    <span>Buscador de Versículos por Frase</span>
-                    <span className="text-[10px] uppercase font-sans tracking-wider px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30">
-                      Biblia
-                    </span>
+                  <h3 className="font-serif font-black text-lg text-[#1A2533] dark:text-stone-100 uppercase tracking-tight flex items-center gap-2">
+                    Concordancia Canónica
                   </h3>
-                  <p className="text-xs text-gray-300">
-                    Encuentre versículos bíblicos buscando por frase o palabra clave
+                  <p className="text-[10px] font-black text-stone-400 uppercase tracking-[0.2em] mt-0.5">
+                    Investigación de Textos Sagrados • Sesenta y Seis Libros
                   </p>
                 </div>
               </div>
               <button
                 onClick={() => setIsPhraseSearchOpen(false)}
-                className="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors cursor-pointer"
-                title="Cerrar buscador"
+                className="p-2 text-stone-400 hover:text-[#7F1D1D] hover:bg-stone-50 dark:hover:bg-stone-800 rounded transition-colors cursor-pointer"
+                title="Cerrar concordancia"
               >
-                <X className="w-5 h-5" />
+                <X size={24} strokeWidth={1.5} />
               </button>
             </div>
 
-            {/* Search Controls Bar */}
-            <div className="p-4 bg-[#F4EFE6] dark:bg-zinc-800/60 border-b border-[#E0D7C6] dark:border-zinc-700/80 flex flex-col gap-3 shrink-0">
+            {/* Search Controls Bar: Paper Style */}
+            <div className="p-6 bg-[#FAF9F5] dark:bg-stone-900/50 border-b border-stone-200 dark:border-stone-800 flex flex-col gap-4 shrink-0">
               <form 
                 onSubmit={(e) => { e.preventDefault(); handleExecutePhraseSearch(); }}
-                className="flex items-center gap-2"
+                className="flex items-center gap-3"
               >
                 <div className="relative flex-1">
-                  <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
+                  <Search className="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-stone-400" strokeWidth={1.5} />
                   <input
                     type="text"
                     value={phraseQuery}
                     onChange={(e) => setPhraseQuery(e.target.value)}
-                    placeholder="Escriba una frase (ej. 'por sus frutos los conoceréis', 'el Señor es mi pastor')..."
-                    className="w-full pl-10 pr-10 py-2.5 text-xs sm:text-sm rounded-xl bg-white dark:bg-zinc-900 border border-stone-300 dark:border-zinc-700 focus:outline-none focus:ring-2 focus:ring-[#7F1D1D] dark:text-white"
+                    placeholder="Redacte la frase o término doctrinal a localizar..."
+                    className="w-full pl-12 pr-12 py-3.5 text-sm rounded bg-white dark:bg-stone-950 border border-stone-300 dark:border-stone-800 focus:border-[#7F1D1D] dark:text-white outline-none shadow-sm transition-all"
                     autoFocus
                   />
                   {phraseQuery && (
                     <button
                       type="button"
                       onClick={() => { setPhraseQuery(''); setPhraseSearchResults([]); setHasSearchedPhrase(false); }}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-stone-400 hover:text-[#7F1D1D]"
                     >
-                      <X className="w-4 h-4" />
+                      <X size={18} />
                     </button>
                   )}
                 </div>
                 <button
                   type="submit"
                   disabled={isSearchingPhrase || !phraseQuery.trim()}
-                  className="px-5 py-2.5 rounded-xl bg-[#7F1D1D] hover:bg-red-800 disabled:opacity-50 text-white font-bold text-xs sm:text-sm flex items-center gap-2 transition-all shadow-sm cursor-pointer shrink-0"
+                  className="px-8 py-3.5 bg-[#1A2533] hover:bg-black disabled:bg-stone-200 dark:disabled:bg-stone-800 text-white font-black text-[10px] uppercase tracking-[0.2em] rounded transition-all shadow-md cursor-pointer shrink-0 active:scale-95"
                 >
-                  {isSearchingPhrase ? (
-                    <>
-                      <Loader2 className="w-4 h-4 animate-spin text-amber-200" />
-                      <span>Buscando...</span>
-                    </>
-                  ) : (
-                    <>
-                      <Search className="w-4 h-4 text-amber-200" />
-                      <span>Buscar</span>
-                    </>
-                  )}
+                  {isSearchingPhrase ? 'Localizando...' : 'Localizar'}
                 </button>
               </form>
 
               {/* Sample Quick Phrase Suggestions */}
-              <div className="flex items-center gap-1.5 overflow-x-auto pb-1 custom-scrollbar">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 shrink-0 mr-1 flex items-center gap-1">
-                  <Sparkles className="w-3 h-3 text-amber-500" />
-                  Sugerencias:
+              <div className="flex items-center gap-2 overflow-x-auto pb-1 custom-scrollbar scrollbar-hide">
+                <span className="text-[9px] font-black text-stone-400 uppercase tracking-[0.2em] shrink-0 border-r border-stone-300 dark:border-stone-700 pr-3 mr-1">
+                  Sugerencias
                 </span>
                 {POPULAR_PHRASE_SUGGESTIONS.map((sug, idx) => (
                   <button
@@ -1014,7 +995,7 @@ export function AcademicPanel({
                       setPhraseQuery(sug);
                       handleExecutePhraseSearch(sug);
                     }}
-                    className="px-2.5 py-1 rounded-lg text-[11px] font-medium bg-white dark:bg-zinc-800 text-gray-700 dark:text-zinc-200 border border-stone-300 dark:border-zinc-700 hover:border-amber-500 hover:bg-amber-50 dark:hover:bg-zinc-700 transition-colors shrink-0 cursor-pointer"
+                    className="px-3 py-1.5 rounded bg-white dark:bg-stone-800 text-stone-600 dark:text-stone-300 border border-stone-200 dark:border-stone-700 hover:border-[#7F1D1D] hover:text-[#7F1D1D] text-[9px] font-black uppercase tracking-widest transition-all shrink-0 cursor-pointer shadow-sm active:scale-95"
                   >
                     "{sug}"
                   </button>
@@ -1023,22 +1004,22 @@ export function AcademicPanel({
 
               {/* Testament Filter Options */}
               {phraseSearchResults.length > 0 && (
-                <div className="flex items-center justify-between pt-2 border-t border-[#E0D7C6] dark:border-zinc-700/60 text-xs">
-                  <div className="flex items-center gap-2">
-                    <Filter className="w-3.5 h-3.5 text-gray-500" />
-                    <span className="font-bold text-gray-700 dark:text-gray-300">
-                      Filtrar por Testamento:
+                <div className="flex items-center justify-between pt-4 border-t border-stone-200 dark:border-stone-800">
+                  <div className="flex items-center gap-3">
+                    <Filter className="w-4 h-4 text-stone-400" />
+                    <span className="text-[10px] font-black text-stone-500 dark:text-stone-400 uppercase tracking-[0.2em]">
+                      Filtrar Testamento:
                     </span>
                   </div>
-                  <div className="flex items-center gap-1.5">
+                  <div className="flex items-center gap-2">
                     {(['ALL', 'Antiguo Testamento', 'Nuevo Testamento'] as const).map(testament => (
                       <button
                         key={testament}
                         onClick={() => setPhraseFilterTestament(testament)}
-                        className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition-colors ${
+                        className={`px-3 py-1.5 rounded text-[9px] font-black uppercase tracking-[0.2em] transition-all border ${
                           phraseFilterTestament === testament
-                            ? 'bg-[#7F1D1D] text-white'
-                            : 'bg-white dark:bg-zinc-800 text-gray-700 dark:text-gray-300 border border-stone-300 dark:border-zinc-700'
+                            ? 'bg-[#7F1D1D] border-[#7F1D1D] text-white shadow-sm'
+                            : 'bg-white dark:bg-stone-800 border-stone-200 dark:border-stone-700 text-stone-500 hover:border-stone-400'
                         }`}
                       >
                         {testament === 'ALL' ? 'Toda la Biblia' : testament}
@@ -1049,88 +1030,90 @@ export function AcademicPanel({
               )}
             </div>
 
-            {/* Results Content Area */}
-            <div className="flex-1 overflow-y-auto p-4 sm:p-6 custom-scrollbar bg-[#FDFBF7] dark:bg-zinc-950">
+            {/* Results Content Area: White Background with Stone Grid */}
+            <div className="flex-1 overflow-y-auto p-6 sm:p-10 custom-scrollbar bg-white dark:bg-zinc-950">
               {isSearchingPhrase ? (
-                <div className="flex flex-col items-center justify-center py-16 gap-3 text-stone-500 dark:text-stone-400">
-                  <Loader2 className="w-8 h-8 animate-spin text-[#7F1D1D]" />
-                  <p className="text-sm font-medium">Buscando coincidencias en los 66 libros de la Biblia...</p>
+                <div className="flex flex-col items-center justify-center py-20 gap-4 text-stone-400">
+                  <RefreshCw className="w-10 h-10 animate-spin text-[#7F1D1D]" />
+                  <p className="text-[10px] font-black uppercase tracking-[0.2em]">Escaneando el Canon Bíblico...</p>
                 </div>
               ) : filteredPhraseResults.length > 0 ? (
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between pb-2 border-b border-[#E0D7C6] dark:border-zinc-800 text-xs text-gray-500">
+                <div className="space-y-6">
+                  <div className="flex items-center justify-between pb-4 border-b border-stone-100 dark:border-stone-900 text-[10px] font-black uppercase tracking-widest text-stone-400">
                     <span>
-                      Se encontraron <strong className="text-gray-900 dark:text-white font-bold">{filteredPhraseResults.length}</strong> versículos para "{phraseQuery}"
+                      Hallazgos: <strong className="text-[#1A2533] dark:text-white">{filteredPhraseResults.length}</strong> pasajes para "{phraseQuery}"
                     </span>
-                    <span className="font-mono text-[11px]">Haga clic en un versículo para abrirlo en la Biblia</span>
+                    <span className="hidden sm:inline">Seleccione un registro para consulta exegética completa</span>
                   </div>
 
-                  <div className="grid grid-cols-1 gap-3">
+                  <div className="grid grid-cols-1 gap-6">
                     {filteredPhraseResults.map((res, idx) => (
                       <div
                         key={idx}
                         onClick={() => handleSelectSearchResult(res)}
-                        className="group p-4 rounded-xl bg-white dark:bg-zinc-900 border border-[#E0D7C6] dark:border-zinc-800 hover:border-amber-500 hover:shadow-md transition-all cursor-pointer relative"
+                        className="group p-6 rounded border border-stone-100 dark:border-stone-900 bg-white dark:bg-stone-950 hover:border-[#7F1D1D]/30 hover:bg-[#FAF9F5] dark:hover:bg-stone-900 transition-all cursor-pointer relative"
                       >
-                        <div className="flex items-center justify-between gap-2 mb-2">
-                          <div className="flex items-center gap-2">
-                            <span className="font-bold font-serif text-sm text-[#7F1D1D] dark:text-amber-400 group-hover:underline flex items-center gap-1.5">
-                              <BookOpen className="w-4 h-4 text-amber-600" />
+                        <div className="flex items-center justify-between gap-4 mb-3">
+                          <div className="flex items-center gap-3">
+                            <span className="font-serif font-black text-base text-[#7F1D1D] dark:text-amber-500 uppercase tracking-tight group-hover:underline">
                               {res.bookName} {res.chapter}:{res.verse}
                             </span>
-                            <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-stone-100 dark:bg-zinc-800 text-stone-600 dark:text-stone-300 border border-stone-200 dark:border-zinc-700">
+                            <span className="text-[9px] font-black uppercase tracking-[0.2em] px-2 py-1 rounded bg-[#FAF9F5] dark:bg-stone-800 text-stone-400 dark:text-stone-300 border border-stone-200 dark:border-stone-700">
                               {res.division}
                             </span>
                           </div>
-                          <span className="text-xs font-bold text-amber-700 dark:text-amber-400 opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1">
-                            Abrir pasaje &rarr;
+                          <span className="text-[9px] font-black text-[#7F1D1D] dark:text-amber-500 opacity-0 group-hover:opacity-100 transition-opacity uppercase tracking-widest flex items-center gap-2">
+                            Consultar pasaje <ChevronRight size={14} strokeWidth={3} />
                           </span>
                         </div>
 
-                        <p className="font-serif text-sm sm:text-base text-gray-800 dark:text-gray-200 leading-relaxed italic">
-                          "{<span dangerouslySetInnerHTML={{ __html: res.text.replace(/<mark>/gi, '<mark class="bg-amber-200 dark:bg-amber-900/80 text-amber-950 dark:text-amber-100 font-bold px-1 rounded border border-amber-400/50">') }} />}"
+                        <p className="font-serif italic text-base sm:text-lg text-[#1A2533] dark:text-stone-100 leading-relaxed">
+                          "{<span dangerouslySetInnerHTML={{ __html: res.text.replace(/<mark>/gi, '<mark class="bg-amber-100 dark:bg-amber-900/50 text-[#7F1D1D] dark:text-amber-200 font-black px-1 rounded-sm border-b-2 border-[#7F1D1D]/20">') }} />}"
                         </p>
                       </div>
                     ))}
                   </div>
                 </div>
               ) : hasSearchedPhrase ? (
-                <div className="text-center py-16 px-4 space-y-3">
-                  <div className="w-12 h-12 rounded-full bg-amber-100 dark:bg-zinc-800 text-amber-800 dark:text-amber-300 flex items-center justify-center mx-auto text-lg font-bold">
-                    ?
+                <div className="text-center py-24 px-6 space-y-4">
+                  <div className="w-16 h-16 rounded bg-[#FAF9F5] dark:bg-stone-900 text-stone-300 dark:text-stone-700 flex items-center justify-center mx-auto border border-stone-100 dark:border-stone-800">
+                    <Search size={32} strokeWidth={1} />
                   </div>
-                  <h4 className="font-bold text-base text-gray-800 dark:text-gray-200">
-                    No se encontraron versículos para "{phraseQuery}"
-                  </h4>
-                  <p className="text-xs text-gray-500 dark:text-gray-400 max-w-md mx-auto">
-                    Intente buscar con palabras clave más cortas o sinónimos (por ejemplo: "pastor", "frutos", "fe", "camino verdad").
-                  </p>
+                  <div className="space-y-2">
+                    <h4 className="font-serif font-black text-xl text-[#1A2533] dark:text-stone-100 uppercase tracking-tight">Registro No Encontrado</h4>
+                    <p className="text-[10px] font-bold text-stone-400 uppercase tracking-widest max-w-md mx-auto leading-loose">
+                      No se localizaron coincidencias para "{phraseQuery}". <br/>
+                      Recomendamos el uso de términos léxicos fundamentales o raíces semánticas.
+                    </p>
+                  </div>
                 </div>
               ) : (
-                <div className="text-center py-12 px-4 space-y-4">
-                  <div className="w-12 h-12 rounded-full bg-stone-100 dark:bg-zinc-800 text-[#7F1D1D] dark:text-amber-400 flex items-center justify-center mx-auto">
-                    <Search className="w-6 h-6" />
+                <div className="text-center py-20 px-6 space-y-6">
+                  <div className="w-20 h-20 rounded bg-[#FAF9F5] dark:bg-stone-900 text-stone-200 dark:text-stone-800 flex items-center justify-center mx-auto border border-stone-100 dark:border-stone-800">
+                    <BookOpen size={40} strokeWidth={1} />
                   </div>
-                  <div>
-                    <h4 className="font-serif font-bold text-base sm:text-lg text-gray-800 dark:text-gray-200 mb-1">
-                      Busque cualquier frase o versículo en la Biblia
+                  <div className="space-y-2">
+                    <h4 className="font-serif font-black text-2xl text-[#1A2533] dark:text-stone-100 uppercase tracking-tight">
+                      Consulta Lexicográfica
                     </h4>
-                    <p className="text-xs text-gray-500 dark:text-gray-400 max-w-md mx-auto leading-relaxed">
-                      Escriba una frase en el buscador superior o elija una de las frases sugeridas para encontrar de inmediato su cita exacta en las Sagradas Escrituras.
+                    <p className="text-[11px] font-bold text-stone-400 uppercase tracking-widest max-w-md mx-auto leading-relaxed">
+                      Ingrese una frase doctrinal o término bíblico para localizar su posición exacta en el canon de las Sagradas Escrituras.
                     </p>
                   </div>
                 </div>
               )}
             </div>
 
-            {/* Modal Footer */}
-            <div className="p-3 sm:p-4 bg-[#FAF9F6] dark:bg-zinc-900 border-t border-[#E0D7C6] dark:border-zinc-800 flex items-center justify-between text-xs text-gray-500 dark:text-gray-400 shrink-0">
-              <span className="hidden sm:inline">Traducción activa: {activeTranslation.toUpperCase()}</span>
+            {/* Modal Footer: Institutional Badge Style */}
+            <div className="p-5 bg-white dark:bg-stone-900 border-t border-stone-200 dark:border-stone-800 flex items-center justify-between shrink-0">
+              <span className="text-[9px] font-black text-stone-400 uppercase tracking-[0.3em]">
+                Fuente: Textus Receptus / {activeTranslation.toUpperCase()} • Seminario Digital
+              </span>
               <button
                 onClick={() => setIsPhraseSearchOpen(false)}
-                className="px-4 py-1.5 rounded-lg bg-stone-200 dark:bg-zinc-800 hover:bg-stone-300 dark:hover:bg-zinc-700 text-gray-800 dark:text-gray-200 font-bold transition-colors cursor-pointer ml-auto"
+                className="px-6 py-2 rounded bg-stone-100 dark:bg-stone-800 hover:bg-stone-200 dark:hover:bg-stone-700 text-[#1A2533] dark:text-stone-100 text-[10px] font-black uppercase tracking-[0.2em] transition-all cursor-pointer active:scale-95 border border-stone-200 dark:border-stone-700 shadow-sm"
               >
-                Cerrar Buscador
+                Cerrar Concordancia
               </button>
             </div>
 

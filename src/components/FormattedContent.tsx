@@ -45,7 +45,7 @@ export function TextWithGlossary({ text, onSelectVerse }: { text: string; onSele
                 className={`inline-flex items-center gap-1 font-semibold text-[#7F1D1D] bg-amber-100/70 hover:bg-amber-200/90 text-inherit px-1.5 py-0.5 rounded border border-[#D1B17F]/40 transition-colors mx-0.5 align-baseline ${
                   handleVerseClick ? 'cursor-pointer hover:underline shadow-2xs' : ''
                 }`}
-                title={`Abrir ${s} en la Segunda Pantalla de Estudio Bíblico`}
+                title={`Ver ${s} en el Visor Bíblico`}
               >
                 <BookOpen size={12} className="text-[#7F1D1D] shrink-0" />
                 <span>{s}</span>

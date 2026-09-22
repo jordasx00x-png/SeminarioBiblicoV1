@@ -1,5 +1,29 @@
 {
   "entities": {
+    "ChatConversation": {
+      "title": "Chat Conversation",
+      "description": "A conversation with the doctrinal assistant.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "title": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" },
+        "lastMessage": { "type": "string" }
+      },
+      "required": ["userId", "title", "createdAt", "updatedAt"]
+    },
+    "ChatMessage": {
+      "title": "Chat Message",
+      "description": "A message within a doctrinal chat conversation.",
+      "type": "object",
+      "properties": {
+        "role": { "type": "string", "enum": ["user", "assistant"] },
+        "content": { "type": "string" },
+        "timestamp": { "type": "string", "format": "date-time" }
+      },
+      "required": ["role", "content", "timestamp"]
+    },
     "UserProgress": {
       "title": "User Progress",
       "description": "Progress of a user in the courses.",
@@ -29,6 +53,14 @@
     }
   },
   "firestore": {
+    "conversations/{conversationId}": {
+      "schema": { "$ref": "#/entities/ChatConversation" },
+      "description": "Top-level metadata for assistant conversations."
+    },
+    "conversations/{conversationId}/messages/{messageId}": {
+      "schema": { "$ref": "#/entities/ChatMessage" },
+      "description": "Messages belonging to a specific conversation."
+    },
     "users/{userId}/progress/default": {
       "schema": {
         "$ref": "#/entities/UserProgress"

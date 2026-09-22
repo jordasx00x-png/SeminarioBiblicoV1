@@ -158,16 +158,15 @@ export function MobileBottomNav({
               </div>
 
               {/* Student Card Summary */}
-              <div className="p-3.5 rounded-2xl bg-gradient-to-br from-slate-800/90 to-slate-900 border border-slate-700/70 flex items-center justify-between">
+              <div className="p-3.5 rounded-xl bg-stone-900 border border-stone-800 flex items-center justify-between">
                 <div className="flex items-center gap-3 min-w-0">
-                  <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-amber-600 to-red-700 text-white flex items-center justify-center font-bold text-lg font-serif shadow-md border border-amber-400/30 shrink-0">
+                  <div className="w-10 h-10 rounded-lg bg-[#7F1D1D] text-amber-200 flex items-center justify-center font-bold text-base font-serif border border-amber-500/20 shrink-0">
                     {studentName.charAt(0).toUpperCase()}
                   </div>
                   <div className="min-w-0">
-                    <p className="text-sm font-bold text-white truncate">{studentName}</p>
-                    <p className="text-[11px] text-amber-400 flex items-center gap-1">
-                      <Flame size={12} className="fill-amber-400" />
-                      <span>{completedLessonsCount} clases aprobadas</span>
+                    <p className="text-sm font-semibold text-stone-100 truncate">{studentName}</p>
+                    <p className="text-xs text-[#D1B17F] flex items-center gap-1">
+                      <span>{completedLessonsCount} lecciones completadas</span>
                     </p>
                   </div>
                 </div>
@@ -177,7 +176,7 @@ export function MobileBottomNav({
                       setShowMoreMenu(false);
                       onOpenProfile();
                     }}
-                    className="p-2 text-slate-300 hover:text-white bg-slate-800 hover:bg-slate-700 rounded-xl border border-slate-700 transition-colors"
+                    className="p-2 text-stone-300 hover:text-white bg-stone-800 hover:bg-stone-700 rounded-lg border border-stone-700 transition-colors cursor-pointer"
                     title="Editar perfil"
                   >
                     <Settings size={16} />
@@ -185,34 +184,9 @@ export function MobileBottomNav({
                 )}
               </div>
 
-              {/* Featured: Asistente Teológico IA Card */}
-              {onOpenAssistant && (
-                <button
-                  onClick={() => {
-                    setShowMoreMenu(false);
-                    onOpenAssistant();
-                  }}
-                  className="w-full p-4 rounded-2xl bg-gradient-to-r from-amber-600/20 via-amber-500/10 to-transparent border border-amber-500/40 text-left flex items-center justify-between cursor-pointer hover:border-amber-400 transition-all active:scale-98 group shadow-lg"
-                >
-                  <div className="flex items-center gap-3.5">
-                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-600 to-amber-800 flex items-center justify-center shadow-md border border-amber-400/40 shrink-0">
-                      <Bot size={20} className="text-white" />
-                    </div>
-                    <div>
-                      <div className="flex items-center gap-1.5">
-                        <span className="text-sm font-bold text-white">Asistente Teológico IA</span>
-                        <Sparkles size={13} className="text-amber-300 animate-pulse" />
-                      </div>
-                      <p className="text-xs text-slate-300">Tutor bíblico y teológico interactivo</p>
-                    </div>
-                  </div>
-                  <ChevronRight size={18} className="text-amber-400 group-hover:translate-x-1 transition-transform" />
-                </button>
-              )}
-
               {/* Secondary Navigation Section */}
               <div className="space-y-1.5">
-                <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400 px-1">
+                <p className="text-[11px] font-semibold uppercase tracking-wider text-stone-400 px-1">
                   Módulos de Estudio
                 </p>
 

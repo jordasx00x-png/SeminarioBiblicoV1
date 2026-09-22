@@ -1,6 +1,28 @@
 <!doctype html>
 <html lang="es">
   <head>
+    <script>
+      // Ignore benign Vite WebSocket errors in AI Studio iframe environment as specified in system guidelines
+      (function() {
+        const origError = console.error;
+        const origWarn = console.warn;
+        console.error = function(...args) {
+          const msg = args.map(function(a) { return String(a || ''); }).join(' ');
+          if (msg.includes('WebSocket') || msg.includes('[vite]')) return;
+          origError.apply(console, args);
+        };
+        console.warn = function(...args) {
+          const msg = args.map(function(a) { return String(a || ''); }).join(' ');
+          if (msg.includes('WebSocket') || msg.includes('[vite]')) return;
+          origWarn.apply(console, args);
+        };
+        window.addEventListener('unhandledrejection', function(event) {
+          if (event.reason && (String(event.reason).includes('WebSocket') || String(event.reason).includes('[vite]'))) {
+            event.preventDefault();
+          }
+        });
+      })();
+    </script>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Remix Seminario Teológico Digital</title>
@@ -25,4 +47,3 @@
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
-

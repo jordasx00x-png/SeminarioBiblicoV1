@@ -40,29 +40,36 @@ export function StudyCalendar({ progress, totalLessons }: StudyCalendarProps) {
   const daysRemaining = totalLessons - completedCount;
 
   return (
-    <div className="bg-white border border-[#E0D7C6] rounded-2xl overflow-hidden shadow-sm font-sans">
-      {/* Header / Stats */}
-      <div className="bg-[#1A2533] p-6 text-white">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-          <div className="space-y-1">
-            <h3 className="text-lg font-bold uppercase tracking-widest flex items-center gap-2">
-              <Target size={20} className="text-[#D1B17F]" />
-              Plan de Estudio Personalizado
-            </h3>
-            <p className="text-xs text-gray-400">
-              Objetivo: Completar el Seminario en {totalLessons} días ({Math.round(totalLessons / 30)} meses)
+    <div className="bg-white border border-stone-200 rounded overflow-hidden shadow-sm font-sans">
+      {/* Header / Stats: Institutional Style */}
+      <div className="bg-[#FAF9F5] p-8 md:p-10 text-[#1A2533] border-b border-stone-200 relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-48 h-48 bg-[#7F1D1D]/5 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl pointer-events-none" />
+        
+        <div className="relative flex flex-col md:flex-row md:items-center justify-between gap-8">
+          <div className="space-y-3">
+            <div className="flex items-center gap-2">
+              <span className="w-6 h-px bg-[#7F1D1D]" />
+              <h3 className="text-[10px] font-bold uppercase tracking-[0.3em] text-[#7F1D1D]">
+                Plan de Estudio Vigente
+              </h3>
+            </div>
+            <h2 className="text-3xl font-serif font-black text-[#1A2533] leading-tight">
+              Cronograma <br /> de Acreditación
+            </h2>
+            <p className="text-xs text-stone-500 font-serif italic">
+              Objetivo: Completar el Seminario en {totalLessons} días lectivos.
             </p>
           </div>
           
-          <div className="flex items-center gap-8">
+          <div className="flex items-center gap-10 bg-white p-6 rounded border border-stone-200 shadow-sm">
             <div className="text-center">
-              <p className="text-[10px] uppercase tracking-tighter text-gray-400 mb-1">Completado</p>
-              <p className="text-2xl font-bold text-[#D1B17F]">{completedCount}<span className="text-sm font-normal text-gray-500">/{totalLessons}</span></p>
+              <p className="text-[9px] font-bold uppercase tracking-widest text-stone-400 mb-1">Acreditadas</p>
+              <p className="text-3xl font-serif font-black text-[#7F1D1D] tabular-nums">{completedCount}<span className="text-sm font-normal text-stone-300"> / {totalLessons}</span></p>
             </div>
-            <div className="h-10 w-[1px] bg-gray-700/50"></div>
+            <div className="h-10 w-px bg-stone-100"></div>
             <div className="text-center">
-              <p className="text-[10px] uppercase tracking-tighter text-gray-400 mb-1">Días Restantes</p>
-              <p className="text-2xl font-bold text-white">{daysRemaining}</p>
+              <p className="text-[9px] font-bold uppercase tracking-widest text-stone-400 mb-1">Pendientes</p>
+              <p className="text-3xl font-serif font-black text-[#1A2533] tabular-nums">{daysRemaining}</p>
             </div>
           </div>
         </div>

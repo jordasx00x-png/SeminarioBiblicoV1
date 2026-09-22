@@ -312,7 +312,7 @@ export function VirtualAssistantWidget({
                     <span className="text-[9px] text-stone-500 dark:text-stone-400 font-black uppercase tracking-widest">¿Borrar?</span>
                     <button
                       onClick={() => {
-                        clearMessages();
+                        startNewConversation();
                         setShowClearConfirm(false);
                       }}
                       className="px-2 py-0.5 bg-[#7F1D1D] hover:bg-black text-white rounded text-[10px] font-black uppercase tracking-widest"

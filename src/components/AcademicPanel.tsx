@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
 import { 
   BookOpen, 
   Search, 
@@ -19,7 +20,9 @@ import {
   Trash2,
   Palette,
   FileText,
-  Plus
+  Plus,
+  RefreshCw,
+  ChevronRight
 } from 'lucide-react';
 import { BIBLE_BOOKS_CANON, findBibleBook } from '../data/completeBibleData';
 import { getBibleChapter, ChapterContent } from '../data/bibleTextRepository';
@@ -66,6 +69,7 @@ export function AcademicPanel({
   const [isBookDrawerOpen, setIsBookDrawerOpen] = useState<boolean>(false);
   const [bookSearchQuery, setBookSearchQuery] = useState<string>('');
   const [bookTestamentTab, setBookTestamentTab] = useState<'ALL' | 'Antiguo Testamento' | 'Nuevo Testamento'>('ALL');
+  const [bookDrawerStep, setBookDrawerStep] = useState<'books' | 'chapters'>('books');
   const [activeVerseMenuTab, setActiveVerseMenuTab] = useState<'menu' | 'comentario_biblico' | 'referencias' | 'comentario_historico' | 'subrayado'>('menu');
 
   // Notes and Highlighting hooks
@@ -257,18 +261,21 @@ export function AcademicPanel({
           <div className="flex items-center gap-2 w-full md:w-auto justify-end overflow-x-auto pb-1 md:pb-0">
             <div className="flex items-center gap-1.5 border-r border-stone-200 dark:border-stone-800 pr-2 mr-2">
               <button
-                onClick={() => setIsBookDrawerOpen(true)}
-                className="px-3 py-1.5 rounded bg-stone-100 hover:bg-stone-200 dark:bg-stone-800 text-[#1A2533] dark:text-stone-200 text-xs font-bold flex items-center gap-2 border border-stone-200 dark:border-stone-700 transition-colors shadow-xs shrink-0"
+                onClick={() => {
+                  setBookDrawerStep('books');
+                  setIsBookDrawerOpen(true);
+                }}
+                className="px-4 py-2 rounded bg-white hover:bg-[#FAF9F5] text-[#1A2533] dark:bg-stone-900 dark:text-stone-100 text-[10px] font-black uppercase tracking-[0.2em] flex items-center gap-3 border border-stone-300 dark:border-stone-700 transition-all shadow-sm cursor-pointer active:scale-95 shrink-0"
               >
-                <BookMarked className="w-3.5 h-3.5 text-[#7F1D1D]" />
+                <BookMarked className="w-4 h-4 text-[#7F1D1D]" strokeWidth={2} />
                 <span>Libros</span>
-                <ChevronDown className="w-3 h-3 opacity-60" />
+                <ChevronDown className="w-3 h-3 text-stone-400" />
               </button>
 
               <select
                 value={activeTranslation}
                 onChange={(e) => setActiveTranslation(e.target.value as any)}
-                className="px-2 py-1.5 rounded bg-stone-100 border border-stone-200 text-[#1A2533] text-xs font-bold focus:outline-none cursor-pointer"
+                className="px-3 py-2 rounded bg-white dark:bg-stone-900 border border-stone-300 dark:border-stone-700 text-[#1A2533] dark:text-stone-100 text-[10px] font-black uppercase tracking-widest focus:outline-none focus:border-[#7F1D1D] cursor-pointer shadow-sm transition-all"
               >
                 <option value="rvr1960">RVR1960</option>
                 <option value="lbla">LBLA</option>
@@ -280,12 +287,12 @@ export function AcademicPanel({
             <div className="flex items-center gap-1.5 border-r border-stone-200 dark:border-stone-800 pr-2 mr-2">
               <button
                 onClick={() => setIsNotesDrawerOpen(true)}
-                className="px-3 py-1.5 rounded bg-white hover:bg-stone-50 text-[#1A2533] text-xs font-bold flex items-center gap-2 border border-stone-200 shadow-xs transition-colors cursor-pointer shrink-0"
+                className="px-4 py-2 rounded bg-white hover:bg-[#FAF9F5] text-[#1A2533] dark:bg-stone-900 dark:text-stone-100 text-[10px] font-black uppercase tracking-[0.2em] flex items-center gap-3 border border-stone-300 dark:border-stone-700 shadow-sm transition-all cursor-pointer active:scale-95 shrink-0"
               >
-                <Highlighter className="w-3.5 h-3.5 text-[#D1B17F]" />
-                <span>Notas</span>
+                <Highlighter className="w-4 h-4 text-[#D1B17F]" strokeWidth={2} />
+                <span>Archivo</span>
                 {allNotes.length > 0 && (
-                  <span className="px-1.5 py-0.2 rounded bg-[#7F1D1D] text-[10px] font-mono text-white">
+                  <span className="px-1.5 py-0.5 rounded bg-[#7F1D1D] text-[9px] font-black text-white">
                     {allNotes.length}
                   </span>
                 )}
@@ -339,102 +346,156 @@ export function AcademicPanel({
       </header>
 
       {isBookDrawerOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 animate-in fade-in">
-          <div className="bg-[#FAF9F6] dark:bg-zinc-900 border border-[#E0D7C6] dark:border-zinc-700 w-full max-w-4xl max-h-[90vh] rounded-2xl shadow-2xl flex flex-col overflow-hidden">
-            <div className="p-4 bg-[#1A2533] text-white flex items-center justify-between border-b border-[#2C3E50]">
-              <div className="flex items-center gap-2">
-                <BookMarked className="w-5 h-5 text-amber-300" />
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4 animate-in fade-in duration-300">
+          <motion.div 
+            initial={{ scale: 0.95, opacity: 0, y: 20 }}
+            animate={{ scale: 1, opacity: 1, y: 0 }}
+            className="bg-white dark:bg-zinc-950 border border-stone-200 dark:border-stone-800 w-full max-w-5xl max-h-[90vh] rounded shadow-[0_30px_60px_rgba(0,0,0,0.25)] flex flex-col overflow-hidden"
+          >
+            {/* Header: Institutional Night */}
+            <div className="p-5 bg-white dark:bg-stone-900 flex items-center justify-between border-b border-stone-200 dark:border-stone-800 relative">
+              <div className="absolute top-0 left-0 w-full h-1 bg-[#7F1D1D]" />
+              <div className="flex items-center gap-4">
+                <div className="w-10 h-10 rounded bg-[#FAF9F5] dark:bg-stone-800 flex items-center justify-center border border-stone-200 dark:border-stone-700 shadow-sm shrink-0">
+                  <BookMarked className="w-5 h-5 text-[#7F1D1D] dark:text-amber-500" strokeWidth={1.5} />
+                </div>
                 <div>
-                  <h3 className="font-serif font-bold text-base text-white">
-                    Canon Bíblico (66 Libros)
+                  <h3 className="text-sm font-serif font-black text-[#1A2533] dark:text-stone-100 uppercase tracking-tight">
+                    {bookDrawerStep === 'books' ? 'Canon Bíblico (66 Libros)' : `Capítulos: ${currentBook?.name || ''}`}
                   </h3>
+                  <p className="text-[10px] font-bold text-stone-400 uppercase tracking-widest mt-0.5">
+                    {bookDrawerStep === 'books' ? 'Índice Canónico del Seminario Digital' : 'Selección de Capítulo Exegético'}
+                  </p>
                 </div>
               </div>
+              <div className="flex items-center gap-2">
+                {bookDrawerStep === 'chapters' && (
+                  <button
+                    onClick={() => setBookDrawerStep('books')}
+                    className="flex items-center gap-2 px-3 py-1.5 text-[10px] font-black text-[#7F1D1D] uppercase tracking-widest hover:bg-stone-50 dark:hover:bg-stone-800 rounded transition-all"
+                  >
+                    <ArrowLeft size={14} />
+                    Volver
+                  </button>
+                )}
+                <button
+                  onClick={() => setIsBookDrawerOpen(false)}
+                  className="p-2 text-stone-400 hover:text-[#7F1D1D] hover:bg-stone-50 dark:hover:bg-stone-800 rounded transition-colors cursor-pointer"
+                >
+                  <X size={20} />
+                </button>
+              </div>
+            </div>
+
+            {bookDrawerStep === 'books' ? (
+              <>
+                {/* Search & Filter: Paper Style */}
+                <div className="p-5 border-b border-stone-200 dark:border-stone-800 bg-[#FAF9F5] dark:bg-stone-900 flex flex-col lg:flex-row items-center justify-between gap-4">
+                  <div className="relative w-full lg:w-96">
+                    <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-stone-400" />
+                    <input
+                      type="text"
+                      placeholder="Localizar Libro..."
+                      value={bookSearchQuery}
+                      onChange={(e) => setBookSearchQuery(e.target.value)}
+                      className="w-full pl-10 pr-4 py-2.5 text-xs rounded border border-stone-300 dark:border-stone-700 bg-white dark:bg-zinc-950 focus:outline-none focus:border-[#7F1D1D] font-sans transition-all"
+                    />
+                  </div>
+
+                  <div className="flex items-center gap-1.5 w-full lg:w-auto overflow-x-auto whitespace-nowrap">
+                    <span className="text-[9px] font-black text-stone-400 uppercase tracking-[0.2em] mr-2">Filtrar:</span>
+                    {(['ALL', 'Antiguo Testamento', 'Nuevo Testamento'] as const).map(tab => (
+                      <button
+                        key={tab}
+                        onClick={() => setBookTestamentTab(tab)}
+                        className={`px-4 py-2 rounded text-[10px] font-black uppercase tracking-widest transition-all ${
+                          bookTestamentTab === tab
+                            ? 'bg-[#7F1D1D] text-white shadow-md'
+                            : 'bg-white dark:bg-stone-800 text-stone-600 dark:text-stone-300 border border-stone-300 dark:border-stone-700 hover:bg-stone-50'
+                        }`}
+                      >
+                        {tab === 'ALL' ? 'Biblia Completa' : tab}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Book Grid */}
+                <div className="flex-1 overflow-y-auto p-6 bg-white dark:bg-zinc-950 custom-scrollbar">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
+                    {filteredBooks.map(book => (
+                      <button
+                        key={book.id}
+                        onClick={() => {
+                          setSelectedBookId(book.id);
+                          setBookDrawerStep('chapters');
+                        }}
+                        className={`w-full text-left p-4 rounded border-2 transition-all flex flex-col justify-between h-24 ${
+                          selectedBookId === book.id
+                            ? 'bg-[#FAF9F5] dark:bg-stone-900 border-[#7F1D1D] shadow-inner ring-1 ring-[#7F1D1D]/20'
+                            : 'bg-white dark:bg-zinc-900 border-stone-100 dark:border-stone-800 hover:border-stone-300 dark:hover:border-stone-600'
+                        }`}
+                      >
+                        <span className={`text-[8px] font-black uppercase tracking-[0.2em] mb-1 ${
+                          selectedBookId === book.id ? 'text-[#7F1D1D]' : 'text-stone-400'
+                        }`}>
+                          {book.division}
+                        </span>
+                        <span className={`font-serif font-black text-sm tracking-tight ${
+                          selectedBookId === book.id ? 'text-[#1A2533] dark:text-white' : 'text-stone-700 dark:text-stone-300'
+                        }`}>
+                          {book.name}
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </>
+            ) : (
+              /* Chapter Selection Grid */
+              <div className="flex-1 overflow-y-auto p-8 bg-white dark:bg-zinc-950 custom-scrollbar flex flex-col items-center">
+                <div className="w-full max-w-4xl">
+                  <div className="mb-8 text-center">
+                    <h4 className="font-serif font-black text-2xl text-[#1A2533] dark:text-white uppercase tracking-tighter">
+                      {currentBook?.name}
+                    </h4>
+                    <p className="text-[10px] font-bold text-stone-400 uppercase tracking-[0.2em] mt-2">
+                      Seleccione el capítulo para iniciar el análisis exegético
+                    </p>
+                  </div>
+                  
+                  <div className="grid grid-cols-5 sm:grid-cols-8 md:grid-cols-10 lg:grid-cols-12 gap-2">
+                    {currentBook && Array.from({ length: currentBook.chaptersCount }).map((_, i) => (
+                      <button
+                        key={i}
+                        onClick={() => {
+                          setSelectedChapter(i + 1);
+                          setIsBookDrawerOpen(false);
+                          setBookDrawerStep('books'); // Reset for next open
+                        }}
+                        className={`aspect-square flex items-center justify-center text-xs font-mono font-bold rounded border transition-all ${
+                          selectedChapter === i + 1
+                            ? 'bg-[#7F1D1D] text-white border-[#7F1D1D] shadow-lg scale-110 z-10'
+                            : 'bg-white dark:bg-stone-800 text-stone-600 dark:text-stone-300 border-stone-200 dark:border-stone-700 hover:border-[#7F1D1D] hover:text-[#7F1D1D]'
+                        }`}
+                      >
+                        {i + 1}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+            
+            <div className="p-4 bg-[#FAF9F5] dark:bg-stone-900 border-t border-stone-200 dark:border-stone-800 flex justify-center">
               <button
                 onClick={() => setIsBookDrawerOpen(false)}
-                className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors"
+                className="px-10 py-3 bg-[#1A2533] hover:bg-black text-white text-[10px] font-black uppercase tracking-[0.3em] rounded shadow-lg transition-all"
               >
-                ✕
+                Cerrar Índice
               </button>
             </div>
-
-            <div className="p-4 border-b border-[#E0D7C6] dark:border-zinc-800 bg-[#F4EFE6] dark:bg-zinc-800/50 flex flex-col sm:flex-row items-center justify-between gap-3">
-              <div className="relative w-full sm:w-72">
-                <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-                <input
-                  type="text"
-                  placeholder="Buscar libro (ej. Romanos)..."
-                  value={bookSearchQuery}
-                  onChange={(e) => setBookSearchQuery(e.target.value)}
-                  className="w-full pl-9 pr-3 py-1.5 text-xs rounded-xl bg-white dark:bg-zinc-900 border border-stone-300 dark:border-zinc-700 focus:outline-none focus:ring-2 focus:ring-[#7F1D1D]"
-                />
-              </div>
-
-              <div className="flex items-center gap-1.5 w-full sm:w-auto overflow-x-auto">
-                {(['ALL', 'Antiguo Testamento', 'Nuevo Testamento'] as const).map(tab => (
-                  <button
-                    key={tab}
-                    onClick={() => setBookTestamentTab(tab)}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-colors ${
-                      bookTestamentTab === tab
-                        ? 'bg-[#7F1D1D] text-white shadow-sm'
-                        : 'bg-white dark:bg-zinc-800 text-gray-700 dark:text-zinc-300 border border-stone-300 dark:border-zinc-700 hover:bg-stone-50'
-                    }`}
-                  >
-                    {tab === 'ALL' ? 'Toda la Biblia' : tab}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div className="flex-1 overflow-y-auto p-4 custom-scrollbar bg-[#FDFBF7] dark:bg-zinc-950">
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
-                {filteredBooks.map(book => (
-                  <div key={book.id} className="space-y-1.5">
-                    <button
-                      onClick={() => {
-                        setSelectedBookId(book.id);
-                        setSelectedChapter(1);
-                        setIsBookDrawerOpen(false);
-                      }}
-                      className={`w-full text-left p-3 rounded-xl border transition-all ${
-                        selectedBookId === book.id
-                          ? 'bg-amber-50 dark:bg-zinc-800 border-amber-500 shadow-md ring-1 ring-amber-400'
-                          : 'bg-white dark:bg-zinc-900 border-[#E0D7C6] dark:border-zinc-700 hover:border-amber-300 hover:shadow-sm'
-                      }`}
-                    >
-                      <div className="text-[10px] font-mono uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-1">
-                        {book.division}
-                      </div>
-                      <div className="font-serif font-bold text-sm text-[#1A2533] dark:text-zinc-100 truncate">
-                        {book.shortName}
-                      </div>
-                    </button>
-                    {selectedBookId === book.id && (
-                      <div className="grid grid-cols-5 gap-1 pt-1">
-                        {Array.from({ length: book.chaptersCount }).map((_, i) => (
-                          <button
-                            key={i}
-                            onClick={() => {
-                              setSelectedChapter(i + 1);
-                              setIsBookDrawerOpen(false);
-                            }}
-                            className={`py-1 text-[10px] font-mono font-bold rounded ${
-                              selectedChapter === i + 1
-                                ? 'bg-[#7F1D1D] text-white'
-                                : 'bg-stone-200 dark:bg-zinc-800 text-gray-700 dark:text-gray-300 hover:bg-stone-300'
-                            }`}
-                          >
-                            {i + 1}
-                          </button>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
+          </motion.div>
         </div>
       )}
 
@@ -542,27 +603,28 @@ export function AcademicPanel({
                     <p>
                       {verse[activeTranslation as keyof typeof verse] as string || verse.rvr1960}
                     </p>
-                    {/* Render attached note badge if present */}
+                    {/* Render attached note badge if present: Institutional Style */}
                     {vNotes.map(n => n.noteText ? (
-                      <div key={n.id} className="mt-1 text-xs bg-amber-50/90 dark:bg-zinc-800/90 border border-amber-200 dark:border-zinc-700 p-2 rounded-lg font-sans text-gray-800 dark:text-gray-200 flex items-start gap-2 shadow-xs">
-                        <Edit3 className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
+                      <div key={n.id} className="mt-2 text-[11px] bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 p-3 rounded shadow-sm font-sans text-[#1A2533] dark:text-stone-200 flex items-start gap-3 relative overflow-hidden group">
+                        <div className="absolute top-0 left-0 w-1 h-full bg-[#7F1D1D]/20 group-hover:bg-[#7F1D1D] transition-colors" />
+                        <Edit3 className="w-3.5 h-3.5 text-[#7F1D1D] dark:text-amber-500 shrink-0 mt-0.5" strokeWidth={1.5} />
                         <div className="flex-1">
                           {n.selectedText && (
-                            <span className="font-serif italic font-semibold text-amber-900 dark:text-amber-300 block text-[11px]">
+                            <span className="font-serif italic font-black text-[#7F1D1D] dark:text-amber-500 block text-[10px] uppercase tracking-tight mb-1">
                               «{n.selectedText}»:
                             </span>
                           )}
-                          <span>{n.noteText}</span>
+                          <span className="leading-relaxed">{n.noteText}</span>
                         </div>
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
                             removeNote(n.id);
                           }}
-                          className="text-gray-400 hover:text-red-500 p-0.5 cursor-pointer"
-                          title="Eliminar nota"
+                          className="text-stone-300 hover:text-[#7F1D1D] p-1 cursor-pointer transition-colors"
+                          title="Eliminar anotación"
                         >
-                          <Trash2 className="w-3 h-3" />
+                          <Trash2 className="w-3.5 h-3.5" />
                         </button>
                       </div>
                     ) : null)}
@@ -585,16 +647,22 @@ export function AcademicPanel({
                   );
 
                   return (
-                    <div className="mt-2 ml-10 p-4 bg-white dark:bg-zinc-900 border border-[#E0D7C6] dark:border-zinc-700 rounded-xl shadow-md animate-in fade-in slide-in-from-top-2">
+                    <motion.div 
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="mt-4 ml-0 sm:ml-12 p-6 bg-white dark:bg-zinc-900 border border-stone-200 dark:border-stone-800 rounded shadow-xl relative"
+                    >
+                      <div className="absolute top-0 left-0 w-1.5 h-full bg-[#7F1D1D]" />
+                      
                       {activeVerseMenuTab === 'menu' ? (
-                        <div className="flex flex-col gap-2">
-                          <div className="flex justify-between items-center mb-2">
-                            <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">
-                              Herramientas ({currentBook.shortName} {selectedChapter}:{verse.num})
+                        <div className="flex flex-col gap-4">
+                          <div className="flex justify-between items-center border-b border-stone-100 dark:border-stone-800 pb-3">
+                            <span className="text-[10px] font-black text-[#1A2533] dark:text-stone-400 uppercase tracking-[0.2em]">
+                              Herramientas Exegéticas · {currentBook.shortName} {selectedChapter}:{verse.num}
                             </span>
                             <button 
                               onClick={(e) => { e.stopPropagation(); setSelectedVerse(null); }}
-                              className="p-1 hover:bg-stone-100 dark:hover:bg-zinc-800 rounded-full text-gray-400"
+                              className="p-1.5 hover:bg-stone-50 dark:hover:bg-zinc-800 rounded transition-colors text-stone-400 hover:text-[#7F1D1D]"
                             >
                               <X className="w-4 h-4" />
                             </button>
@@ -775,42 +843,43 @@ export function AcademicPanel({
                               </div>
                             )}
                             {activeVerseMenuTab === 'comentario_biblico' && (
-                              <div className="space-y-3 max-h-[320px] overflow-y-auto custom-scrollbar pr-2">
+                              <div className="space-y-4 max-h-[400px] overflow-y-auto custom-scrollbar pr-2">
                                 {verse.theologicalNote && (
-                                  <div className="bg-amber-100/60 dark:bg-amber-950/40 p-3 rounded-lg border border-amber-300 dark:border-amber-800/60">
-                                    <h4 className="font-bold text-xs text-amber-900 dark:text-amber-300 mb-1 flex items-center gap-1.5 uppercase tracking-wide">
-                                      <BookMarked className="w-3.5 h-3.5" />
-                                      Nota Teológica del Versículo {verse.num}
+                                  <div className="bg-[#FAF9F5] dark:bg-stone-800 p-4 rounded border border-stone-200 dark:border-stone-700 relative overflow-hidden">
+                                    <div className="absolute top-0 left-0 w-1 h-full bg-[#7F1D1D]" />
+                                    <h4 className="font-serif font-black text-[10px] text-[#7F1D1D] dark:text-amber-500 mb-2 flex items-center gap-2 uppercase tracking-[0.15em]">
+                                      <BookMarked size={14} />
+                                      Nota Teológica · Versículo {verse.num}
                                     </h4>
-                                    <p className="text-xs text-amber-950 dark:text-amber-200">
+                                    <p className="text-xs text-[#1A2533] dark:text-stone-200 font-sans leading-relaxed">
                                       {verse.theologicalNote}
                                     </p>
                                   </div>
                                 )}
-                                <div className="bg-stone-50 dark:bg-zinc-800/50 p-3 rounded-lg border border-[#E0D7C6] dark:border-zinc-700">
-                                  <h4 className="font-bold text-sm text-[#1A2533] dark:text-zinc-100 mb-1 flex items-center gap-2">
-                                    <div className="w-2 h-2 rounded-full bg-amber-600"></div>
+                                <div className="bg-white dark:bg-zinc-950 p-4 rounded border border-stone-200 dark:border-stone-800 shadow-sm">
+                                  <h4 className="font-serif font-black text-sm text-[#1A2533] dark:text-zinc-100 mb-2 flex items-center gap-2 border-b border-stone-100 dark:border-stone-800 pb-2">
+                                    <div className="w-2.5 h-2.5 rounded bg-[#7F1D1D]"></div>
                                     Matthew Henry (Comentario Expositivo)
                                   </h4>
-                                  <p className="text-xs text-gray-600 dark:text-gray-300 leading-relaxed">
+                                  <p className="text-xs text-stone-600 dark:text-stone-300 leading-relaxed font-sans">
                                     {verseComm.matthewHenry}
                                   </p>
                                 </div>
-                                <div className="bg-stone-50 dark:bg-zinc-800/50 p-3 rounded-lg border border-[#E0D7C6] dark:border-zinc-700">
-                                  <h4 className="font-bold text-sm text-[#1A2533] dark:text-zinc-100 mb-1 flex items-center gap-2">
-                                    <div className="w-2 h-2 rounded-full bg-emerald-600"></div>
+                                <div className="bg-white dark:bg-zinc-950 p-4 rounded border border-stone-200 dark:border-stone-800 shadow-sm">
+                                  <h4 className="font-serif font-black text-sm text-[#1A2533] dark:text-zinc-100 mb-2 flex items-center gap-2 border-b border-stone-100 dark:border-stone-800 pb-2">
+                                    <div className="w-2.5 h-2.5 rounded bg-emerald-600"></div>
                                     Paul Washer (Enfoque Reformado)
                                   </h4>
-                                  <p className="text-xs text-gray-600 dark:text-gray-300 leading-relaxed">
+                                  <p className="text-xs text-stone-600 dark:text-stone-300 leading-relaxed font-sans">
                                     {verseComm.paulWasher}
                                   </p>
                                 </div>
-                                <div className="bg-stone-50 dark:bg-zinc-800/50 p-3 rounded-lg border border-[#E0D7C6] dark:border-zinc-700">
-                                  <h4 className="font-bold text-sm text-[#1A2533] dark:text-zinc-100 mb-1 flex items-center gap-2">
-                                    <div className="w-2 h-2 rounded-full bg-blue-600"></div>
+                                <div className="bg-white dark:bg-zinc-950 p-4 rounded border border-stone-200 dark:border-stone-800 shadow-sm">
+                                  <h4 className="font-serif font-black text-sm text-[#1A2533] dark:text-zinc-100 mb-2 flex items-center gap-2 border-b border-stone-100 dark:border-stone-800 pb-2">
+                                    <div className="w-2.5 h-2.5 rounded bg-sky-600"></div>
                                     Charles Spurgeon (Tesoro del Devocional)
                                   </h4>
-                                  <p className="text-xs text-gray-600 dark:text-gray-300 leading-relaxed">
+                                  <p className="text-xs text-stone-600 dark:text-stone-300 leading-relaxed font-sans">
                                     {verseComm.charlesSpurgeon}
                                   </p>
                                 </div>
@@ -825,23 +894,24 @@ export function AcademicPanel({
                                 verseTextStr
                               );
                               return (
-                                <ul className="space-y-3 max-h-[320px] overflow-y-auto custom-scrollbar pr-2">
+                                <ul className="space-y-4 max-h-[400px] overflow-y-auto custom-scrollbar pr-2">
                                   {crossRefs.map((cr, idx) => (
-                                    <li key={idx} className="p-3 bg-stone-50 dark:bg-zinc-800/50 rounded-lg border border-[#E0D7C6] dark:border-zinc-700">
-                                      <div className="flex items-center justify-between gap-2 mb-1.5">
-                                        <span className="font-bold text-amber-700 dark:text-amber-400 text-xs flex items-center gap-1.5">
-                                          <LinkIcon className="w-3.5 h-3.5" />
+                                    <li key={idx} className="p-4 bg-white dark:bg-zinc-950 rounded border border-stone-200 dark:border-stone-800 shadow-sm relative group overflow-hidden">
+                                      <div className="absolute top-0 left-0 w-1 h-full bg-stone-100 dark:bg-stone-800 group-hover:bg-[#7F1D1D] transition-colors" />
+                                      <div className="flex items-center justify-between gap-3 mb-3">
+                                        <span className="font-serif font-black text-[#7F1D1D] dark:text-amber-500 text-xs flex items-center gap-2 uppercase tracking-tight">
+                                          <LinkIcon size={14} className="text-stone-400" />
                                           {cr.ref}
                                         </span>
-                                        <span className="text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-800/50 shrink-0">
+                                        <span className="text-[9px] font-black uppercase tracking-[0.2em] px-2.5 py-1 rounded bg-[#FAF9F5] dark:bg-stone-900 text-stone-500 dark:text-stone-400 border border-stone-200 dark:border-stone-800">
                                           {cr.type}
                                         </span>
                                       </div>
-                                      <p className="text-xs italic text-gray-700 dark:text-gray-300 mb-1.5 leading-relaxed bg-white/60 dark:bg-zinc-900/40 p-2 rounded border border-stone-200 dark:border-zinc-800">
-                                        {cr.quote}
+                                      <p className="text-xs italic font-serif text-[#1A2533] dark:text-stone-200 mb-3 leading-relaxed bg-[#FAF9F5] dark:bg-stone-900 p-3 rounded border border-stone-100 dark:border-stone-800">
+                                        «{cr.quote}»
                                       </p>
-                                      <p className="text-[11px] text-gray-600 dark:text-gray-400 leading-normal">
-                                        <strong className="text-gray-700 dark:text-gray-300 font-medium">Conexión: </strong>
+                                      <p className="text-[11px] text-stone-600 dark:text-stone-400 leading-relaxed font-sans">
+                                        <strong className="text-[#1A2533] dark:text-stone-200 font-black uppercase tracking-widest text-[9px]">Análisis: </strong>
                                         {cr.explanation}
                                       </p>
                                     </li>
@@ -884,7 +954,7 @@ export function AcademicPanel({
                           </div>
                         </div>
                       )}
-                    </div>
+                    </motion.div>
                   );
                 })()}
               </div>

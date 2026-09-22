@@ -42,6 +42,7 @@ interface FloatingNotesWidgetProps {
   lessonId?: string;
   onNavigateToLesson?: (courseId: string, lessonId: string) => void;
   onLayoutChange?: (info: { isOpen: boolean; isMinimized: boolean; isDocked: boolean; width: number; rightOffset: number }) => void;
+  externalOpenTrigger?: number;
 }
 
 export function FloatingNotesWidget({
@@ -52,9 +53,17 @@ export function FloatingNotesWidget({
   courseId,
   lessonId,
   onNavigateToLesson,
-  onLayoutChange
+  onLayoutChange,
+  externalOpenTrigger
 }: FloatingNotesWidgetProps) {
   const [isOpen, setIsOpen] = useState(false);
+
+  useEffect(() => {
+    if (externalOpenTrigger && externalOpenTrigger > 0) {
+      setIsOpen(true);
+      setIsMinimized(false);
+    }
+  }, [externalOpenTrigger]);
   const userId = user?.uid || 'invitado_seminario';
   const userName = customProfileName || user?.displayName || (user?.email ? user.email.split('@')[0] : 'Estudiante');
   const userEmail = user?.email || 'invitado@seminariodigital.org';
@@ -398,14 +407,14 @@ export function FloatingNotesWidget({
               isFullScreen
                 ? 'inset-2 sm:inset-6 w-auto h-auto rounded-2xl'
                 : !winPos
-                  ? 'top-16 right-4 w-[520px] max-w-[92vw] h-[600px] max-h-[85vh]'
+                  ? 'inset-x-2 bottom-4 top-14 sm:inset-x-auto sm:top-16 sm:right-4 sm:left-auto sm:bottom-auto sm:w-[520px] sm:max-w-[92vw] sm:h-[600px] sm:max-h-[85vh] rounded-2xl'
                   : ''
             }`}
             onClick={e => e.stopPropagation()}
           >
-            {/* 8-DIRECTION RESIZABLE HANDLES */}
+            {/* 8-DIRECTION RESIZABLE HANDLES (Desktop only) */}
             {!isFullScreen && (
-              <>
+              <div className="hidden sm:block">
                 <div onMouseDown={e => handleResizeStart(e, 'top')} className="absolute -top-1.5 left-3 right-3 h-3 cursor-ns-resize z-30" />
                 <div onMouseDown={e => handleResizeStart(e, 'bottom')} className="absolute -bottom-1.5 left-3 right-3 h-3 cursor-ns-resize z-30" />
                 <div onMouseDown={e => handleResizeStart(e, 'left')} className="absolute top-3 -left-1.5 bottom-3 w-3 cursor-ew-resize z-30" />
@@ -414,7 +423,7 @@ export function FloatingNotesWidget({
                 <div onMouseDown={e => handleResizeStart(e, 'top-right')} className="absolute -top-1.5 -right-1.5 w-4 h-4 cursor-nesw-resize z-30" />
                 <div onMouseDown={e => handleResizeStart(e, 'bottom-left')} className="absolute -bottom-1.5 -left-1.5 w-4 h-4 cursor-nesw-resize z-30" />
                 <div onMouseDown={e => handleResizeStart(e, 'bottom-right')} className="absolute -bottom-1.5 -right-1.5 w-4 h-4 cursor-nwse-resize z-30" />
-              </>
+              </div>
             )}
 
             {/* HEADER BAR */}

@@ -20,6 +20,7 @@ import { HomePanel } from './components/HomePanel';
 import { OfflineBanner } from './components/OfflineBanner';
 import { FloatingNotesWidget } from './components/FloatingNotesWidget';
 import { VirtualAssistantWidget } from './components/VirtualAssistantWidget';
+import { MobileBottomNav } from './components/MobileBottomNav';
 import { AnimatePresence, motion } from 'motion/react';
 
 export default function App() {
@@ -29,6 +30,7 @@ export default function App() {
   const [activeTab, setActiveTab] = useState<'home' | 'courses' | 'academic' | 'calendar' | 'grades'>('home');
   const [showProfile, setShowProfile] = useState(false);
   const [isAssistantOpen, setIsAssistantOpen] = useState(false);
+  const [notesOpenTrigger, setNotesOpenTrigger] = useState(0);
   const { profile: customProfile, saveProfile, isLoading: profileLoading } = useProfile();
   const { progress, markCompleted, resetAllProgress, isLoading: progressLoading } = useProgress();
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -323,6 +325,7 @@ export default function App() {
         activeLessonTitle={activeLesson?.title}
         courseId={activeCourse?.id}
         lessonId={activeLesson?.id}
+        externalOpenTrigger={notesOpenTrigger}
         onNavigateToLesson={(cId, lId) => {
           let targetCourseId = cId;
           if (!targetCourseId && lId) {
@@ -344,6 +347,29 @@ export default function App() {
         onClose={() => setIsAssistantOpen(false)}
         activeCourseTitle={activeCourse?.title}
         activeLessonTitle={activeLesson?.title}
+      />
+
+      {/* Dedicated Native Mobile Bottom Navigation Bar */}
+      <MobileBottomNav 
+        activeTab={activeTab}
+        onSelectTab={(tab) => {
+          setActiveTab(tab);
+          setActiveCourseId(null);
+          setActiveLessonId(null);
+        }}
+        onResetCourseSelection={() => {
+          setActiveCourseId(null);
+          setActiveLessonId(null);
+        }}
+        onOpenAssistant={() => setIsAssistantOpen(true)}
+        onOpenNotes={() => setNotesOpenTrigger(Date.now())}
+        onOpenProfile={() => setShowProfile(true)}
+        darkMode={darkMode}
+        onToggleDarkMode={() => setDarkMode(prev => !prev)}
+        completedLessonsCount={Object.keys(progress.completedLessons || {}).length}
+        user={user}
+        customProfile={customProfile}
+        onSignOut={signOut}
       />
 
       <OfflineBanner />

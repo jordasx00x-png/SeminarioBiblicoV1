@@ -272,7 +272,7 @@ export function VirtualAssistantWidget({
             className={`fixed z-[65] bg-slate-900/98 backdrop-blur-xl border border-amber-500/40 shadow-2xl rounded-2xl flex flex-col font-sans overflow-hidden text-slate-100 ${
               isExpanded
                 ? 'inset-2 sm:inset-6 w-auto h-auto max-w-5xl mx-auto'
-                : 'bottom-4 left-4 right-4 sm:right-auto sm:w-[480px] md:w-[520px] h-[640px] max-h-[88vh]'
+                : 'inset-x-2 bottom-2 top-12 sm:top-auto sm:inset-x-auto sm:bottom-4 sm:left-4 sm:right-auto sm:w-[480px] md:w-[520px] sm:h-[640px] sm:max-h-[88vh]'
             }`}
           >
             {/* TOP HEADER */}

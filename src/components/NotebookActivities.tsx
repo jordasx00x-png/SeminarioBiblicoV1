@@ -1,21 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Lesson } from '../types';
-import { generateLessonNotebookActivities, NotebookItem } from '../utils/notebookActivitiesGenerator';
-import { 
-  BookOpen, 
-  PenTool, 
-  CheckSquare, 
-  Square, 
-  Sparkles, 
-  Copy, 
-  Check, 
-  HelpCircle, 
-  Edit3, 
-  FileText,
-  ListChecks,
-  ChevronDown,
-  ChevronUp
-} from 'lucide-react';
+import { generateLessonNotebookPlan } from '../utils/notebookActivitiesGenerator';
+import { CheckSquare, Square, Copy, Check, PenTool, FileText, Sparkles, BookOpen, Layers } from 'lucide-react';
 
 interface NotebookActivitiesProps {
   lesson: Lesson;
@@ -24,29 +10,25 @@ interface NotebookActivitiesProps {
 }
 
 export function NotebookActivities({ lesson, courseTitle, onOpenNotesWidget }: NotebookActivitiesProps) {
-  const [completedItems, setCompletedItems] = useState<Record<string, boolean>>({});
+  const [completed, setCompleted] = useState<Record<string, boolean>>({});
   const [copied, setCopied] = useState(false);
-  const [isExpanded, setIsExpanded] = useState(true);
 
-  // Load saved notebook checks for this lesson
+  // Load checks from local storage
   useEffect(() => {
     try {
-      const saved = localStorage.getItem(`notebook_checks_${lesson.id}`);
-      if (saved) {
-        setCompletedItems(JSON.parse(saved));
-      } else {
-        setCompletedItems({});
-      }
+      const saved = localStorage.getItem(`nb_sem_${lesson.id}`);
+      if (saved) setCompleted(JSON.parse(saved));
+      else setCompleted({});
     } catch {
-      setCompletedItems({});
+      setCompleted({});
     }
   }, [lesson.id]);
 
-  const toggleCheck = (itemId: string) => {
-    setCompletedItems(prev => {
-      const next = { ...prev, [itemId]: !prev[itemId] };
+  const toggle = (id: string) => {
+    setCompleted(prev => {
+      const next = { ...prev, [id]: !prev[id] };
       try {
-        localStorage.setItem(`notebook_checks_${lesson.id}`, JSON.stringify(next));
+        localStorage.setItem(`nb_sem_${lesson.id}`, JSON.stringify(next));
       } catch (e) {
         console.error(e);
       }
@@ -54,176 +36,170 @@ export function NotebookActivities({ lesson, courseTitle, onOpenNotesWidget }: N
     });
   };
 
-  // Generate unique, tailored notebook activities specifically for this lesson
-  const notebookItems: NotebookItem[] = React.useMemo(() => {
-    return generateLessonNotebookActivities(lesson);
+  // Generate dynamic, lesson-specific notebook plan with distinct pedagogical focus
+  const notebookPlan = React.useMemo(() => {
+    return generateLessonNotebookPlan(lesson);
   }, [lesson]);
 
-  const completedCount = notebookItems.filter(item => completedItems[item.id]).length;
-  const progressPercent = Math.round((completedCount / notebookItems.length) * 100);
+  const tasks = notebookPlan.tasks;
+  const completedCount = tasks.filter(t => completed[t.id]).length;
+  const isAllDone = completedCount === tasks.length;
+  const progressPercent = Math.round((completedCount / tasks.length) * 100);
 
-  const handleCopyGuide = () => {
-    const text = `✏️ GUÍA DE CUADERNO DE APUNTES - ${lesson.title}\n` +
+  const handleCopy = () => {
+    const text = `📓 TRABAJO EN LIBRETA - ${lesson.title}\n` +
       `Curso: ${courseTitle || ''}\n` +
-      `Pasaje: ${lesson.baseVerse?.reference || 'N/A'}\n\n` +
-      notebookItems.map((item, index) => 
-        `${index + 1}. [${item.category}] ${item.title}\n   ${item.instruction}\n   💡 ${item.hint || ''}\n`
-      ).join('\n') +
-      `\n--- Realizado a mano en libreta de estudio ---`;
+      `${notebookPlan.pedagogicalFocus}\n\n` +
+      tasks.map(t => 
+        `[${t.badge.toUpperCase()}] ${t.title}\n` +
+        `Instrucción: ${t.task}\n` +
+        `Guía: ${t.guidePrompt}\n`
+      ).join('\n-----------------------------------\n') +
+      `\nSeminario Teológico Digital`;
 
     navigator.clipboard.writeText(text);
     setCopied(true);
-    setTimeout(() => setCopied(false), 2500);
+    setTimeout(() => setCopied(false), 2000);
   };
 
   return (
-    <div className="bg-gradient-to-br from-amber-50/90 via-[#FAF8F5] to-amber-100/40 dark:from-slate-900 dark:via-slate-900/90 dark:to-amber-950/30 border-2 border-amber-300/80 dark:border-amber-700/60 rounded-2xl p-5 md:p-7 shadow-md font-sans my-8 relative overflow-hidden">
-      {/* Decorative notebook binding side margin */}
-      <div className="absolute left-0 top-0 bottom-0 w-2.5 bg-amber-500/80 dark:bg-amber-600/70" />
+    <div className="bg-gradient-to-br from-amber-50/90 via-[#FAF8F5] to-amber-100/40 dark:from-slate-900 dark:via-slate-900/90 dark:to-amber-950/30 border-2 border-amber-300/80 dark:border-amber-700/60 rounded-3xl p-4 sm:p-6 my-7 shadow-sm font-sans transition-colors duration-300">
       
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-amber-200 dark:border-slate-800">
-        <div className="flex items-center gap-3">
-          <div className="w-11 h-11 rounded-xl bg-amber-500 text-slate-950 flex items-center justify-center font-bold shadow-md shrink-0 border border-amber-400">
-            <PenTool size={22} />
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-amber-200/80 dark:border-slate-800">
+        <div className="flex items-start sm:items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-600 to-amber-700 text-white flex items-center justify-center font-bold shadow-md shrink-0 border border-amber-400">
+            <PenTool size={20} />
           </div>
           <div>
             <div className="flex items-center gap-2 flex-wrap">
-              <h3 className="text-base md:text-lg font-serif font-bold text-amber-950 dark:text-amber-200">
+              <h4 className="text-base sm:text-lg font-serif font-bold text-amber-950 dark:text-amber-100">
                 ✏️ Trabajo en Libreta y Cuaderno de Estudio
-              </h3>
-              <span className="text-[10px] font-extrabold uppercase tracking-widest px-2.5 py-0.5 rounded-full bg-amber-200/90 text-amber-900 dark:bg-amber-900/80 dark:text-amber-200 border border-amber-300 dark:border-amber-700">
-                Independiente de la Tarea
+              </h4>
+              {/* Dynamic Archetype Badge indicating this class's specific angle */}
+              <span className="text-[10px] font-extrabold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-amber-200/90 text-amber-900 dark:bg-amber-900/80 dark:text-amber-200 border border-amber-300 dark:border-amber-700 flex items-center gap-1">
+                <Layers size={11} className="text-amber-700 dark:text-amber-300" />
+                <span>{notebookPlan.focusBadge}</span>
               </span>
             </div>
-            <p className="text-xs text-amber-900/80 dark:text-slate-300 mt-0.5">
-              Actividades prácticas para anotar a mano, responder preguntas de reflexión y profundizar en tu cuaderno.
+            <p className="text-xs text-amber-900/80 dark:text-slate-300 mt-0.5 flex items-center gap-1.5 flex-wrap">
+              <span className="font-semibold text-amber-800 dark:text-amber-300">{notebookPlan.pedagogicalFocus}</span>
+              <span className="hidden sm:inline text-slate-400">•</span>
+              <span className="text-slate-600 dark:text-slate-400">Ejercicios adaptados a la temática de esta clase</span>
             </p>
           </div>
         </div>
 
+        {/* Header Actions */}
         <div className="flex items-center gap-2 shrink-0">
           <button
-            onClick={handleCopyGuide}
-            className="px-3 py-1.5 rounded-lg bg-white dark:bg-slate-800 text-amber-900 dark:text-amber-300 hover:bg-amber-100 dark:hover:bg-slate-700 border border-amber-300/80 dark:border-slate-700 text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer shadow-2xs"
-            title="Copiar las actividades para pegarlas en tus notas"
+            onClick={handleCopy}
+            className="px-3 py-1.5 rounded-xl bg-white dark:bg-slate-800 text-amber-900 dark:text-amber-300 hover:bg-amber-100 dark:hover:bg-slate-700 border border-amber-300/80 dark:border-slate-700 text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer shadow-2xs"
+            title="Copiar las consignas de esta lección"
           >
             {copied ? <Check size={14} className="text-emerald-600" /> : <Copy size={14} />}
-            <span>{copied ? '¡Copiado!' : 'Copiar Guía'}</span>
-          </button>
-
-          <button
-            onClick={() => setIsExpanded(prev => !prev)}
-            className="p-1.5 rounded-lg bg-white dark:bg-slate-800 text-amber-900 dark:text-amber-300 hover:bg-amber-100 dark:hover:bg-slate-700 border border-amber-300/80 dark:border-slate-700 transition-colors cursor-pointer"
-            title={isExpanded ? "Plegar sección" : "Desplegar sección"}
-          >
-            {isExpanded ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+            <span>{copied ? 'Copiado' : 'Copiar Ejercicios'}</span>
           </button>
         </div>
       </div>
 
       {/* Progress Bar */}
-      <div className="mt-4 mb-2">
-        <div className="flex items-center justify-between text-xs font-bold text-amber-900 dark:text-amber-300 mb-1">
+      <div className="mt-3.5 mb-2">
+        <div className="flex items-center justify-between text-xs font-semibold text-amber-900/90 dark:text-amber-300 mb-1">
           <span className="flex items-center gap-1.5">
-            <ListChecks size={15} className="text-amber-600 dark:text-amber-400" />
+            <BookOpen size={14} className="text-amber-600 dark:text-amber-400" />
             <span>Progreso de Ejercicios en Cuaderno:</span>
           </span>
-          <span className="font-mono bg-amber-200/60 dark:bg-amber-950 px-2 py-0.5 rounded border border-amber-300/80 dark:border-amber-800">
-            {completedCount} de {notebookItems.length} completados ({progressPercent}%)
+          <span className="font-mono bg-white dark:bg-slate-800 px-2 py-0.5 rounded-md border border-amber-300/70 dark:border-slate-700 text-[11px]">
+            {completedCount} de {tasks.length} realizados ({progressPercent}%)
           </span>
         </div>
         <div className="w-full h-2 bg-amber-200/60 dark:bg-slate-800 rounded-full overflow-hidden">
           <div 
-            className="h-full bg-gradient-to-r from-amber-500 to-amber-600 transition-all duration-500 rounded-full"
+            className={`h-full transition-all duration-400 rounded-full ${
+              isAllDone ? 'bg-emerald-500' : 'bg-amber-500'
+            }`}
             style={{ width: `${progressPercent}%` }}
           />
         </div>
       </div>
 
-      {/* Items list */}
-      {isExpanded && (
-        <div className="space-y-3.5 mt-5">
-          {notebookItems.map((item, index) => {
-            const isChecked = !!completedItems[item.id];
-            const badgeStyle = {
-              APUNTE: 'bg-blue-100 dark:bg-blue-950/80 text-blue-800 dark:text-blue-300 border-blue-300 dark:border-blue-800',
-              PREGUNTA: 'bg-purple-100 dark:bg-purple-950/80 text-purple-800 dark:text-purple-300 border-purple-300 dark:border-purple-800',
-              ACTIVIDAD: 'bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 border-emerald-300 dark:border-emerald-800'
-            }[item.category];
+      {/* Dynamic Tasks List */}
+      <div className="space-y-3 mt-4">
+        {tasks.map((task) => {
+          const isChecked = !!completed[task.id];
 
-            const categoryIcon = {
-              APUNTE: <Edit3 size={13} />,
-              PREGUNTA: <HelpCircle size={13} />,
-              ACTIVIDAD: <Sparkles size={13} />
-            }[item.category];
-
-            return (
-              <div 
-                key={item.id}
-                onClick={() => toggleCheck(item.id)}
-                className={`p-4 rounded-xl border transition-all cursor-pointer flex items-start gap-3.5 group select-none ${
-                  isChecked 
-                    ? 'bg-amber-100/50 dark:bg-amber-950/40 border-amber-400/80 dark:border-amber-700/80 opacity-90' 
-                    : 'bg-white/90 dark:bg-slate-900/90 border-amber-200/90 dark:border-slate-800 hover:border-amber-400 dark:hover:border-amber-600 hover:shadow-xs'
-                }`}
+          return (
+            <div
+              key={task.id}
+              onClick={() => toggle(task.id)}
+              className={`p-3.5 sm:p-4 rounded-2xl border transition-all cursor-pointer flex items-start gap-3.5 select-none ${
+                isChecked
+                  ? 'bg-emerald-50/50 dark:bg-emerald-950/20 border-emerald-300 dark:border-emerald-800 opacity-90'
+                  : 'bg-white/95 dark:bg-slate-900/90 border-amber-200/90 dark:border-slate-800 hover:border-amber-400 dark:hover:border-amber-600 shadow-xs'
+              }`}
+            >
+              {/* Checkbox */}
+              <button
+                type="button"
+                className="mt-0.5 text-amber-600 dark:text-amber-400 shrink-0 cursor-pointer"
+                title={isChecked ? "Marcar como pendiente" : "Marcar como terminado en tu cuaderno"}
               >
-                <div className="mt-0.5 text-amber-600 dark:text-amber-400 shrink-0 transition-transform group-hover:scale-110">
-                  {isChecked ? (
-                    <CheckSquare size={20} className="text-emerald-600 dark:text-emerald-400" />
-                  ) : (
-                    <Square size={20} className="text-amber-800/60 dark:text-slate-500" />
-                  )}
+                {isChecked ? (
+                  <CheckSquare size={21} className="text-emerald-600 dark:text-emerald-400" />
+                ) : (
+                  <Square size={21} className="text-slate-400 hover:text-amber-600" />
+                )}
+              </button>
+
+              <div className="flex-1 min-w-0">
+                {/* Badge and Title */}
+                <div className="flex items-center gap-2 flex-wrap mb-1">
+                  <span className={`text-[10px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded-md border ${task.badgeColor}`}>
+                    {task.badge}
+                  </span>
+                  <h5 className={`text-xs sm:text-sm font-bold ${
+                    isChecked ? 'line-through text-slate-400 dark:text-slate-500' : 'text-slate-900 dark:text-slate-100'
+                  }`}>
+                    {task.title}
+                  </h5>
                 </div>
 
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 flex-wrap mb-1">
-                    <span className={`text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md border flex items-center gap-1 ${badgeStyle}`}>
-                      {categoryIcon}
-                      <span>{item.category}</span>
-                    </span>
-                    <h4 className={`text-xs md:text-sm font-bold ${
-                      isChecked ? 'line-through text-slate-500 dark:text-slate-400' : 'text-slate-900 dark:text-slate-100'
-                    }`}>
-                      {index + 1}. {item.title}
-                    </h4>
-                  </div>
+                {/* Substantive Instruction */}
+                <p className={`text-xs sm:text-sm leading-relaxed whitespace-pre-line mt-1 ${
+                  isChecked ? 'text-slate-400 dark:text-slate-500' : 'text-slate-700 dark:text-slate-300'
+                }`}>
+                  {task.task}
+                </p>
 
-                  <p className={`text-xs md:text-sm leading-relaxed ${
-                    isChecked ? 'text-slate-500 dark:text-slate-400' : 'text-slate-700 dark:text-slate-300'
-                  }`}>
-                    {item.instruction}
-                  </p>
-
-                  {item.hint && (
-                    <div className="mt-2 text-[11px] font-sans text-amber-800 dark:text-amber-300/90 bg-amber-50/80 dark:bg-slate-800/80 p-2 rounded-lg border border-amber-200/60 dark:border-slate-700 flex items-start gap-1.5">
-                      <Sparkles size={12} className="text-amber-500 shrink-0 mt-0.5" />
-                      <span><strong>Sugerencia de Cuaderno:</strong> {item.hint}</span>
-                    </div>
-                  )}
+                {/* Quick Writing Guide */}
+                <div className="mt-2.5 flex items-center gap-1.5 text-[11px] text-amber-900/80 dark:text-amber-300/80 bg-amber-50/80 dark:bg-slate-800/80 p-2 rounded-xl border border-amber-200/60 dark:border-slate-700">
+                  <Sparkles size={13} className="text-amber-500 shrink-0" />
+                  <span><strong>En tu hoja:</strong> {task.guidePrompt}</span>
                 </div>
               </div>
-            );
-          })}
-        </div>
-      )}
+            </div>
+          );
+        })}
+      </div>
 
-      {/* Footer Info */}
-      <div className="mt-4 pt-3 border-t border-amber-200/70 dark:border-slate-800/80 flex flex-col sm:flex-row items-center justify-between gap-2 text-[11px] text-amber-900/80 dark:text-slate-400">
-        <span className="flex items-center gap-1">
-          <BookOpen size={13} className="text-amber-600 dark:text-amber-400" />
-          <span>El estudio constante en libreta fortalece la retención conceptual y la devoción personal.</span>
+      {/* Footer advice and digital notes shortcut */}
+      <div className="mt-4 pt-3 border-t border-amber-200/70 dark:border-slate-800/80 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-amber-900/80 dark:text-slate-400">
+        <span className="text-[11px]">
+          💡 <strong>Nota del Seminario:</strong> Cada lección rota su enfoque pedagógico para ejercitar tu capacidad exegética, homilética, apologética y pastoral sin caer en la monotonía.
         </span>
+
         {onOpenNotesWidget && (
           <button
             onClick={onOpenNotesWidget}
-            className="text-amber-800 dark:text-amber-300 font-bold hover:underline cursor-pointer flex items-center gap-1 shrink-0"
+            className="text-amber-800 dark:text-amber-300 font-bold hover:underline flex items-center gap-1 shrink-0 cursor-pointer text-xs"
           >
-            <FileText size={12} />
-            <span>Abrir Mis Notas Digitales</span>
+            <FileText size={13} />
+            <span>Abrir Bloc de Notas Digital</span>
           </button>
         )}
       </div>
+
     </div>
   );
 }

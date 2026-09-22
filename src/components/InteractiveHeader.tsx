@@ -64,22 +64,22 @@ export function InteractiveHeader({
         {/* Left: Brand Logo Pill */}
         <button
           onClick={() => handleTabClick('home')}
-          className="flex items-center gap-2.5 px-2 py-1.5 rounded-2xl hover:bg-slate-800/80 transition-all cursor-pointer group shrink-0 active:scale-95"
+          className="flex items-center gap-2 sm:gap-2.5 px-1.5 sm:px-2 py-1.5 rounded-2xl hover:bg-slate-800/80 transition-all cursor-pointer group shrink-0 active:scale-95"
         >
           <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-red-700 via-amber-800 to-amber-600 flex items-center justify-center shadow-md border border-amber-500/40 group-hover:scale-105 transition-transform">
             <span className="font-serif font-extrabold text-white text-xs tracking-widest leading-none">STD</span>
           </div>
-          <div className="hidden md:flex flex-col text-left leading-tight">
+          <div className="flex flex-col text-left leading-tight">
             <span className="text-xs font-bold tracking-tight text-white font-sans flex items-center gap-1">
               SEMINARIO
-              <span className="text-[8px] bg-amber-500/20 text-amber-300 border border-amber-500/30 px-1.5 py-0.2 rounded uppercase tracking-wider font-semibold">DIGITAL</span>
+              <span className="text-[8px] bg-amber-500/20 text-amber-300 border border-amber-500/30 px-1 py-0.2 rounded uppercase tracking-wider font-semibold">DIGITAL</span>
             </span>
-            <span className="text-[9px] font-sans text-slate-400">Campus Interactivo</span>
+            <span className="text-[9px] font-sans text-slate-400 hidden sm:inline">Campus Teológico</span>
           </div>
         </button>
 
-        {/* Center: Main Interactive Floating Tab Bar */}
-        <nav className="flex items-center gap-1 sm:gap-2 md:gap-4 overflow-x-auto px-1 py-1 w-full justify-center flex-1 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+        {/* Center: Main Interactive Floating Tab Bar (Desktop only, mobile uses Bottom Nav) */}
+        <nav className="hidden md:flex items-center gap-1.5 lg:gap-3 px-1 py-1 justify-center flex-1">
           {navTabs.map((tab) => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.id;

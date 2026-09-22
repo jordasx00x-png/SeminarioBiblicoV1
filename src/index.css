@@ -60,7 +60,7 @@
     background: linear-gradient(135deg, #D4AF37 0%, #F59E0B 100%);
   }
 
-  .accent-[#7F1D1D]-gradient {
+  .accent-crimson-gradient {
     background: linear-gradient(135deg, #7F1D1D 0%, #B91C1C 100%);
   }
 
@@ -71,6 +71,15 @@
   .glow-shadow-gold {
     box-shadow: 0 10px 30px -10px rgba(245, 158, 11, 0.3);
   }
+
+  .pb-safe {
+    padding-bottom: max(env(safe-area-inset-bottom, 0px), 16px);
+  }
+}
+
+/* Mobile Touch & Tap Optimizations */
+* {
+  -webkit-tap-highlight-color: transparent;
 }
 
 /* Smooth Scrolling Globally */

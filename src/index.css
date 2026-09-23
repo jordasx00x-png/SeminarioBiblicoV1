@@ -9,6 +9,19 @@
   --font-display: "Cinzel", Georgia, serif;
 }
 
+@layer base {
+  html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    overscroll-behavior: none;
+  }
+  #root {
+    height: 100%;
+  }
+}
+
 @layer utilities {
   .hide-scrollbar {
     -ms-overflow-style: none;  /* IE and Edge */

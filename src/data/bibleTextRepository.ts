@@ -447,7 +447,7 @@ export const CURATED_CHAPTERS_DB: Record<string, ChapterContent> = {
         lbla: 'En el principio creó Dios los cielos y la tierra.',
         ntv: 'En el principio, Dios creó los cielos y la tierra.',
         nvi: 'En el principio, Dios creó los cielos y la tierra.',
-        originalText: 'בְּרֵאשִׁית בָּרָא אֱלֹהִים אֵת הַשָּׁמַיִם וְאֵת הָאָרֶץ',
+        originalText: 'בְּרֵאשִׁית בָּרָא אֱלֹהִים אֵת הַשָּׁמַיִם וְאֵת הַהָאָרֶץ',
         transliteration: 'Bereshit bara Elohim et hashamayim veet haaretz',
         strong: 'H7225 (reshith), H1254 (bara), H430 (Elohim)',
         theologicalNote: '«Bara» (crear de la nada): verbo reservado exclusivamente para la actividad divina creadora.',
@@ -459,7 +459,7 @@ export const CURATED_CHAPTERS_DB: Record<string, ChapterContent> = {
         lbla: 'Y la tierra estaba sin orden y vacía, y las tinieblas cubrían la superficie del abismo, y el Espíritu de Dios se movía sobre la superficie de las aguas.',
         ntv: 'La tierra no tenía forma y estaba vacía, y la oscuridad cubría las aguas profundas; y el Espíritu de Dios se movía en el aire sobre la superficie de las aguas.',
         nvi: 'La tierra era un caos total, las tinieblas cubrían el abismo, y el Espíritu de Dios iba y venía sobre la superficie de las aguas.',
-        originalText: 'וְהָאָרֶץ הָיְתָה תֹהוּ וָבֹהוּ וְחֹשֶׁךְ עַל־פְּנֵי תְהוֹם וְרוּחַ אֱלֹהִים מְרַחֶפֶת עַל־פְּנֵי הַמָּיִם',
+        originalText: 'וְהָאָרֶץ הָיְתָה תֹהוּ וָבֹהוּ וְחֹשֶךְ עַל־פְּנֵי תְהוֹם וְרוּחַ אֱלֹהִים מְרַחֶפֶת עַל־פְּנֵי הַמָּיִם',
         transliteration: 'Vehaaretz hayetah tohu vavohu vechoshech al-pene tehom veruach Elohim merachephet al-pene hammayim',
         strong: 'H8414 (tohu), H922 (bohu), H7307 (ruach)',
         theologicalNote: 'El Espíritu Santo (Ruaj Elohim) activo en el génesis de la creación vivificante.',
@@ -471,7 +471,7 @@ export const CURATED_CHAPTERS_DB: Record<string, ChapterContent> = {
         lbla: 'Entonces dijo Dios: Sea la luz. Y hubo luz.',
         ntv: 'Entonces Dios dijo: «Que haya luz»; y hubo luz.',
         nvi: 'Y dijo Dios: «¡Que haya luz!» Y la luz llegó a existir.',
-        originalText: 'וַיֹּאמֶר אֱלֹהִים יְהִי אוֹר וַיְהִי־אוֹר',
+        originalText: 'וַיֹּאמֶρ אֱלֹהִים יְהִי אוֹר וַיְהִי־אוֹר',
         transliteration: 'Vayyomer Elohim yehi or vayhi-or',
         strong: 'H559 (amar), H216 (or)',
         theologicalNote: 'Creación inmediata por el fiat divino de la Palabra eterna de Dios.',
@@ -495,10 +495,75 @@ export const CURATED_CHAPTERS_DB: Record<string, ChapterContent> = {
         lbla: 'Creó, pues, Dios al hombre a imagen suya, a imagen de Dios lo creó; varón y hembra los creó.',
         ntv: 'Así que Dios creó a los seres humanos a su propia imagen. A imagen de Dios los creó; hombre y mujer los creó.',
         nvi: 'Y Dios creó al ser humano a su imagen; lo creó a imagen de Dios. Hombre y mujer los creó.',
-        originalText: 'וַיִּבְרָא אֱלֹהִים אֶת־הָאָדָם בְּצַלְמוֹ בְּצֶלֶם אֱלֹהִים בָּרָא אֹתוֹ זָכָר וּנְקֵבָה בָּרָא אֹתָם',
+        originalText: 'וַיִּבְרָא אֱלֹהִים אֶת־הָאָדָם בְּצַלְמוֹ בְּצֶλֶם אֱלֹהִים בָּרָא אֹתוֹ זָכָר וּנְקֵבָה בָּרָא אֹתָם',
         transliteration: 'Vayyivra Elohim et-haadam betsalmo betselem Elohim bara oto zachar unqevah bara otam',
         strong: 'H2145 (zachar), H5347 (neqevah)',
         theologicalNote: 'Igualdad ontológica y complementariedad divina en el diseño del matrimonio.',
+        isKeyPassage: true
+      }
+    ]
+  },
+
+  // GÉNESIS 2
+  'gen-2': {
+    bookId: 'gen',
+    bookName: 'Génesis',
+    testament: 'Antiguo Testamento',
+    division: 'Pentateuco',
+    chapter: 2,
+    heading: 'El Huerto del Edén y la Institución del Matrimonio',
+    summary: 'Dios completa la creación con el reposo del séptimo día, detalla la formación del hombre del polvo de la tierra y de la mujer de su costilla, estableciendo el diseño original para el matrimonio y la vida en Edén.',
+    historicalContext: 'Relato de la provisión divina y el orden social original previo a la caída.',
+    keyTheologicalTheme: 'Sabbat, Antropología Bíblica, Complementariedad y la Institución Matrimonial.',
+    verses: [
+      {
+        num: 1,
+        rvr1960: 'Fueron, pues, acabados los cielos y la tierra, y todo el ejército de ellos.',
+        lbla: 'Así fueron acabados los cielos y la tierra y todas sus huestes.',
+        ntv: 'Así quedó terminada la creación de los cielos y de la tierra y de todo lo que hay en ellos.',
+        nvi: 'Así quedaron terminados los cielos y la tierra, y todo lo que hay en ellos.',
+        isKeyPassage: true
+      },
+      {
+        num: 7,
+        rvr1960: 'Entonces Jehová Dios formó al hombre del polvo de la tierra, y sopló en su nariz aliento de vida, y fue el hombre un ser viviente.',
+        lbla: 'Entonces el SEÑOR Dios formó al hombre del polvo de la tierra, y sopló en su nariz el aliento de vida; y fue el hombre un ser viviente.',
+        ntv: 'Luego el SEÑOR Dios formó al hombre del polvo de la tierra. Sopló aliento de vida en la nariz del hombre, y el hombre se convirtió en un ser viviente.',
+        nvi: 'Y Dios el Señor formó al hombre del polvo de la tierra, y sopló en su nariz hálito de vida, y el hombre se convirtió en un ser viviente.',
+        theologicalNote: 'La doble naturaleza del hombre: material (polvo) e inmaterial (aliento divino).',
+        isKeyPassage: true
+      },
+      {
+        num: 18,
+        rvr1960: 'Y dijo Jehová Dios: No es bueno que el hombre esté solo; le haré ayuda idónea para él.',
+        lbla: 'Y el SEÑOR Dios dijo: No es bueno que el hombre esté solo; le haré una ayuda idónea.',
+        ntv: 'Después, el SEÑOR Dios dijo: «No es bueno que el hombre esté solo. Haré una ayuda ideal para él».',
+        nvi: 'Luego Dios el Señor dijo: «No es bueno que el hombre esté solo. Voy a hacerle una ayuda adecuada».',
+        isKeyPassage: true
+      },
+      {
+        num: 23,
+        rvr1960: 'Dijo entonces Adán: Esto es ahora hueso de mis huesos y carne de mi carne; ésta será llamada Varona, porque del varón fue tomada.',
+        lbla: 'Y el hombre dijo: Esta es ahora hueso de mis huesos, y carne de mi carne; ella será llamada mujer, porque del hombre fue tomada.',
+        ntv: '«¡Al fin! —exclamó el hombre—. ¡Esta es hueso de mis huesos y carne de mi carne! Ella será llamada “mujer”, porque fue sacada del hombre».',
+        nvi: 'El hombre exclamó: «¡Esta sí que es hueso de mis huesos y carne de mi carne! Se llamará “mujer”, porque del hombre fue sacada».',
+        isKeyPassage: true
+      },
+      {
+        num: 24,
+        rvr1960: 'Por tanto, dejará el hombre a su padre y a su madre, y se unirá a su mujer, y serán una sola carne.',
+        lbla: 'Por tanto el hombre dejará a su padre y a su madre y se unirá a su mujer, y serán una sola carne.',
+        ntv: 'Esto explica por qué el hombre deja a su padre y a su madre, y se une a su mujer, y los dos se convierten en uno solo.',
+        nvi: 'Por eso el hombre deja a su padre y a su madre, y se une a su mujer, y los dos se funden en un solo ser.',
+        theologicalNote: 'El fundamento bíblico de la unidad matrimonial y la exclusividad pactual.',
+        isKeyPassage: true
+      },
+      {
+        num: 25,
+        rvr1960: 'Y estaban ambos desnudos, Adán y su mujer, y no se avergonzaban.',
+        lbla: 'Y estaban ambos desnudos, el hombre y su mujer, y no se avergonzaban.',
+        ntv: 'Ahora bien, el hombre y su mujer estaban desnudos, pero no sentían vergüenza.',
+        nvi: 'En ese tiempo el hombre y su mujer estaban desnudos, pero ninguno de los dos sentía vergüenza.',
         isKeyPassage: true
       }
     ]
@@ -637,8 +702,19 @@ export function getBibleChapter(bookId: string, chapterNum: number): ChapterCont
   const bookMeta = findBibleBook(bookId) || BIBLE_BOOKS_CANON[0];
   const safeChapter = Math.max(1, Math.min(chapterNum, bookMeta.chaptersCount));
 
-  // Determine a realistic verse count (for Genesis 1, it's 31 verses. We use 25 as a generic fallback)
-  const baseVerseCount = (bookId.toLowerCase() === 'gen' && safeChapter === 1) ? 31 : 25; 
+  // Realistic verse counts for common chapters or higher fallbacks
+  const getVerseCount = () => {
+    if (bookId.toLowerCase() === 'gen') {
+      if (chapterNum === 1) return 31;
+      if (chapterNum === 2) return 25;
+      return 35;
+    }
+    if (bookId.toLowerCase() === 'mat') return 40;
+    if (bookId.toLowerCase() === 'sal') return 50;
+    return 40; // Higher fallback
+  };
+
+  const baseVerseCount = getVerseCount(); 
 
   const generatedVerses: ScriptureVerse[] = [];
 

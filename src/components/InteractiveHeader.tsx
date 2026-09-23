@@ -70,17 +70,17 @@ export function InteractiveHeader({
             <GraduationCap size={22} strokeWidth={1.5} />
           </div>
           <div className="flex flex-col text-left leading-none">
-            <span className="font-serif tracking-[0.1em] text-sm font-black text-[#1A2533] dark:text-stone-100 uppercase">
+            <span className="font-serif tracking-[0.1em] text-[10px] sm:text-sm font-black text-[#1A2533] dark:text-stone-100 uppercase">
               Seminario Digital
             </span>
-            <span className="font-sans text-[10px] tracking-[0.2em] text-[#7F1D1D] dark:text-amber-500 uppercase font-bold mt-1">
+            <span className="font-sans text-[8px] sm:text-[10px] tracking-[0.2em] text-[#7F1D1D] dark:text-amber-500 uppercase font-bold mt-0.5">
               Campus Teológico
             </span>
           </div>
         </button>
 
         {/* Center: Main Interactive Tab Bar */}
-        <nav className="hidden md:flex items-center gap-1 lg:gap-2 px-2 py-1 justify-center flex-1">
+        <nav className="flex items-center gap-0.5 sm:gap-1 lg:gap-2 px-1 py-1 justify-center flex-1">
           {navTabs.map((tab) => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.id;
@@ -89,13 +89,15 @@ export function InteractiveHeader({
               <button
                 key={tab.id}
                 onClick={() => handleTabClick(tab.id)}
-                className={`relative flex items-center gap-2 px-3 lg:px-4 py-2 rounded text-xs lg:text-[11px] font-bold uppercase tracking-widest transition-all cursor-pointer whitespace-nowrap ${
+                className={`relative flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 lg:px-4 py-2 rounded text-[10px] sm:text-xs lg:text-[11px] font-bold uppercase tracking-wider sm:tracking-widest transition-all cursor-pointer whitespace-nowrap ${
                   isActive
                     ? 'text-[#7F1D1D] dark:text-amber-400'
                     : 'text-stone-500 hover:text-[#1A2533] dark:hover:text-white hover:bg-stone-50 dark:hover:bg-stone-900'
                 }`}
               >
-                <Icon size={16} strokeWidth={isActive ? 2.5 : 2} className={isActive ? 'text-[#7F1D1D]' : 'text-stone-400 shrink-0'} />
+                <div className={`${isActive ? 'text-[#7F1D1D]' : 'text-stone-400'} shrink-0`}>
+                  <Icon className="w-3.5 h-3.5 sm:w-4 sm:h-4" strokeWidth={isActive ? 2.5 : 2} />
+                </div>
                 <span className="hidden lg:inline">{tab.label}</span>
                 <span className="inline lg:hidden">{tab.id === 'home' ? 'Inicio' : tab.id === 'courses' ? 'Cursos' : tab.id === 'academic' ? 'Biblia' : tab.id === 'calendar' ? 'Plan' : 'Kardex'}</span>
                 

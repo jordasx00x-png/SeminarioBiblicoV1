@@ -22,7 +22,10 @@ import {
   FileText,
   Plus,
   RefreshCw,
-  ChevronRight
+  ChevronRight,
+  Languages,
+  Library,
+  ListFilter
 } from 'lucide-react';
 import { BIBLE_BOOKS_CANON, findBibleBook } from '../data/completeBibleData';
 import { getBibleChapter, ChapterContent } from '../data/bibleTextRepository';
@@ -70,7 +73,7 @@ export function AcademicPanel({
   const [bookSearchQuery, setBookSearchQuery] = useState<string>('');
   const [bookTestamentTab, setBookTestamentTab] = useState<'ALL' | 'Antiguo Testamento' | 'Nuevo Testamento'>('ALL');
   const [bookDrawerStep, setBookDrawerStep] = useState<'books' | 'chapters'>('books');
-  const [activeVerseMenuTab, setActiveVerseMenuTab] = useState<'menu' | 'comentario_biblico' | 'referencias' | 'comentario_historico' | 'subrayado'>('menu');
+  const [activeVerseMenuTab, setActiveVerseMenuTab] = useState<'menu' | 'comentario_biblico' | 'referencias' | 'comentario_historico' | 'subrayado' | 'diccionario_strong' | 'estudio_profundo' | 'concordancia'>('menu');
 
   // Notes and Highlighting hooks
   const { allNotes, chapterNotes, addOrUpdateHighlight, removeNote } = useBibleNotes(selectedBookId, selectedChapter);
@@ -86,6 +89,11 @@ export function AcademicPanel({
   const [isSearchingPhrase, setIsSearchingPhrase] = useState<boolean>(false);
   const [hasSearchedPhrase, setHasSearchedPhrase] = useState<boolean>(false);
   const [phraseFilterTestament, setPhraseFilterTestament] = useState<'ALL' | 'Antiguo Testamento' | 'Nuevo Testamento'>('ALL');
+
+  // Concordance specific states
+  const [concordanceQuery, setConcordanceQuery] = useState<string>('');
+  const [concordanceResults, setConcordanceResults] = useState<VerseSearchResult[]>([]);
+  const [isSearchingConcordance, setIsSearchingConcordance] = useState<boolean>(false);
 
   useEffect(() => {
     if (initialBookId) setSelectedBookId(initialBookId);
@@ -201,6 +209,47 @@ export function AcademicPanel({
     });
   }, [bookSearchQuery, bookTestamentTab]);
 
+  const selectedVerseData = useMemo(() => {
+    if (selectedVerse === null) return null;
+    const rawVerse = realVerses.length > 0 
+      ? realVerses.find(v => v.num === selectedVerse) 
+      : currentChapterContent.verses.find(v => v.num === selectedVerse);
+      
+    if (!rawVerse) return null;
+    
+    const curatedVerse = currentChapterContent.verses.find(v => v.num === selectedVerse);
+    return { 
+      ...curatedVerse, 
+      ...rawVerse, 
+      theologicalNote: curatedVerse?.theologicalNote, 
+      originalText: curatedVerse?.originalText, 
+      isKeyPassage: curatedVerse?.isKeyPassage 
+    };
+  }, [selectedVerse, realVerses, currentChapterContent]);
+
+  const selectedVerseComm = useMemo(() => {
+    if (!selectedVerseData) return null;
+    const verseTextStr = (selectedVerseData[activeTranslation as keyof typeof selectedVerseData] as string) || selectedVerseData.rvr1960 || '';
+    return generateVerseCommentary(
+      currentBook.name,
+      selectedChapter,
+      selectedVerseData.num,
+      verseTextStr,
+      currentBook.author,
+      currentBook.date,
+      currentBook.theme,
+      currentBook.testament,
+      currentBook.division
+    );
+  }, [selectedVerseData, activeTranslation, currentBook, selectedChapter]);
+
+  const selectedVerseNotes = useMemo(() => {
+    if (selectedVerse === null) return [];
+    return chapterNotes.filter(n => n.verse === selectedVerse);
+  }, [selectedVerse, chapterNotes]);
+
+  const selectedVerseMainHighlight = selectedVerseNotes[0];
+
   const handlePrevChapter = () => {
     setSelectedVerse(null);
     if (selectedChapter > 1) {
@@ -239,19 +288,13 @@ export function AcademicPanel({
   };
 
   return (
-    <div className="min-h-screen bg-[#FAF9F5] dark:bg-zinc-950 text-[#1A2533] dark:text-zinc-100 flex flex-col">
-      <header className="bg-white dark:bg-stone-900 border-b border-stone-200 dark:border-stone-800 px-4 lg:px-6 py-3 sticky top-0 z-30 shadow-sm">
+    <div className="flex-1 min-h-0 bg-[#FAF9F5] dark:bg-zinc-950 text-[#1A2533] dark:text-zinc-100 flex flex-col overflow-hidden">
+      <header className="bg-white dark:bg-stone-900 border-b border-stone-200 dark:border-stone-800 px-4 lg:px-6 py-3 shrink-0 z-30 shadow-sm">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-4 w-full md:w-auto justify-between md:justify-start">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded bg-[#7F1D1D] flex items-center justify-center text-amber-100 shadow-sm border border-[#7F1D1D]/20 shrink-0">
-                <BookOpen className="w-5 h-5" strokeWidth={1.5} />
-              </div>
               <div className="min-w-0">
-                <h1 className="text-xs font-bold tracking-[0.2em] uppercase text-[#7F1D1D] dark:text-amber-500 leading-none mb-1">
-                  Seminario Digital
-                </h1>
-                <p className="text-sm font-serif font-bold text-[#1A2533] dark:text-stone-100 truncate">
+                <p className="text-lg font-serif font-bold text-[#1A2533] dark:text-stone-100 truncate">
                   {currentBook.name} {selectedChapter}
                 </p>
               </div>
@@ -499,46 +542,53 @@ export function AcademicPanel({
         </div>
       )}
 
-      <div className="flex-1 overflow-y-auto bg-white dark:bg-zinc-950 p-6 flex justify-center pb-24">
-        <div className="max-w-4xl w-full">
-          {/* Quick Phrase Search Trigger Banner: Institutional Design */}
-          <div className="mb-10 bg-[#FAF9F5] border-2 border-[#7F1D1D]/10 rounded-lg p-6 flex flex-col sm:flex-row items-center justify-between gap-6 shadow-sm relative overflow-hidden group border-stone-200">
-            <div className="absolute top-0 left-0 w-1 h-full bg-[#7F1D1D]" />
-            <div className="flex items-center gap-5">
-              <div className="w-14 h-14 rounded bg-[#7F1D1D] text-white flex items-center justify-center shrink-0 shadow-md">
-                <Search className="w-7 h-7" strokeWidth={1.5} />
+      <div className="flex-1 flex overflow-hidden bg-white dark:bg-zinc-950">
+        <div className="flex-1 flex flex-col overflow-hidden">
+          {/* Fixed Header Section for Bible */}
+          <div className="shrink-0 px-4 sm:px-6 pt-3 sm:pt-6 flex justify-center bg-white dark:bg-zinc-950 border-b border-stone-100 dark:border-stone-900 shadow-sm z-10">
+            <div className="max-w-4xl w-full">
+              {/* Quick Phrase Search Trigger Banner: Institutional Design */}
+              <div className="mb-4 bg-[#FAF9F5] border-2 border-[#7F1D1D]/10 rounded-lg p-3 sm:p-4 flex flex-col sm:flex-row items-center justify-between gap-3 relative overflow-hidden group border-stone-200 dark:bg-zinc-900/50 dark:border-stone-800">
+                <div className="absolute top-0 left-0 w-1 h-full bg-[#7F1D1D]" />
+                <div className="flex items-center gap-3 sm:gap-4">
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 rounded bg-[#7F1D1D] text-white flex items-center justify-center shrink-0 shadow-sm">
+                    <Search className="w-4 h-4 sm:w-5 sm:h-5" strokeWidth={1.5} />
+                  </div>
+                  <div>
+                    <h3 className="text-[12px] sm:text-sm font-serif font-bold text-[#1A2533] dark:text-stone-100">
+                      Concordancia y Búsqueda Canónica
+                    </h3>
+                    <p className="hidden sm:block text-[10px] text-stone-500 dark:text-stone-400 font-sans tracking-wide leading-tight max-w-xs">
+                      Investigación textual exegética. Localice frases y conceptos teológicos.
+                    </p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setIsPhraseSearchOpen(true)}
+                  className="w-full sm:w-auto px-4 sm:px-6 py-2 bg-[#1A2533] hover:bg-black text-white text-[8px] sm:text-[9px] font-bold uppercase tracking-[0.2em] rounded transition-all cursor-pointer shadow-sm active:scale-95 whitespace-nowrap"
+                >
+                  Búsqueda
+                </button>
               </div>
-              <div>
-                <h3 className="text-lg font-serif font-bold text-[#1A2533] dark:text-stone-100">
-                  Concordancia y Búsqueda Canónica
-                </h3>
-                <p className="text-xs text-stone-600 dark:text-stone-400 font-sans tracking-wide leading-relaxed max-w-md">
-                  Investigación textual exegética en los sesenta y seis libros del canon bíblico. Localice frases, términos léxicos y conceptos teológicos fundamentales.
-                </p>
+
+              <div className="text-center mb-4">
+                <h2 className="text-2xl md:text-3xl font-black font-serif text-[#1A2533] dark:text-white">
+                  {currentBook.name} {selectedChapter}
+                </h2>
+                <div className="text-[10px] font-serif text-gray-500 dark:text-gray-400 italic">
+                  {currentChapterContent.heading}
+                </div>
               </div>
             </div>
-            <button
-              onClick={() => setIsPhraseSearchOpen(true)}
-              className="px-8 py-3 bg-[#1A2533] hover:bg-black text-white text-[10px] font-bold uppercase tracking-[0.2em] rounded transition-all cursor-pointer shadow-md active:scale-95 whitespace-nowrap"
-            >
-              Iniciar Búsqueda
-            </button>
           </div>
 
-          <div className="text-center mb-8 border-b border-[#E0D7C6] dark:border-zinc-800 pb-6">
-            <h2 className="text-3xl md:text-4xl font-black font-serif text-[#1A2533] dark:text-white mb-2">
-              {currentBook.name} {selectedChapter}
-            </h2>
-            <div className="text-sm font-serif text-gray-600 dark:text-gray-400 italic">
-              {currentChapterContent.heading}
-            </div>
-          </div>
-
-          <div className={`space-y-4 font-serif text-gray-900 dark:text-gray-100 leading-relaxed ${
-            bibleFontSize === 'sm' ? 'text-sm' :
-            bibleFontSize === 'base' ? 'text-base' :
-            bibleFontSize === 'lg' ? 'text-xl' : 'text-2xl leading-loose'
-          }`}>
+          <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-6 flex justify-center pb-64 custom-scrollbar overscroll-contain">
+            <div className="max-w-4xl w-full">
+              <div className={`space-y-4 font-serif text-gray-900 dark:text-gray-100 leading-relaxed ${
+                bibleFontSize === 'sm' ? 'text-sm' :
+                bibleFontSize === 'base' ? 'text-base' :
+                bibleFontSize === 'lg' ? 'text-xl' : 'text-2xl leading-loose'
+              }`}>
             {isLoadingVerses ? (
               <div className="flex flex-col gap-4 py-8">
                 {[1,2,3,4,5].map(i => (
@@ -551,10 +601,23 @@ export function AcademicPanel({
                   </div>
                 ))}
               </div>
-              ) : (realVerses.length > 0 ? realVerses.map(rv => {
-                const curatedVerse = currentChapterContent.verses.find(v => v.num === rv.num);
-                return { ...curatedVerse, ...rv, theologicalNote: curatedVerse?.theologicalNote, originalText: curatedVerse?.originalText, isKeyPassage: curatedVerse?.isKeyPassage };
-              }) : currentChapterContent.verses).map(verse => {
+              ) : (currentChapterContent.verses.map(cv => {
+                const rv = realVerses.find(v => v.num === cv.num);
+                // Merge real text into curated structure
+                return { 
+                  ...cv, 
+                  ...(rv || {}),
+                  // Ensure we keep curated metadata if rv doesn't have it
+                  theologicalNote: cv.theologicalNote || (rv as any)?.theologicalNote,
+                  originalText: cv.originalText || (rv as any)?.originalText,
+                  isKeyPassage: cv.isKeyPassage || (rv as any)?.isKeyPassage,
+                  // If rv has real text, use it, otherwise keep cv text (which might be curated or fallback)
+                  rvr1960: (rv?.rvr1960 && rv.rvr1960.length > 50) ? rv.rvr1960 : cv.rvr1960,
+                  lbla: (rv?.lbla && rv.lbla.length > 50) ? rv.lbla : cv.lbla,
+                  ntv: (rv?.ntv && rv.ntv.length > 50) ? rv.ntv : cv.ntv,
+                  nvi: (rv?.nvi && rv.nvi.length > 50) ? rv.nvi : cv.nvi,
+                };
+              })).map(verse => {
                 const vNotes = chapterNotes.filter(n => n.verse === verse.num);
                 const mainHighlight = vNotes[0];
                 const colorStyle = mainHighlight ? getColorClasses(mainHighlight.color) : null;
@@ -650,7 +713,7 @@ export function AcademicPanel({
                     <motion.div 
                       initial={{ opacity: 0, y: -10 }}
                       animate={{ opacity: 1, y: 0 }}
-                      className="mt-4 ml-0 sm:ml-12 p-6 bg-white dark:bg-zinc-900 border border-stone-200 dark:border-stone-800 rounded shadow-xl relative"
+                      className="lg:hidden mt-4 ml-0 sm:ml-12 p-6 bg-white dark:bg-zinc-900 border border-stone-200 dark:border-stone-800 rounded shadow-xl relative"
                     >
                       <div className="absolute top-0 left-0 w-1.5 h-full bg-[#7F1D1D]" />
                       
@@ -961,30 +1024,531 @@ export function AcademicPanel({
             );
           })}
           </div>
-          
-          {/* Bottom Bible Navigation Bar */}
-          <div className="mt-12 p-3 bg-[#FAF9F6] dark:bg-zinc-900 border-t border-[#E0D7C6] dark:border-zinc-800 flex items-center justify-between text-xs rounded-xl">
-            <button
-              onClick={handlePrevChapter}
-              className="px-4 py-2 rounded-xl bg-white dark:bg-zinc-800 border border-stone-300 dark:border-zinc-700 text-gray-700 dark:text-zinc-200 hover:bg-stone-50 font-bold flex items-center gap-2"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              <span>Anterior</span>
-            </button>
-
-            <span className="font-serif font-bold text-gray-600 dark:text-gray-300 hidden sm:block">
-              {currentBook.name} • Capítulo {selectedChapter} de {currentBook.chaptersCount}
-            </span>
-
-            <button
-              onClick={handleNextChapter}
-              className="px-4 py-2 rounded-xl bg-white dark:bg-zinc-800 border border-stone-300 dark:border-zinc-700 text-gray-700 dark:text-zinc-200 hover:bg-stone-50 font-bold flex items-center gap-2"
-            >
-              <span>Siguiente</span>
-              <ArrowRight className="w-4 h-4" />
-            </button>
-          </div>
         </div>
+      </div>
+    </div>
+
+      <AnimatePresence>
+          {selectedVerseData && selectedVerseComm && (
+            <motion.aside
+              initial={{ x: '100%', opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              exit={{ x: '100%', opacity: 0 }}
+              className="hidden lg:flex w-[400px] border-l border-stone-200 dark:border-stone-800 bg-[#FAF9F5] dark:bg-zinc-950 flex-col overflow-hidden shadow-2xl z-20 overscroll-contain shrink-0"
+            >
+              <div className="p-5 bg-white dark:bg-stone-900 border-b border-stone-200 dark:border-stone-800 flex items-center justify-between relative">
+                <div className="absolute top-0 left-0 w-full h-1 bg-[#7F1D1D]" />
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded bg-[#7F1D1D] text-white flex items-center justify-center shrink-0 shadow-sm border border-[#7F1D1D]/20">
+                    <Sparkles className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h3 className="text-xs font-black text-[#1A2533] dark:text-stone-100 uppercase tracking-[0.2em]">
+                      Herramientas Exegéticas
+                    </h3>
+                    <p className="text-[10px] font-bold text-stone-400 uppercase tracking-widest mt-0.5">
+                      {currentBook.shortName} {selectedChapter}:{selectedVerseData.num}
+                    </p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setSelectedVerse(null)}
+                  className="p-2 text-stone-400 hover:text-[#7F1D1D] hover:bg-stone-50 dark:hover:bg-stone-800 rounded transition-colors cursor-pointer"
+                >
+                  <X size={20} />
+                </button>
+              </div>
+
+              <div className="flex-1 overflow-y-auto p-6 custom-scrollbar overscroll-contain">
+                {activeVerseMenuTab === 'menu' ? (
+                  <div className="flex flex-col gap-4">
+                    <button 
+                      onClick={() => {
+                        const existing = chapterNotes.find(n => n.verse === selectedVerseData.num);
+                        if (existing) {
+                          setNoteInputText(existing.noteText || '');
+                          setSelectedColor(existing.color);
+                        }
+                        setActiveVerseMenuTab('subrayado');
+                      }}
+                      className="flex items-center gap-3 p-4 rounded-xl bg-white dark:bg-stone-800/50 hover:bg-amber-50 dark:hover:bg-stone-800 text-sm font-medium transition-colors border border-stone-200 dark:border-stone-800 hover:border-amber-200 dark:hover:border-stone-700 text-left cursor-pointer shadow-sm"
+                    >
+                      <Highlighter className="w-5 h-5 text-amber-500 shrink-0" />
+                      <div className="flex-1">
+                        <div className="font-semibold text-gray-800 dark:text-gray-200 flex items-center justify-between">
+                          <span>Subrayar y Nota Personal</span>
+                          {selectedVerseMainHighlight && (
+                            <span className="text-[9px] uppercase font-black px-2 py-0.5 rounded bg-amber-100 dark:bg-amber-900/60 text-amber-800 dark:text-amber-200 border border-amber-200 dark:border-amber-800">
+                              Resaltado
+                            </span>
+                          )}
+                        </div>
+                        <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">Escoge un color de subrayado y escribe tus notas de estudio</div>
+                      </div>
+                    </button>
+
+                    <button 
+                      onClick={() => setActiveVerseMenuTab('comentario_biblico')}
+                      className="flex items-center gap-3 p-4 rounded-xl bg-white dark:bg-stone-800/50 hover:bg-amber-50 dark:hover:bg-stone-800 text-sm font-medium transition-colors border border-stone-200 dark:border-stone-800 hover:border-amber-200 dark:hover:border-stone-700 text-left shadow-sm"
+                    >
+                      <MessageSquare className="w-5 h-5 text-amber-600 dark:text-amber-400 shrink-0" />
+                      <div>
+                        <div className="font-semibold text-gray-800 dark:text-gray-200">Comentario Bíblico Devocional</div>
+                        <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">Exégesis y aplicación de Henry, Washer y Spurgeon</div>
+                      </div>
+                    </button>
+
+                    <button 
+                      onClick={() => setActiveVerseMenuTab('referencias')}
+                      className="flex items-center gap-3 p-4 rounded-xl bg-white dark:bg-stone-800/50 hover:bg-amber-50 dark:hover:bg-stone-800 text-sm font-medium transition-colors border border-stone-200 dark:border-stone-800 hover:border-amber-200 dark:hover:border-stone-700 text-left shadow-sm"
+                    >
+                      <LinkIcon className="w-5 h-5 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                      <div>
+                        <div className="font-semibold text-gray-800 dark:text-gray-200">Versículos de Referencia</div>
+                        <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">Conexiones temáticas en el canon bíblico</div>
+                      </div>
+                    </button>
+
+                    <button 
+                      onClick={() => setActiveVerseMenuTab('comentario_historico')}
+                      className="flex items-center gap-3 p-4 rounded-xl bg-white dark:bg-stone-800/50 hover:bg-amber-50 dark:hover:bg-stone-800 text-sm font-medium transition-colors border border-stone-200 dark:border-stone-800 hover:border-amber-200 dark:hover:border-stone-700 text-left shadow-sm"
+                    >
+                      <History className="w-5 h-5 text-blue-600 dark:text-blue-400 shrink-0" />
+                      <div>
+                        <div className="font-semibold text-gray-800 dark:text-gray-200">Comentario Histórico y Cultural</div>
+                        <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">Contexto de la época, costumbres y lingüística</div>
+                      </div>
+                    </button>
+
+                    <button 
+                      onClick={() => setActiveVerseMenuTab('diccionario_strong')}
+                      className="flex items-center gap-3 p-4 rounded-xl bg-white dark:bg-stone-800/50 hover:bg-amber-50 dark:hover:bg-stone-800 text-sm font-medium transition-colors border border-stone-200 dark:border-stone-800 hover:border-amber-200 dark:hover:border-stone-700 text-left shadow-sm"
+                    >
+                      <Languages className="w-5 h-5 text-indigo-600 dark:text-indigo-400 shrink-0" />
+                      <div>
+                        <div className="font-semibold text-gray-800 dark:text-gray-200">Diccionario Strong</div>
+                        <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">Análisis léxico de términos en griego y hebreo</div>
+                      </div>
+                    </button>
+
+                    <button 
+                      onClick={() => setActiveVerseMenuTab('estudio_profundo')}
+                      className="flex items-center gap-3 p-4 rounded-xl bg-white dark:bg-stone-800/50 hover:bg-amber-50 dark:hover:bg-stone-800 text-sm font-medium transition-colors border border-stone-200 dark:border-stone-800 hover:border-amber-200 dark:hover:border-stone-700 text-left shadow-sm"
+                    >
+                      <Library className="w-5 h-5 text-rose-600 dark:text-rose-400 shrink-0" />
+                      <div>
+                        <div className="font-semibold text-gray-800 dark:text-gray-200">Estudio Exegético Profundo</div>
+                        <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">Análisis académico y ministerial exhaustivo</div>
+                      </div>
+                    </button>
+
+                    <button 
+                      onClick={() => setActiveVerseMenuTab('concordancia')}
+                      className="flex items-center gap-3 p-4 rounded-xl bg-white dark:bg-stone-800/50 hover:bg-amber-50 dark:hover:bg-stone-800 text-sm font-medium transition-colors border border-stone-200 dark:border-stone-800 hover:border-amber-200 dark:hover:border-stone-700 text-left shadow-sm"
+                    >
+                      <ListFilter className="w-5 h-5 text-teal-600 dark:text-teal-400 shrink-0" />
+                      <div>
+                        <div className="font-semibold text-gray-800 dark:text-gray-200">Concordancia Bíblica</div>
+                        <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">Rastreo de palabras y conceptos en el canon</div>
+                      </div>
+                    </button>
+
+                    <div className="mt-8 p-6 bg-white dark:bg-stone-900 border border-[#E0D7C6] dark:border-stone-800 rounded-xl">
+                      <h4 className="text-[10px] font-black text-[#7F1D1D] dark:text-amber-500 uppercase tracking-[0.2em] mb-3 flex items-center gap-2">
+                        <BookOpen size={14} />
+                        Texto Original / Exégesis
+                      </h4>
+                      <p className="text-sm font-serif italic text-stone-800 dark:text-stone-200 leading-relaxed">
+                        "{ (selectedVerseData[activeTranslation as keyof typeof selectedVerseData] as string) || selectedVerseData.rvr1960 }"
+                      </p>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="flex flex-col">
+                    <div className="flex items-center gap-2 mb-6 pb-4 border-b border-[#E0D7C6] dark:border-stone-800">
+                      <button 
+                        onClick={() => setActiveVerseMenuTab('menu')}
+                        className="p-2 hover:bg-stone-100 dark:hover:bg-stone-800 rounded-xl text-gray-500 transition-colors"
+                      >
+                        <ArrowLeft className="w-4 h-4" />
+                      </button>
+                      <span className="font-bold text-sm text-[#1A2533] dark:text-white flex-1">
+                        {activeVerseMenuTab === 'subrayado' && `Notas y Subrayado`}
+                        {activeVerseMenuTab === 'comentario_biblico' && `Comentario Bíblico`}
+                        {activeVerseMenuTab === 'referencias' && `Referencias Cruzadas`}
+                        {activeVerseMenuTab === 'comentario_historico' && `Contexto Histórico`}
+                        {activeVerseMenuTab === 'diccionario_strong' && `Diccionario Strong`}
+                        {activeVerseMenuTab === 'estudio_profundo' && `Estudio Profundo`}
+                        {activeVerseMenuTab === 'concordancia' && `Concordancia Bíblica`}
+                      </span>
+                    </div>
+                    
+                    <div className="text-sm text-gray-600 dark:text-gray-300 font-sans leading-relaxed">
+                      {activeVerseMenuTab === 'subrayado' && (
+                        <div className="space-y-6">
+                          {selectedTextSnippet && selectedTextSnippet.verse === selectedVerseData.num && (
+                            <div className="p-4 rounded-xl bg-amber-50 dark:bg-stone-900 border border-amber-300 dark:border-amber-800 text-xs font-serif italic text-amber-950 dark:text-amber-200">
+                              <span className="font-sans font-bold not-italic text-[10px] uppercase block text-amber-600 mb-1">Texto seleccionado:</span>
+                              «{selectedTextSnippet.text}»
+                            </div>
+                          )}
+
+                          <div>
+                            <label className="block text-[10px] font-black text-stone-500 dark:text-stone-400 mb-3 uppercase tracking-widest">
+                              Gama de Colores:
+                            </label>
+                            <div className="flex items-center gap-2 flex-wrap">
+                              {(['yellow', 'green', 'blue', 'pink', 'purple', 'orange'] as HighlightColor[]).map((c) => {
+                                const cDetails = getColorClasses(c);
+                                const isSelected = selectedColor === c;
+                                return (
+                                  <button
+                                    key={c}
+                                    onClick={() => {
+                                      setSelectedColor(c);
+                                      addOrUpdateHighlight(
+                                        selectedBookId,
+                                        currentBook.name,
+                                        selectedChapter,
+                                        selectedVerseData.num,
+                                        c,
+                                        selectedTextSnippet?.verse === selectedVerseData.num ? selectedTextSnippet.text : undefined,
+                                        noteInputText
+                                      );
+                                    }}
+                                    className={`px-3 py-2 rounded-lg text-[11px] font-bold flex items-center gap-2 transition-all cursor-pointer border ${
+                                      isSelected ? 'ring-2 ring-[#7F1D1D] scale-105 shadow-md border-transparent' : 'opacity-80 hover:opacity-100 border-stone-200 dark:border-stone-800'
+                                    } ${cDetails.badge}`}
+                                  >
+                                    <span className={`w-3 h-3 rounded-full ${cDetails.dot} border border-black/10`}></span>
+                                    <span className="capitalize">{c === 'yellow' ? 'Oro' : c === 'green' ? 'Vida' : c === 'blue' ? 'Gracia' : c === 'pink' ? 'Amor' : c === 'purple' ? 'Pacto' : 'Fuego'}</span>
+                                  </button>
+                                );
+                              })}
+                            </div>
+                          </div>
+
+                          <div className="space-y-2">
+                            <label className="block text-[10px] font-black text-stone-500 dark:text-stone-400 uppercase tracking-widest">
+                              Observaciones Exegéticas:
+                            </label>
+                            <textarea
+                              value={noteInputText}
+                              onChange={(e) => setNoteInputText(e.target.value)}
+                              placeholder="Redacte aquí sus observaciones, exégesis o meditaciones..."
+                              rows={8}
+                              className="w-full p-4 text-sm bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#7F1D1D] dark:text-white font-sans shadow-inner leading-relaxed"
+                            />
+                            <div className="flex justify-between items-center mt-4">
+                              {selectedVerseNotes.length > 0 && (
+                                <button
+                                  onClick={() => {
+                                    selectedVerseNotes.forEach(n => removeNote(n.id));
+                                    setNoteInputText('');
+                                  }}
+                                  className="text-[10px] font-black text-red-600 uppercase tracking-widest hover:underline flex items-center gap-1.5"
+                                >
+                                  <Trash2 size={14} />
+                                  Eliminar Todo
+                                </button>
+                              )}
+                              <button
+                                onClick={() => {
+                                  addOrUpdateHighlight(
+                                    selectedBookId,
+                                    currentBook.name,
+                                    selectedChapter,
+                                    selectedVerseData.num,
+                                    selectedColor,
+                                    selectedTextSnippet?.verse === selectedVerseData.num ? selectedTextSnippet.text : undefined,
+                                    noteInputText
+                                  );
+                                  setActiveVerseMenuTab('menu');
+                                }}
+                                className="ml-auto px-6 py-2.5 rounded-xl bg-[#7F1D1D] hover:bg-red-900 text-white font-black text-[10px] uppercase tracking-widest flex items-center gap-2 shadow-lg transition-all active:scale-95"
+                              >
+                                <Check className="w-4 h-4" />
+                                Guardar Análisis
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+
+                      {activeVerseMenuTab === 'comentario_biblico' && (
+                        <div className="space-y-4">
+                          {selectedVerseData.theologicalNote && (
+                            <div className="bg-[#FAF9F5] dark:bg-stone-800 p-5 rounded-xl border border-[#D1B17F]/30 relative overflow-hidden">
+                              <div className="absolute top-0 left-0 w-1 h-full bg-[#7F1D1D]" />
+                              <h4 className="font-serif font-black text-[11px] text-[#7F1D1D] dark:text-amber-500 mb-3 flex items-center gap-2 uppercase tracking-[0.2em]">
+                                <Sparkles size={14} />
+                                Insight del Seminario
+                              </h4>
+                              <p className="text-xs text-stone-800 dark:text-stone-200 font-sans leading-relaxed">
+                                {selectedVerseData.theologicalNote}
+                              </p>
+                            </div>
+                          )}
+
+                          <div className="bg-white dark:bg-stone-900 p-5 rounded-xl border border-stone-200 dark:border-stone-800 shadow-sm">
+                            <h4 className="font-serif font-black text-[11px] text-[#1A2533] dark:text-zinc-100 mb-3 flex items-center gap-2 border-b border-stone-100 dark:border-stone-800 pb-2 uppercase tracking-widest">
+                              <div className="w-2.5 h-2.5 rounded-full bg-[#7F1D1D]"></div>
+                              Matthew Henry
+                            </h4>
+                            <p className="text-xs text-stone-600 dark:text-stone-400 leading-relaxed font-sans italic">
+                              {selectedVerseComm.matthewHenry}
+                            </p>
+                          </div>
+
+                          <div className="bg-white dark:bg-stone-900 p-5 rounded-xl border border-stone-200 dark:border-stone-800 shadow-sm">
+                            <h4 className="font-serif font-black text-[11px] text-[#1A2533] dark:text-zinc-100 mb-3 flex items-center gap-2 border-b border-stone-100 dark:border-stone-800 pb-2 uppercase tracking-widest">
+                              <div className="w-2.5 h-2.5 rounded-full bg-emerald-600"></div>
+                              Paul Washer
+                            </h4>
+                            <p className="text-xs text-stone-600 dark:text-stone-400 leading-relaxed font-sans italic">
+                              {selectedVerseComm.paulWasher}
+                            </p>
+                          </div>
+
+                          <div className="bg-white dark:bg-stone-900 p-5 rounded-xl border border-stone-200 dark:border-stone-800 shadow-sm">
+                            <h4 className="font-serif font-black text-[11px] text-[#1A2533] dark:text-zinc-100 mb-3 flex items-center gap-2 border-b border-stone-100 dark:border-stone-800 pb-2 uppercase tracking-widest">
+                              <div className="w-2.5 h-2.5 rounded-full bg-sky-600"></div>
+                              Charles Spurgeon
+                            </h4>
+                            <p className="text-xs text-stone-600 dark:text-stone-400 leading-relaxed font-sans italic">
+                              {selectedVerseComm.charlesSpurgeon}
+                            </p>
+                          </div>
+                        </div>
+                      )}
+
+                      {activeVerseMenuTab === 'referencias' && (() => {
+                        const crossRefs = generateCrossReferences(
+                          currentBook.name,
+                          selectedChapter,
+                          selectedVerseData.num,
+                          (selectedVerseData[activeTranslation as keyof typeof selectedVerseData] as string) || selectedVerseData.rvr1960 || ''
+                        );
+                        return (
+                          <div className="space-y-4">
+                            {crossRefs.map((cr, idx) => (
+                              <div key={idx} className="p-5 bg-white dark:bg-stone-900 rounded-xl border border-stone-200 dark:border-stone-800 shadow-sm relative group">
+                                <div className="absolute top-0 left-0 w-1 h-full bg-[#E0D7C6] group-hover:bg-[#7F1D1D] transition-colors" />
+                                <div className="flex items-center justify-between gap-3 mb-3">
+                                  <span className="font-serif font-black text-[#7F1D1D] dark:text-amber-500 text-xs flex items-center gap-2 uppercase tracking-tight">
+                                    <LinkIcon size={14} className="text-stone-400" />
+                                    {cr.ref}
+                                  </span>
+                                  <span className="text-[9px] font-black uppercase tracking-[0.2em] px-2 py-1 rounded bg-stone-50 dark:bg-stone-800 text-stone-400 border border-stone-200 dark:border-stone-800">
+                                    {cr.type}
+                                  </span>
+                                </div>
+                                <p className="text-xs italic font-serif text-[#1A2533] dark:text-stone-200 mb-3 leading-relaxed">
+                                  «{cr.quote}»
+                                </p>
+                                <p className="text-[11px] text-stone-500 dark:text-stone-400 leading-relaxed font-sans">
+                                  {cr.explanation}
+                                </p>
+                              </div>
+                            ))}
+                          </div>
+                        );
+                      })()}
+
+                      {activeVerseMenuTab === 'comentario_historico' && (
+                        <div className="space-y-6">
+                          <div className="p-5 bg-blue-50/50 dark:bg-blue-900/20 rounded-xl border border-blue-100 dark:border-blue-900/50">
+                            <h4 className="font-black text-[10px] text-blue-900 dark:text-blue-300 mb-3 flex items-center gap-2 uppercase tracking-widest">
+                              <History size={14} />
+                              Trasfondo Histórico
+                            </h4>
+                            <p className="text-xs text-stone-700 dark:text-stone-300 leading-relaxed">
+                              {selectedVerseComm.historicalContext}
+                            </p>
+                          </div>
+
+                          <div className="p-5 bg-stone-50/50 dark:bg-stone-900/50 rounded-xl border border-stone-200 dark:border-stone-800">
+                            <h4 className="font-black text-[10px] text-stone-500 dark:text-stone-400 mb-3 uppercase tracking-widest">
+                              Cultura y Lenguaje
+                            </h4>
+                            <p className="text-xs text-stone-600 dark:text-stone-400 leading-relaxed">
+                              {selectedVerseComm.culturalBackground}
+                            </p>
+                          </div>
+
+                          <div className="p-5 bg-stone-50/50 dark:bg-stone-900/50 rounded-xl border border-stone-200 dark:border-stone-800">
+                            <h4 className="font-black text-[10px] text-stone-500 dark:text-stone-400 mb-3 uppercase tracking-widest">
+                              Síntesis Teológica
+                            </h4>
+                            <p className="text-xs text-stone-600 dark:text-stone-400 leading-relaxed">
+                              {selectedVerseComm.theologicalInsight}
+                            </p>
+                          </div>
+                        </div>
+                      )}
+
+                      {activeVerseMenuTab === 'diccionario_strong' && (
+                        <div className="space-y-4">
+                          <div className="bg-indigo-50/50 dark:bg-indigo-900/20 p-5 rounded-xl border border-indigo-100 dark:border-indigo-900/50 mb-6">
+                            <h4 className="font-black text-[10px] text-indigo-900 dark:text-indigo-300 mb-3 flex items-center gap-2 uppercase tracking-widest">
+                              <Languages size={14} />
+                              Léxico de Originales
+                            </h4>
+                            <p className="text-xs text-stone-600 dark:text-stone-400 leading-relaxed">
+                              Investigación de términos fundamentales del versículo ${selectedVerseData.num} utilizando el Diccionario Strong de concordancia exhaustiva.
+                            </p>
+                          </div>
+
+                          {selectedVerseComm.strongsDictionary.map((entry, idx) => (
+                            <div key={idx} className="p-5 bg-white dark:bg-stone-900 rounded-xl border border-stone-200 dark:border-stone-800 shadow-sm relative group overflow-hidden">
+                              <div className="absolute top-0 left-0 w-1 h-full bg-indigo-200 dark:bg-indigo-900 group-hover:bg-indigo-600 transition-colors" />
+                              <div className="flex items-center justify-between mb-3">
+                                <div className="flex items-center gap-3">
+                                  <span className="text-lg font-serif font-bold text-indigo-700 dark:text-indigo-400">{entry.word}</span>
+                                  <span className="text-[10px] font-black text-stone-400 uppercase tracking-widest bg-stone-50 dark:bg-stone-800 px-2 py-1 rounded border border-stone-100 dark:border-stone-800">
+                                    {entry.number}
+                                  </span>
+                                </div>
+                                <span className="text-xs italic text-stone-400 font-serif">/{entry.transliteration}/</span>
+                              </div>
+                              <p className="text-xs text-stone-700 dark:text-stone-300 leading-relaxed font-sans">
+                                {entry.definition}
+                              </p>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+
+                      {activeVerseMenuTab === 'estudio_profundo' && (
+                        <div className="space-y-6">
+                          <div className="p-6 bg-white dark:bg-stone-900 rounded-xl border border-[#D1B17F]/30 shadow-lg relative overflow-hidden">
+                            <div className="absolute top-0 left-0 w-1.5 h-full bg-[#7F1D1D]" />
+                            <div className="prose prose-sm dark:prose-invert max-w-none prose-headings:font-serif prose-headings:font-black prose-headings:uppercase prose-headings:tracking-tight prose-headings:text-[#1A2533] dark:prose-headings:text-stone-100 prose-p:text-stone-600 dark:prose-p:text-stone-400 prose-p:leading-relaxed prose-strong:text-[#7F1D1D] dark:prose-strong:text-amber-500">
+                              <div className="markdown-content font-sans text-sm leading-loose text-stone-700 dark:text-stone-300" dangerouslySetInnerHTML={{ 
+                                __html: selectedVerseComm.deepStudy
+                                  .replace(/### (.*)/g, '<h3 class="text-lg font-serif font-black text-[#1A2533] dark:text-stone-100 uppercase tracking-tight mb-4 mt-8">$1</h3>')
+                                  .replace(/#### (.*)/g, '<h4 class="text-sm font-serif font-black text-[#7F1D1D] dark:text-amber-500 uppercase tracking-widest mb-3 mt-6">$1</h4>')
+                                  .replace(/\*\*(.*)\*\*/g, '<strong class="font-bold text-[#1A2533] dark:text-stone-100">$1</strong>')
+                                  .replace(/\n/g, '<br/>')
+                              }} />
+                            </div>
+                          </div>
+                        </div>
+                      )}
+
+                      {activeVerseMenuTab === 'concordancia' && (() => {
+                        const verseText = (selectedVerseData[activeTranslation as keyof typeof selectedVerseData] as string) || selectedVerseData.rvr1960 || '';
+                        const stopWords = new Set(['el', 'la', 'los', 'las', 'un', 'una', 'unos', 'unas', 'de', 'del', 'al', 'a', 'en', 'con', 'y', 'o', 'u', 'por', 'para', 'que', 'si', 'no', 'es', 'su', 'sus', 'sus', 'lo', 'esto', 'esta', 'estos', 'estas', 'pero', 'mas', 'porque', 'cuando', 'donde', 'como', 'tan', 'muy', 'nos', 'me', 'le', 'les', 'se', 'su', 'yo', 'tu', 'él', 'ella', 'nosotros', 'vosotros', 'ellos', 'ellas', 'mi', 'mis', 'tu', 'tus', 'todo', 'todos', 'toda', 'todas', 'sobre', 'entre', 'hacia', 'hasta', 'desde', 'ante', 'bajo', 'cupo', 'cuyo', 'cuya', 'cuyos', 'cuyas', 'donde', 'quien', 'quienes', 'cual', 'cuales', 'algún', 'algunos', 'alguna', 'algunas', 'ningún', 'ningunos', 'ninguna', 'ningunas', 'otro', 'otros', 'otra', 'otras', 'tanto', 'tanta', 'tantos', 'tantas']);
+                        
+                        const keywords = Array.from(new Set(
+                          verseText
+                            .toLowerCase()
+                            .replace(/[.,;:( )«»"]/g, ' ')
+                            .split(/\s+/)
+                            .filter(word => word.length > 2 && !stopWords.has(word))
+                        )).slice(0, 12);
+
+                        const handleConcordanceSearch = async (term: string) => {
+                          setConcordanceQuery(term);
+                          setIsSearchingConcordance(true);
+                          try {
+                            const results = await searchBibleByPhrase(term);
+                            setConcordanceResults(results.slice(0, 30));
+                          } catch (error) {
+                            console.error('Concordance search error:', error);
+                          } finally {
+                            setIsSearchingConcordance(false);
+                          }
+                        };
+
+                        return (
+                          <div className="space-y-6">
+                            <div className="p-4 bg-teal-50/50 dark:bg-teal-900/20 rounded-xl border border-teal-100 dark:border-teal-900/50">
+                              <h4 className="font-black text-[10px] text-teal-900 dark:text-teal-300 mb-3 flex items-center gap-2 uppercase tracking-widest">
+                                <ListFilter size={14} />
+                                Concordancia de Términos
+                              </h4>
+                              <p className="text-[11px] text-stone-600 dark:text-stone-400 mb-4 leading-relaxed">
+                                Seleccione una palabra clave del versículo para rastrear su uso a través de las Sagradas Escrituras:
+                              </p>
+                              <div className="flex flex-wrap gap-2">
+                                {keywords.map((kw, idx) => (
+                                  <button
+                                    key={idx}
+                                    onClick={() => handleConcordanceSearch(kw)}
+                                    className={`px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider transition-all cursor-pointer border ${
+                                      concordanceQuery === kw 
+                                        ? 'bg-teal-600 text-white border-teal-600 shadow-md scale-105' 
+                                        : 'bg-white dark:bg-stone-800 text-teal-700 dark:text-teal-400 border-teal-200 dark:border-teal-900 hover:border-teal-400'
+                                    }`}
+                                  >
+                                    {kw}
+                                  </button>
+                                ))}
+                              </div>
+                            </div>
+
+                            <div className="space-y-4">
+                              <div className="flex items-center justify-between px-1">
+                                <h5 className="text-[10px] font-black text-stone-400 uppercase tracking-widest">
+                                  {isSearchingConcordance ? 'Investigando...' : concordanceResults.length > 0 ? `Resultados para "${concordanceQuery}"` : 'Resultados de Búsqueda'}
+                                </h5>
+                                {concordanceResults.length > 0 && (
+                                  <span className="text-[9px] font-black text-teal-600 dark:text-teal-400 bg-teal-50 dark:bg-teal-900/30 px-2 py-0.5 rounded border border-teal-100 dark:border-teal-800">
+                                    {concordanceResults.length} hallazgos
+                                  </span>
+                                )}
+                              </div>
+
+                              {isSearchingConcordance ? (
+                                <div className="flex flex-col items-center justify-center py-12 text-stone-400">
+                                  <Loader2 className="w-8 h-8 animate-spin mb-4 text-teal-600" />
+                                  <p className="text-[10px] font-black uppercase tracking-widest">Escaneando el Canon...</p>
+                                </div>
+                              ) : concordanceResults.length > 0 ? (
+                                <div className="space-y-3">
+                                  {concordanceResults.map((res, idx) => (
+                                    <button
+                                      key={idx}
+                                      onClick={() => {
+                                        setSelectedBookId(res.bookId);
+                                        setSelectedChapter(res.chapter);
+                                        setSelectedVerse(res.verse);
+                                      }}
+                                      className="w-full text-left p-4 bg-white dark:bg-stone-900 rounded-xl border border-stone-200 dark:border-stone-800 hover:border-teal-300 dark:hover:border-teal-800 transition-all group relative overflow-hidden"
+                                    >
+                                      <div className="flex items-center justify-between mb-2">
+                                        <span className="font-serif font-black text-[10px] text-teal-700 dark:text-teal-400 uppercase">
+                                          {res.bookName} {res.chapter}:{res.verse}
+                                        </span>
+                                        <span className="text-[8px] font-black text-stone-300 uppercase group-hover:text-teal-400">Ver Contexto</span>
+                                      </div>
+                                      <p 
+                                        className="text-xs text-stone-600 dark:text-stone-300 leading-relaxed font-sans line-clamp-3"
+                                        dangerouslySetInnerHTML={{ __html: res.text }}
+                                      />
+                                    </button>
+                                  ))}
+                                </div>
+                              ) : (
+                                <div className="flex flex-col items-center justify-center py-12 text-stone-300 dark:text-stone-700 border-2 border-dashed border-stone-100 dark:border-stone-900 rounded-2xl">
+                                  <Search className="w-10 h-10 mb-3 opacity-20" />
+                                  <p className="text-[10px] font-black uppercase tracking-[0.2em] max-w-[180px] text-center">
+                                    Inicie una búsqueda seleccionando una palabra clave superior
+                                  </p>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        );
+                      })()}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </motion.aside>
+          )}
+        </AnimatePresence>
       </div>
 
       {/* Phrase Search Modal */}

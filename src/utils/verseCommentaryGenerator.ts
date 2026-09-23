@@ -1,3 +1,10 @@
+export interface StrongsEntry {
+  number: string;
+  word: string;
+  transliteration: string;
+  definition: string;
+}
+
 export interface VerseCommentary {
   matthewHenry: string;
   paulWasher: string;
@@ -5,6 +12,8 @@ export interface VerseCommentary {
   historicalContext: string;
   culturalBackground: string;
   theologicalInsight: string;
+  strongsDictionary: StrongsEntry[];
+  deepStudy: string;
 }
 
 export interface CrossReference {
@@ -200,6 +209,35 @@ export function generateVerseCommentary(
   const washerIndex = (hashVal >> 1) % 4;
   const spurgeonIndex = (hashVal >> 3) % 4;
 
+  // Generate some semi-realistic Strong's entries based on common biblical words
+  const strongsDictionary: StrongsEntry[] = [];
+  if (lower.includes('principio')) strongsDictionary.push({ number: 'H7225', word: 'רֵאשִׁית', transliteration: 'reshit', definition: 'Principio, primicia, parte principal. Indica el punto de partida absoluto.' });
+  if (lower.includes('creó')) strongsDictionary.push({ number: 'H1254', word: 'בָּרָא', transliteration: 'bara', definition: 'Crear, formar, hacer. Usado exclusivamente para la actividad creativa de Dios.' });
+  if (lower.includes('dios') && !isNT) strongsDictionary.push({ number: 'H430', word: 'אֱלֹהִים', transliteration: 'elohim', definition: 'Dios (plural de majestad). El Creador soberano y Juez del universo.' });
+  if (lower.includes('señor') && isNT) strongsDictionary.push({ number: 'G2962', word: 'κύριος', transliteration: 'kyrios', definition: 'Señor, amo, dueño. Título aplicado a Jesús reconociendo Su deidad.' });
+  if (lower.includes('espíritu')) strongsDictionary.push({ number: isNT ? 'G4151' : 'H7307', word: isNT ? 'πνεῦμα' : 'רוּחַ', transliteration: isNT ? 'pneuma' : 'ruach', definition: 'Espíritu, viento, aliento. El agente divino de vida y revelación.' });
+  if (lower.includes('fe')) strongsDictionary.push({ number: 'G4102', word: 'πίστις', transliteration: 'pistis', definition: 'Fe, creencia, confianza, fidelidad. Relación de confianza absoluta en Dios.' });
+  if (lower.includes('gracia')) strongsDictionary.push({ number: 'G5485', word: 'χάρις', transliteration: 'charis', definition: 'Gracia, favor inmerecido, bondad. La disposición benevolente de Dios hacia el pecador.' });
+  if (lower.includes('justicia')) strongsDictionary.push({ number: isNT ? 'G1343' : 'H6666', word: isNT ? 'δικαιοσύνη' : 'צְדָקָה', transliteration: isNT ? 'dikaiosyne' : 'tsedaqah', definition: 'Justicia, rectitud. El estándar moral de Dios y Su veredicto salvador.' });
+  
+  if (strongsDictionary.length === 0) {
+    strongsDictionary.push({ number: isNT ? 'G3056' : 'H1697', word: isNT ? 'λόγος' : 'דָּבָר', transliteration: isNT ? 'logos' : 'dabar', definition: 'Palabra, asunto, mensaje. La comunicación proposicional de Dios.' });
+  }
+
+  const deepStudy = `### Análisis Exegético Profundo: ${bookName} ${chapter}:${verseNum}
+
+#### 1. Sintaxis y Estructura Textual
+El versículo ${verseNum} presenta una estructura ${hashVal % 2 === 0 ? 'lineal' : 'quiasmática'} que enfatiza ${primaryTopic}. En el original ${isNT ? 'griego' : 'hebreo'}, el énfasis recae sobre el verbo principal, sugiriendo una acción ${hashVal % 3 === 0 ? 'completa y definitiva' : 'continua y progresiva'} por parte de la Deidad.
+
+#### 2. Desarrollo Teológico
+Dentro del flujo de ${bookName}, este pasaje actúa como ${hashVal % 4 === 0 ? 'una conclusión doxológica' : hashVal % 4 === 1 ? 'un punto de inflexión pactual' : 'un fundamento doctrinal'} para los capítulos siguientes. La mención de ${snippet.length > 20 ? snippet : 'estos conceptos'} conecta directamente con la doctrina de ${theologicalTheme}.
+
+#### 3. Aplicación Académica y Ministerial
+El estudiante de seminario debe observar que ${cleanText ? `«${cleanText}»` : 'este pasaje'} no es solo una declaración informativa, sino una demanda imperativa para la fe. Históricamente, este versículo ha sido interpretado por la ortodoxia como una defensa de la soberanía de Dios frente a las intrusiones del pensamiento secular.
+
+#### 4. Síntesis de la Exégesis
+En resumen, ${bookName} ${chapter}:${verseNum} nos invita a reconocer que ${primaryTopic.charAt(0).toUpperCase() + primaryTopic.slice(1)}. Es una invitación a la adoración fundada en la verdad proposicional de las Escrituras.`;
+
   return {
     matthewHenry: `En ${bookName} ${chapter}:${verseNum}, al reflexionar sobre ${snippet}, Matthew Henry resalta ${henryFocusList[henryIndex]} Como escribió en sus notas expositivas: la Palabra de Dios expresada aquí en el versículo ${verseNum} exige de nosotros fe, humildad y una caminata constante en la presencia divina.`,
 
@@ -209,7 +247,9 @@ export function generateVerseCommentary(
 
     historicalContext: historicalContextTemplates[histVarIndex],
     culturalBackground: culturalBackgroundTemplates[cultVarIndex],
-    theologicalInsight: theologicalInsightTemplates[theoVarIndex]
+    theologicalInsight: theologicalInsightTemplates[theoVarIndex],
+    strongsDictionary,
+    deepStudy
   };
 }
 

@@ -137,7 +137,7 @@ export default function App() {
 
   return (
     <div 
-      className="min-h-screen bg-slate-50/80 dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-sans flex flex-col relative transition-colors duration-300"
+      className="h-screen h-[100dvh] bg-slate-50/80 dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-sans flex flex-col relative transition-colors duration-300 overflow-hidden"
       style={{ zoom: `${zoomLevel}%` } as React.CSSProperties}
     >
       {/* Full-width Top Interactive Header */}
@@ -166,10 +166,12 @@ export default function App() {
       />
 
       <div 
-        className={`flex-1 flex flex-col w-full relative pt-4 transition-all duration-300 ease-out ${
-          notesLayout.isOpen && !notesLayout.isMinimized
-            ? 'lg:max-w-[calc(100vw-550px)] xl:max-w-[calc(100vw-560px)] lg:ml-0 lg:mr-auto pl-0 sm:pl-2 pr-2'
-            : 'max-w-7xl mx-auto px-2 sm:px-4 md:px-6'
+        className={`flex-1 min-h-0 flex flex-col w-full relative transition-all duration-300 ease-out overflow-hidden ${
+          activeTab === 'academic' 
+            ? 'pt-0' 
+            : notesLayout.isOpen && !notesLayout.isMinimized
+              ? 'lg:max-w-[calc(100vw-550px)] xl:max-w-[calc(100vw-560px)] lg:ml-0 lg:mr-auto pl-0 sm:pl-2 pr-2 pt-4'
+              : 'max-w-7xl mx-auto px-2 sm:px-4 md:px-6 pt-4'
         }`}
       >
         <AnimatePresence>
@@ -185,10 +187,10 @@ export default function App() {
         )}
         </AnimatePresence>
 
-        <main className="flex-1 flex flex-col min-h-0 w-full relative">
+        <main className={`flex-1 flex flex-col min-h-0 w-full relative overflow-hidden bg-white dark:bg-zinc-950 ${activeTab === 'academic' ? 'rounded-none' : 'rounded-t-3xl shadow-2xl'}`}>
            <div 
              ref={scrollContainerRef}
-             className="w-full custom-scrollbar pb-24 md:pb-12 transition-all duration-300 ease-out"
+             className={`w-full flex flex-col transition-all duration-300 ease-out ${activeTab === 'academic' ? 'flex-1 h-full overflow-hidden' : 'flex-1 overflow-y-auto pb-24 md:pb-12 custom-scrollbar overscroll-contain'}`}
            >
            <AnimatePresence mode="wait">
              {activeLesson && activeCourse ? (
@@ -272,13 +274,14 @@ export default function App() {
                  />
                </motion.div>
              ) : activeTab === 'academic' ? (
-               <motion.div 
-                 key="academic-panel"
-                 initial={{ opacity: 0, y: 10 }}
-                 animate={{ opacity: 1, y: 0 }}
-                 exit={{ opacity: 0, y: -10 }}
-                 transition={{ duration: 0.25 }}
-               >
+                <motion.div 
+                  key="academic-panel"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.25 }}
+                  className="flex-1 min-h-0 flex flex-col overflow-hidden"
+                >
                  <AcademicPanel />
                </motion.div>
              ) : activeTab === 'calendar' ? (
@@ -347,28 +350,7 @@ export default function App() {
       />
 
       {/* Dedicated Native Mobile Bottom Navigation Bar */}
-      <MobileBottomNav 
-        activeTab={activeTab}
-        onSelectTab={(tab) => {
-          setActiveTab(tab);
-          setActiveCourseId(null);
-          setActiveLessonId(null);
-        }}
-        onResetCourseSelection={() => {
-          setActiveCourseId(null);
-          setActiveLessonId(null);
-        }}
-        onOpenAssistant={() => setIsAssistantOpen(true)}
-        onOpenNotes={() => setNotesOpenTrigger(Date.now())}
-        onOpenProfile={() => setShowProfile(true)}
-        darkMode={darkMode}
-        onToggleDarkMode={() => setDarkMode(prev => !prev)}
-        completedLessonsCount={Object.keys(progress.completedLessons || {}).length}
-        user={user}
-        customProfile={customProfile}
-        onSignOut={signOut}
-      />
-
+      {/* Phrase Search Trigger in AcademicPanel is handled inside the component */}
       <OfflineBanner />
     </div>
   );

@@ -433,11 +433,159 @@ export const maeEducacionCristiana: Course = {
   ]
 };
 
+export const maeHomileticaExpositiva: Course = {
+  id: 'mae-homiletica',
+  title: 'Maestría: Homilética Expositiva y Retórica Sagrada',
+  type: 'MAESTRIA',
+  durationMonths: 12,
+  description: 'Desarrollo de habilidades para la predicación expositiva, análisis del texto bíblico para el púlpito y el arte de la comunicación sagrada que transforma vidas.',
+  lessons: [
+    {
+      id: 'mae-hom-day1',
+      day: 1,
+      title: 'La Primacía de la Predicación Expositiva',
+      blocks: [
+        {
+          type: 'text',
+          id: 'mae-hom-d1-b1',
+          content: 'La predicación expositiva es aquella que extrae el significado del texto bíblico respetando su contexto original y aplicándolo con poder a la audiencia contemporánea. El predicador no impone sus ideas al texto, sino que permite que la Palabra hable por sí misma.'
+        }
+      ],
+      finalExam: [
+        {
+          id: 'f-mae-hom-1',
+          question: '¿Qué define a la predicación expositiva?',
+          options: [
+            'Contar anécdotas personales interesantes.',
+            'Extraer el mensaje del texto bíblico respetando su intención original.',
+            'Hablar de temas de actualidad sin citar la Biblia.',
+            'Repetir frases motivacionales de moda.'
+          ],
+          correctAnswerIndex: 1,
+          explanation: 'La exposición fiel del texto es la base de un ministerio sólido.'
+        }
+      ]
+    }
+  ]
+};
+
+export const maeBioeticaTeologia: Course = {
+  id: 'mae-bioetica',
+  title: 'Maestría: Bioética y Teología de la Vida',
+  type: 'MAESTRIA',
+  durationMonths: 12,
+  description: 'Análisis de los dilemas éticos contemporáneos en medicina y biología desde una cosmovisión teocéntrica, defendiendo la santidad de la vida humana.',
+  lessons: [
+    {
+      id: 'mae-bio-day1',
+      day: 1,
+      title: 'Fundamentos de la Bioética Cristiana',
+      blocks: [
+        {
+          type: 'text',
+          id: 'mae-bio-d1-b1',
+          content: 'La bioética teológica se fundamenta en la Imago Dei (Imagen de Dios) en el ser humano. Cada vida posee una dignidad intrínseca que debe ser protegida frente a visiones utilitarias o materialistas.'
+        }
+      ],
+      finalExam: [
+        {
+          id: 'f-mae-bio-1',
+          question: '¿Cuál es el pilar de la bioética cristiana?',
+          options: [
+            'El ahorro económico del sistema de salud.',
+            'La autonomía absoluta del individuo.',
+            'La santidad de la vida humana como imagen de Dios.',
+            'El avance científico sin restricciones morales.'
+          ],
+          correctAnswerIndex: 2,
+          explanation: 'La vida es un don divino y su dignidad no es negociable.'
+        }
+      ]
+    }
+  ]
+};
+
+export const maeAdministracionGestion: Course = {
+  id: 'mae-gestion',
+  title: 'Maestría: Administración y Gestión de Instituciones Teológicas',
+  type: 'MAESTRIA',
+  durationMonths: 12,
+  description: 'Estrategias de gestión académica, acreditación y sostenibilidad para seminarios y organizaciones educativas cristianas en el siglo XXI.',
+  lessons: [
+    {
+      id: 'mae-ges-day1',
+      day: 1,
+      title: 'Liderazgo en Instituciones de Educación Teológica',
+      blocks: [
+        {
+          type: 'text',
+          id: 'mae-ges-d1-b1',
+          content: 'Gestionar una institución teológica requiere un equilibrio entre la excelencia académica y la fidelidad doctrinal. El gestor debe liderar con integridad, optimizando recursos para el servicio del Reino.'
+        }
+      ],
+      finalExam: [
+        {
+          id: 'f-mae-ges-1',
+          question: '¿Qué debe equilibrar un gestor teológico?',
+          options: [
+            'Excelencia académica y fidelidad doctrinal.',
+            'Ganancias financieras y fama personal.',
+            'Marketing agresivo y falta de ética.',
+            'Solo le interesa la parte administrativa.'
+          ],
+          correctAnswerIndex: 0,
+          explanation: 'La administración teológica es un ministerio que demanda calidad y verdad.'
+        }
+      ]
+    }
+  ]
+};
+
+export const maePensamientoContemporaneo: Course = {
+  id: 'mae-pensamiento',
+  title: 'Maestría: Análisis del Pensamiento Contemporáneo y Postmodernidad',
+  type: 'MAESTRIA',
+  durationMonths: 12,
+  description: 'Estudio crítico de las corrientes filosóficas actuales, el secularismo y la cultura postmoderna para una apologética efectiva en el mundo de hoy.',
+  lessons: [
+    {
+      id: 'mae-pen-day1',
+      day: 1,
+      title: 'El Desafío de la Postmodernidad',
+      blocks: [
+        {
+          type: 'text',
+          id: 'mae-pen-d1-b1',
+          content: 'La postmodernidad cuestiona la existencia de verdades absolutas (metarrelatos). El teólogo debe saber responder a este relativismo con la verdad inerrante de Cristo, adaptando su lenguaje sin comprometer el mensaje.'
+        }
+      ],
+      finalExam: [
+        {
+          id: 'f-mae-pen-1',
+          question: '¿Qué caracteriza a la postmodernidad?',
+          options: [
+            'La fe absoluta en la razón científica.',
+            'El cuestionamiento de los metarrelatos y las verdades universales.',
+            'Un retorno a la monarquía absoluta.',
+            'El rechazo a la tecnología.'
+          ],
+          correctAnswerIndex: 1,
+          explanation: 'La postmodernidad fragmenta la verdad; la Biblia la unifica en Dios.'
+        }
+      ]
+    }
+  ]
+};
+
 export const maestriaCourses = [
   maeTeologiaSistematica,
   maeIdiomasBiblicos,
   maeHistoriaDogma,
   maeConsejeriaBiblica,
   maeMisionologia,
-  maeEducacionCristiana
+  maeEducacionCristiana,
+  maeHomileticaExpositiva,
+  maeBioeticaTeologia,
+  maeAdministracionGestion,
+  maePensamientoContemporaneo
 ];

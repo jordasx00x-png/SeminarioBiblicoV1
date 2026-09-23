@@ -1,6 +1,8 @@
 // Dynamic Syllabus Titles for the 90 Days of each course
 // This ensures every single day of the 90-day curriculum has a highly realistic and specific academic theological title.
 
+import { calculateBibleRange } from './bibleNavigationUtils';
+
 interface CourseTitles {
   [courseId: string]: string[];
 }
@@ -73,37 +75,16 @@ const SPECIFIC_TITLES: CourseTitles = {
     "Cielos Nuevos y Tierra Nueva: La Glorificación del Universo"
   ],
   pentateuco: [
-    "Estudio Bíblico Versículo por Versículo — Génesis 1:1 («En el principio creó Dios los cielos y la tierra»)", // Day 1
-    "Estudio Bíblico Versículo por Versículo — Génesis 1:2 («Y la tierra estaba desordenada y vacía...»)", // Day 2
-    "Estudio Bíblico Versículo por Versículo — Génesis 1:3 («Y dijo Dios: Sea la luz; y fue la luz»)", // Day 3
-    "Estudio Bíblico Versículo por Versículo — Génesis 1:4 («Y vio Dios que la luz era buena; y separó la luz...»)", // Day 4
-    "Estudio Bíblico Versículo por Versículo — Génesis 1:5 («Y llamó Dios a la luz Día, y a las tinieblas Noche»)", // Day 5
-    "Estudio Bíblico Versículo por Versículo — Génesis 1:6 («Haya expansión en medio de las aguas»)", // Day 6
-    "Estudio Bíblico Versículo por Versículo — Génesis 1:7 («E hizo Dios la expansión...»)", // Day 7
-    "Estudio Bíblico Versículo por Versículo — Génesis 1:8 («Y llamó Dios a la expansión Cielos»)", // Day 8
-    "Estudio Bíblico Versículo por Versículo — Génesis 1:9 («Júntense las aguas... y descúbrase lo seco»)", // Day 9
-    "Estudio Bíblico Versículo por Versículo — Génesis 1:10 («Y llamó Dios a lo seco Tierra, y a las aguas Mares»)", // Day 10
-    "Estudio Bíblico Versículo por Versículo — Génesis 1:11 («Produzca la tierra hierba verde y árbol de fruto»)", // Day 11
-    "Estudio Bíblico Versículo por Versículo — Génesis 1:12 («Produjo, pues, la tierra hierba verde...»)", // Day 12
-    "Estudio Bíblico Versículo por Versículo — Génesis 1:13 («Y fue la tarde y la mañana el día tercero»)", // Day 13
-    "Estudio Bíblico Versículo por Versículo — Génesis 1:14 («Haya lumbreras en la expansión de los cielos»)", // Day 14
-    "Estudio Bíblico Versículo por Versículo — Génesis 1:15 («Y sean por lumbreras para alumbrar sobre la tierra»)", // Day 15
-    "Estudio Bíblico Versículo por Versículo — Génesis 1:16 («E hizo Dios las dos grandes lumbreras y las estrellas»)", // Day 16
-    "Estudio Bíblico Versículo por Versículo — Génesis 1:17 («Y las puso Dios en la expansión de los cielos»)", // Day 17
-    "Estudio Bíblico Versículo por Versículo — Génesis 1:18 («Para señorear en el día y en la noche...»)", // Day 18
-    "Estudio Bíblico Versículo por Versículo — Génesis 1:19 («Y fue la tarde y la mañana el día cuarto»)", // Day 19
-    "Estudio Bíblico Versículo por Versículo — Génesis 1:20 («Produzcan las aguas seres vivientes y aves»)", // Day 20
-    "Estudio Bíblico Versículo por Versículo — Génesis 1:21 («Y creó Dios los grandes monstruos marinos...»)", // Day 21
-    "Estudio Bíblico Versículo por Versículo — Génesis 1:22 («Y Dios los bendijo: Fructificad y multiplicaos»)", // Day 22
-    "Estudio Bíblico Versículo por Versículo — Génesis 1:23 («Y fue la tarde y la mañana el día quinto»)", // Day 23
-    "Estudio Bíblico Versículo por Versículo — Génesis 1:24 («Produzca la tierra seres vivientes según su género»)", // Day 24
-    "Estudio Bíblico Versículo por Versículo — Génesis 1:25 («E hizo Dios animales de la tierra según su género»)", // Day 25
-    "Estudio Bíblico Versículo por Versículo — Génesis 1:26 («Hagamos al hombre a nuestra imagen, conforme a semejanza»)", // Day 26
-    "Estudio Bíblico Versículo por Versículo — Génesis 1:27 («Y creó Dios al hombre a su imagen... varón y hembra»)", // Day 27
-    "Estudio Bíblico Versículo por Versículo — Génesis 1:28 («Y los bendijo Dios: Fructificad y multiplicaos»)", // Day 28
-    "Estudio Bíblico Versículo por Versículo — Génesis 1:29 («He aquí que os he dado toda planta que da semilla»)", // Day 29
-    "Estudio Bíblico Versículo por Versículo — Génesis 1:30 («Y a toda bestia de la tierra... planta verde»)", // Day 30
-    "Estudio Bíblico Versículo por Versículo — Génesis 1:31 («Y vio Dios todo lo que había hecho: bueno en gran manera»)" // Day 31
+    "Introducción al Pentateuco y la Teología del Pacto de Obras",
+    "El Cosmos y la Imagen de Dios: Antropología en el Génesis",
+    "La Caída y la Primera Promesa del Evangelio (Protoevangelio)",
+    "El Diluvio y la Gracia Preservadora de Dios con Noé",
+    "El Llamado de Abraham y la Elección Soberana de la Simiente",
+    "Isaac, Jacob y la Providencia de Dios en los Patriarcas",
+    "José en Egipto: La Soberanía sobre el Mal para Salvación",
+    "El Éxodo: Redención con Mano Poderosa y Brazo Extendido",
+    "La Ley en el Sinaí: Santidad y Justicia de Jehová",
+    "El Tabernáculo: La Presencia de Dios en medio de Su Pueblo"
   ],
   historicos: [
     "Teología de la Conquista en el Libro de Josué", // Day 1
@@ -330,12 +311,28 @@ const THEOLOGICAL_NOUNS: Record<string, string[]> = {
   "lic-consejeria-biblica": ["el Cuidado Pastoral", "los Ídolos del Corazón", "el Arrepentimiento Genuino", "la Confesión de Pecados", "el Vínculo Matrimonial", "la Ansiedad del Alma", "las Cargas Espirituales", "la Crianza Cristiana"],
   "lic-misionologia": ["la Antropología Cultural", "los Despertares Misioneros", "la Missio Dei", "el Sincretismo Religioso", "la Plantación de Iglesias", "la Autonomía Local", "el Cuidado del Mártir"],
   "lic-educacion-cristiana": ["la Filosofía Educativa", "el Mandato de Deuteronomio", "el Currículo Expositivo", "el Catecismo Menor", "la Instrucción Sapiencial", "el Magisterio Espiritual"],
+  "lic-geografia-arqueologia": ["la Topografía Sagrada", "la Arqueología del Éxodo", "el Contexto Geopolítico", "los Descubrimientos del Mar Muerto", "las Tierras del Pacto", "la Historicidad de los Patriarcas"],
+  "lic-liderazgo-admin": ["el Liderazgo Servidor", "la Mayordomía Eclesial", "la Gestión de Talentos", "la Administración de Recursos", "el Gobierno de la Iglesia", "la Visión Estratégica"],
   "mae-teologia-sistematica": ["Epistemología Teológica", "Aseidad Divina", "Los Decretos Inmutables", "El Pacto Federal", "Escatología Dogmática", "Antropología del Pecado Originario"],
   "mae-idiomas-biblicos": ["Crítica Textual Superior", "Análisis Discursivo Epistolar", "Poética de Proverbios", "Paralelismos Hebreos", "Gramática del Arameo", "Transmisión Manuscrita Griega"],
   "mae-historia-dogma": ["La Evolución del Canon", "Los Padres Capadocios", "Cristología de Calcedonia", "Misticismo Medieval", "Cismas Históricos", "La Epistemología de Nicea"],
   "mae-consejeria-biblica": ["La Antropología Dicotómica", "Consejería Integrativa", "Terapia de Traumas Complejos", "La Biología y la Depresión", "Gracia en la Desolación", "Restauración Psicoterapéutica"],
   "mae-misionologia": ["Teología de la Misión Soberana", "El Arminianismo Misional Evaluado", "Estrategia Post-Secular", "Plantación en Pueblos Reacios", "Demografía del Islam", "Antropología Sociológica Misional"],
-  "mae-educacion-cristiana": ["Filosofía del Trivium Cívico", "Señorío Epistemológico en Ciencia", "Diseño de Liderazgo Superior", "Apologética Académica Magisterial", "Luchando Contra el Secularismo Histórico", "El Liderazgo de Seminarios"]
+  "mae-educacion-cristiana": ["Filosofía del Trivium Cívico", "Señorío Epistemológico en Ciencia", "Diseño de Liderazgo Superior", "Apologética Académica Magisterial", "Luchando Contra el Secularismo Histórico", "El Liderazgo de Seminarios"],
+  "mae-homiletica": ["la Retórica Sagrada", "la Predicación Expositiva", "el Arte de la Elocuencia", "la Hermenéutica del Púlpito", "la Oratoria Consagrada", "el Mensaje Transformador"],
+  "mae-bioetica": ["la Santidad de la Vida", "el Dilema de la Clonación", "la Ética en la Genética", "la Eutanasia y el Suicidio Asistido", "el Comienzo de la Existencia", "la Dignidad Humana"],
+  "mae-gestion": ["la Acreditación Académica", "la Sostenibilidad Institucional", "el Desarrollo de Facultades", "la Gestión del Cambio", "la Calidad Educativa", "la Administración de Seminarios"],
+  "mae-pensamiento": ["el Relativismo Postmoderno", "el Secularismo Militante", "la Crítica de la Modernidad", "el Pluralismo Religioso", "la Verdad en la Cultura", "los Metarrelatos"],
+  "doc-exegesis-hermeneutica": ["la Crítica Textual Avanzada", "el Método Histórico-Crítico", "la Hermenéutica de la Sospecha", "la Interpretación Dialéctica", "el Análisis Estructural", "la Exégesis Crítica"],
+  "doc-teologia-sistematica": ["la Dogmática Reformada", "la Ontología de la Revelación", "la Cristología Dialéctica", "la Soteriología Contemporánea", "el Pensamiento de Barth", "la Teología del Pacto"],
+  "doc-arqueologia-biblica": ["la Metodología de Campo", "la Estratigrafía Palestina", "el Mundo Grecorromano", "las Inscripciones Semíticas", "la Cerámica Bíblica", "los Tell de Israel"],
+  "doc-etica-filosofia": ["la Ética Social", "la Bioética Médica", "la Filosofía de la Religión", "el Pensamiento Existencialista", "la Moral Cristiana", "la Justicia Global"],
+  "doc-liderazgo-misionologia": ["la Eclesiología Transcultural", "la Misionología Global", "el Liderazgo Estratégico", "la Antropología del Encuentro", "la Expansión del Reino", "el Liderazgo de Equipos"],
+  "doc-educacion-superior": ["la Pedagogía Teológica", "el Diseño Curricular", "la Epistemología Educativa", "la Evaluación Académica", "el Liderazgo de Posgrado", "la Innovación en el Seminario"],
+  "doc-pensamiento-cristiano": ["la Patrística Temprana", "el Pensamiento Escolástico", "la Teología de la Ilustración", "las Controversias Modernistas", "la Historia del Dogma", "los Credos Ecuménicos"],
+  "doc-apologetica-trascendental": ["el Argumento Presuposicional", "la Apologética de Van Til", "la Defensa de la Revelación", "la Crítica del Naturalismo", "la Racionalidad de la Fe", "el Teísmo Cristiano"],
+  "doc-teologia-cultura": ["la Teología de la Esfera Pública", "la Transformación Social", "la Cultura Postsecular", "el Mandato Cultural", "la Ética de la Responsabilidad", "el Evangelio y la Política"],
+  "doc-consejeria-teologica": ["la Cura Animarum", "la Patología Espiritual", "la Restauración del Alma", "la Antropología de la Gracia", "el Cuidado Pastoral de Almas", "la Teología del Sufrimiento"]
 };
 
 export function getLessonTitleForDay(courseId: string, day: number, realTitle?: string): string {
@@ -350,7 +347,14 @@ export function getLessonTitleForDay(courseId: string, day: number, realTitle?: 
   }
 
   if (bibleStudyCourseIds.includes(id)) {
-    return `Estudio Bíblico Versículo por Versículo — Clase ${day}`;
+    const range = calculateBibleRange(id, day);
+    const specificTitle = day <= list.length ? list[day - 1] : "";
+    
+    // Always include the range in the title for Bible Studies
+    if (specificTitle) {
+      return `Estudio Bíblico — ${range.reference}: ${specificTitle}`;
+    }
+    return `Estudio Bíblico — ${range.reference} - Clase ${day}`;
   }
 
   // Generate a majestic automatic name combining a verb and a noun

@@ -390,8 +390,82 @@ export const educacionCristianaSuperior: Course = {
   ]
 };
 
+export const geografiaArqueologiaBiblica: Course = {
+  id: 'lic-geografia-arqueologia',
+  title: 'Licenciatura: Geografía Bíblica y Arqueología del Cercano Oriente',
+  type: 'LICENCIATURA' as any,
+  durationMonths: 6,
+  description: 'Un estudio técnico sobre la topografía, arqueología y geopolítica de las tierras bíblicas, analizando los descubrimientos que corroboran la historicidad del canon sagrado.',
+  lessons: [
+    {
+      id: 'lic-gab-day1',
+      day: 1,
+      title: 'Topografía de la Tierra Prometida',
+      blocks: [
+        {
+          type: 'text',
+          id: 'lic-gab-d1-b1',
+          content: 'La geografía bíblica no es una disciplina meramente auxiliar, sino el escenario físico donde Dios desplegó Su redención histórica. Comprender las regiones de Judá, Galilea y el valle del Jordán permite una exégesis más precisa de las narrativas patriarcales y el ministerio de Jesús.'
+        }
+      ],
+      finalExam: [
+        {
+          id: 'f-gab-1',
+          question: '¿Por qué es relevante la geografía en el estudio bíblico?',
+          options: [
+            'Para planificar viajes turísticos exclusivamente.',
+            'Porque las promesas de Dios están ligadas a escenarios históricos y geográficos específicos que corroboran Su fidelidad.',
+            'Es irrelevante para la doctrina espiritual.',
+            'Para aprender idiomas modernos.'
+          ],
+          correctAnswerIndex: 1,
+          explanation: 'Dios actúa en la historia y en el espacio físico; la geografía es el lienzo de la providencia.'
+        }
+      ]
+    }
+  ]
+};
+
+export const liderazgoAdministracionEclesial: Course = {
+  id: 'lic-liderazgo-admin',
+  title: 'Licenciatura: Liderazgo y Administración Eclesiástica Integral',
+  type: 'LICENCIATURA' as any,
+  durationMonths: 6,
+  description: 'Principios de gestión, liderazgo servidor y administración financiera y legal para el fortalecimiento de la iglesia local y organizaciones ministeriales.',
+  lessons: [
+    {
+      id: 'lic-lae-day1',
+      day: 1,
+      title: 'El Liderazgo Servidor: Modelo de Cristo',
+      blocks: [
+        {
+          type: 'text',
+          id: 'lic-lae-d1-b1',
+          content: 'El liderazgo en el Reino de Dios se diferencia radicalmente de los modelos jerárquicos seculares. Basado en el servicio y la abnegación, el líder cristiano administra los recursos de la Iglesia con transparencia y visión espiritual, buscando el crecimiento del cuerpo de Cristo.'
+        }
+      ],
+      finalExam: [
+        {
+          id: 'f-lae-1',
+          question: '¿Cuál es la base del liderazgo bíblico?',
+          options: [
+            'El dominio y la autoridad absoluta sobre los demás.',
+            'El servicio humilde y el sacrificio personal siguiendo el ejemplo de Jesucristo.',
+            'La búsqueda de prestigio social y beneficios económicos.',
+            'La aplicación de técnicas de marketing exclusivamente.'
+          ],
+          correctAnswerIndex: 1,
+          explanation: 'Jesús enseñó que el que quiera ser el primero, debe ser el servidor de todos.'
+        }
+      ]
+    }
+  ]
+};
+
 export const licenciaturasExtra = [
   consejeriaBiblicaSuperior,
   misionologiaTranscultural,
-  educacionCristianaSuperior
+  educacionCristianaSuperior,
+  geografiaArqueologiaBiblica,
+  liderazgoAdministracionEclesial
 ];

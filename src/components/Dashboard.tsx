@@ -156,7 +156,7 @@ export function Dashboard({ user, courses, progress, customProfile, onSelectCour
                 : 'text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-200'
             }`}
           >
-            Formación Básica & Bíblica ({basicCourses.length})
+            Grados de Iniciación ({basicCourses.length})
           </button>
           <button
             onClick={() => setSelectedDegreeTab('licenciatura')}
@@ -229,7 +229,7 @@ export function Dashboard({ user, courses, progress, customProfile, onSelectCour
                 <div className="flex items-center gap-3">
                   <BookOpen className="text-[#7F1D1D] dark:text-amber-400" size={24} />
                   <div>
-                    <h2 className="text-2xl font-serif font-bold text-stone-900 dark:text-stone-100">Estudio Bíblico y Fundamentos</h2>
+                    <h2 className="text-2xl font-serif font-bold text-stone-900 dark:text-stone-100">Grados de Iniciación y Fundamentos</h2>
                     <p className="text-xs text-stone-500 font-sans">Formación integral en el texto canónico de las Sagradas Escrituras.</p>
                   </div>
                 </div>

@@ -1,4 +1,5 @@
 import { Lesson, ExamQuestion, ContentBlock } from '../types';
+import { calculateBibleRange } from './bibleNavigationUtils';
 
 // Precise pool of standard, highly accurate Biblical verses for theological reinforcement
 const VERSE_POOL = [
@@ -108,138 +109,118 @@ const THEOLOGIANS_POOL = [
   }
 ];
 
+const GENESIS_1_TEXT: Record<number, string> = {
+  1: "En el principio creó Dios los cielos y la tierra.",
+  2: "Y la tierra estaba desordenada y vacía, y las tinieblas estaban sobre la faz del abismo, y el Espíritu de Dios se movía sobre la faz de las aguas.",
+  3: "Y dijo Dios: Sea la luz; y fue la luz.",
+  4: "Y vio Dios que la luz era buena; y separó la luz de las tinieblas.",
+  5: "Y llamó Dios a la luz Día, y a las tinieblas llamó Noche. Y fue la tarde y la mañana un día.",
+  6: "Luego dijo Dios: Haya expansión en medio de las aguas, y separe las aguas de las aguas.",
+  7: "E hizo Dios la expansión, y separó las aguas que estaban debajo de la expansión, de las aguas que estaban sobre la expansión. Y fue así.",
+  8: "Y llamó Dios a la expansión Cielos. Y fue la tarde y la mañana el día segundo.",
+  9: "Dijo también Dios: Júntense las aguas que están debajo de los cielos en un lugar, y descúbrase lo seco. Y fue así.",
+  10: "Y llamó Dios a lo seco Tierra, y a la reunión de las aguas llamó Mares. Y vio Dios que era bueno.",
+  11: "Después dijo Dios: Produzca la tierra hierba verde, hierba que dé semilla; árbol de fruto que dé fruto según su género, que su semilla esté en él, sobre la tierra. Y fue así.",
+  12: "Produjo, pues, la tierra hierba verde, hierba que da semilla según su naturaleza, y árbol que da fruto, cuya semilla está en él, según su género. Y vio Dios que era bueno.",
+  13: "Y fue la tarde y la mañana el día tercero.",
+  14: "Dijo luego Dios: Haya lumbreras en la expansión de los cielos para separar el día de la noche; y sirvan de señales para las estaciones, para días y años.",
+  15: "y sean por lumbreras en la expansión de los cielos para alumbrar sobre la tierra. Y fue así."
+};
+
+const BIBLE_STUDY_SPECIFIC_CONTENT: Record<string, { [range: string]: { analysis: string; exegesis: string; christ: string; application: string } }> = {
+  'pentateuco': {
+    'Génesis 1:1-3': {
+      analysis: `* **בְּרֵאשִׁית (Bereshit - Strong H7225):** Preposición "be" (en) + sustantivo "reshit" (principio/primicia). Denota el punto de partida absoluto de la historia creada. No hay artículo definido, sugiriendo un "estado" inicial de tiempo.
+* **בָּרָא (Bara - Strong H1254):** Verbo en Qal Perfecto. Exclusivo para la actividad creativa de Dios. A diferencia de *yatsar* (formar), *bara* implica la ausencia de esfuerzo y, en este contexto, la creación de la materia misma (*ex nihilo*).
+* **אֱלֹהִים (Elohim - Strong H430):** Plural de majestad para *Eloah*. Sujeto singular con verbo singular, revelando la unidad y plenitud de la Deidad.
+* **תֹהוּ וָבֹהוּ (Tohu va-bohu - Strong H8414/H922):** Un endíadis que describe un estado de "insubstancialidad" y "vacuidad". No indica un juicio previo (Teoría de la Brecha), sino la materia prima antes de ser organizada.
+* **מְרַחֶפֶת (Merachephet - Strong H7363):** Participio Piel de *rachaph*. Describe el movimiento vibrante o protector de un ave sobre sus polluelos (Dt 32:11). El Espíritu Santo es el agente de vida y orden.`,
+      exegesis: `Estos versículos constituyen la base ontológica de la cosmovisión bíblica. Dios es preexistente e independiente del cosmos. El v.1 afirma el monoteísmo frente al panteísmo (el mundo no es Dios) y el dualismo (la materia no es eterna). El v.2 nos presenta la escena del "taller divino": la materia informe bajo la custodia del Espíritu. El v.3 introduce el medio de creación: la **Palabra Proposicional**. Dios no lucha contra el caos (como en los mitos babilónicos tipo Enuma Elish), sino que lo rige mediante Su decreto soberano. La luz aparece no por una emanación de Su ser, sino por un mandato voluntario.`,
+      christ: `Cristo es el *Logos* (la Palabra) mencionado en el v.3. Juan 1:1-3 aclara que "todas las cosas por él fueron hechas". Él es la Luz verdadera que disipa las tinieblas espirituales de la caída. Como Colosenses 1:16 afirma, Él es tanto el Agente como el Fin de esta creación original.`,
+      application: `Reconocer que Dios es Creador implica reconocer Su derecho de propiedad absoluta sobre nuestra vida. Así como el Espíritu se movía sobre el caos para traer orden, Él desea moverse en las áreas desordenadas de tu corazón para traer la luz de la verdad de Cristo.`
+    },
+    'Génesis 1:4-6': {
+      analysis: `* **וַיַּרְא (Vayar - Strong H7200):** "Y vio". No implica que Dios adquirió conocimiento nuevo, sino una aprobación judicial y estética de Su propia obra.
+* **כִּי־טוֹב (Ki-tov):** "Que era bueno". La bondad es una categoría moral y funcional. La creación cumple perfectamente el propósito para el cual fue diseñada.
+* **וַיַּבְדֵּל (Vayabdel - Strong H914):** "Y separó". El acto de distinguir y clasificar es central en la santidad de Dios. Él es el Dios de orden, no de confusión.
+* **יוֹם (Yom - Strong H3117):** Definido aquí por la alternancia de luz y tinieblas. El texto establece la tarde y la mañana como el ciclo de un día, sentando las bases del tiempo humano.
+* **רָקִיעַ (Raqia - Strong H7549):** Del verbo *raqa* (extender/martillar metal). Describe una expansión sólida o firmamento que actúa como frontera estructural entre las aguas atmosféricas y terrestres.`,
+      exegesis: `El estudio de esta sección nos revela a Dios como el Gran Arquitecto y Juez. La "separación" (v.4) es el primer paso del ordenamiento. Dios no tolera la mezcla amorfa entre la luz y las tinieblas; Él define sus fronteras. Al nombrar a la luz "Día" y a las tinieblas "Noche" (v.5), Dios ejerce soberanía real, pues en el pensamiento antiguo, nombrar algo equivalía a tener autoridad sobre ello. El v.6 introduce el concepto de la estructura del hábitat: la expansión divide el caos líquido primigenio para crear un espacio respirable y estable para la futura vida.`,
+      christ: `La separación de la luz y las tinieblas prefigura la obra de Cristo, quien separa a Su pueblo del mundo y de la potestad de las tinieblas (*Colosenses 1:13*). Él es la expansión que reconcilia y sostiene todas las cosas, manteniendo el orden del universo por la palabra de Su poder.`,
+      application: `La vida cristiana debe reflejar la "separación" divina. Dios nos llama a ser luz y a no tener comunión con las tinieblas. Medita hoy en si estás permitiendo que Dios ponga "orden y separación" en tus prioridades y afectos.`
+    },
+    'Génesis 1:7-9': {
+      analysis: `* **וַיַּעַשׂ (Vaya'as - Strong H6213):** "E hizo". A diferencia de *bara*, este verbo a menudo implica trabajar con materiales o estructuras ya existentes (en este caso, la materia creada en el v.1).
+* **לַבָּקִיעַ (La-raqia):** Referencia al firmamento como una entidad divisoria funcional.
+* **מִתַּחַת (Mittachat):** "Debajo de". Indica una organización espacial vertical precisa.
+* **יִקָּווּ (Yikkavu - Strong H6960):** "Júntense/Espérense". Raíz que sugiere un proceso de recolección deliberada.
+* **יַבָּשָׁה (Yabbashah - Strong H3004):** "Lo seco". Del verbo *yabesh* (secarse). La aparición de la tierra seca es el fundamento para la vida terrestre y humana.`,
+      exegesis: `En estos versículos, la soberanía de Dios se manifiesta sobre los elementos más imponentes: el cielo y el mar. El v.7 detalla la ejecución del mandato del v.6, subrayando que la palabra de Dios siempre produce resultados concretos. Al llamar a la expansión "Cielos" (v.8), Dios establece el dominio celestial como el trono de Su gloria. El v.9 muestra Su control sobre la hidrósfera; las aguas indómitas deben obedecer Su mandato de retroceder para que la tierra habitable aparezca. Esto no es un proceso de millones de años de erosión, sino un acto de voluntad divina instantánea que prepara el Edén.`,
+      christ: `Cristo demostró esta misma autoridad sobre los elementos en Galilea: "¡Calla, enmudece!" (*Marcos 4:39*). Las aguas que se juntaron en Génesis obedecieron la misma voz que calmó la tempestad. Él es la roca firme que emerge del caos para darnos un lugar seguro donde habitar.`,
+      application: `Si Dios puede ordenar a los océanos del mundo entero que se detengan en un lugar, ¿no podrá poner límite a las tormentas en tu vida? Confía en que el Señor tiene un "lugar seco" preparado para ti después de la prueba.`
+    },
+    'Génesis 1:10-12': {
+      analysis: `* **אֶרֶץ (Eretz - Strong H776):** Tierra seca/territorio. Ahora recibe su nombre oficial del Rey.
+* **יַמִּים (Yammim - Strong H3220):** Mares. El plural denota la inmensidad de las aguas recolectadas.
+* **תַּדְשֵׁא (Tadshe - Strong H1876):** "Produzca/Verdee". Verbo causativo (Hifil). La tierra no tiene poder propio, sino que actúa por la potencia que la Palabra le otorga.
+* **לְמִינֵהוּ (Leminehu - Strong H4327):** "Según su género". Aparece repetidamente (v.11, 12). Establece una barrera biológica infranqueable. Cada especie es creada con su propia identidad genética fija.
+* **זֶרַע (Zera - Strong H2233):** Semilla. El principio de continuidad y providencia futura instalado en la creación misma.`,
+      exegesis: `Esta es la primera vez que vemos "vida" orgánica en el relato. Dios no solo ordena la geografía, sino que la llena de abundancia. La insistencia en "según su género" (v.11-12) es crucial: refuta el transformismo y la macroevolución. Dios crea sistemas biológicos complejos y completos desde el inicio. La vida vegetal aparece por mandato, no por azar ciego. La evaluación "vio Dios que era bueno" (v.12) indica que la biosfera terrestre inicial era perfecta en su funcionamiento, sin rastro de muerte, enfermedad o descomposición (pues estas entraron con la caída).`,
+      christ: `La "semilla" (v.12) es un tipo cristológico fundamental. Cristo se comparó a Sí mismo con un grano de trigo que cae en la tierra para dar mucho fruto (*Juan 12:24*). Él es la vida verdadera que hace que nuestro desierto espiritual florezca y produzca frutos de justicia.`,
+      application: `Así como la tierra produjo fruto por la palabra de Dios, nuestra alma solo puede producir fruto espiritual si la Palabra de Dios habita en nosotros. ¿Qué "semillas" de la Palabra estás permitiendo que Dios plante hoy en tu corazón para Su gloria?`
+    }
+  }
+};
+
+function getBibleTextForRange(book: string, chapter: number, start: number, end: number): string {
+  if (book.toLowerCase().includes('génesis') && chapter === 1) {
+    let combined = "";
+    for (let i = start; i <= end; i++) {
+      if (GENESIS_1_TEXT[i]) {
+        combined += `${i} ${GENESIS_1_TEXT[i]} `;
+      }
+    }
+    if (combined) return combined.trim();
+  }
+  
+  return `Pasaje bíblico sagrado de ${book} ${chapter}:${start}-${end} en la versión Reina-Valera 1960. Este estudio profundo abarca los versículos del ${start} al ${end} del capítulo ${chapter} de ${book}.`;
+}
+
 function extractOrCalculateVerseRef(courseId: string, day: number, rawTitle?: string): {
   reference: string;
   bookName: string;
   chapter: number;
-  verse: number;
+  verse: string;
   text: string;
 } {
+  // If title already has a specific reference, try to use it
   if (rawTitle) {
-    const match = rawTitle.match(/([1-3]?\s*[A-Za-zÁÉÍÓÚáéíóúñ]+)\s+(\d+):(\d+)/);
+    const match = rawTitle.match(/([1-3]?\s*[A-Za-zÁÉÍÓÚáéíóúñ]+)\s+(\d+):(\d+)(?:-(\d+))?/);
     if (match) {
       const bookName = match[1].trim();
       const chapter = parseInt(match[2], 10);
-      const verse = parseInt(match[3], 10);
-      const ref = `${bookName} ${chapter}:${verse}`;
+      const verseStart = parseInt(match[3], 10);
+      const verseEnd = match[4] ? parseInt(match[4], 10) : verseStart + 2;
+      const ref = `${bookName} ${chapter}:${verseStart}-${verseEnd}`;
       return {
         reference: ref,
         bookName,
         chapter,
-        verse,
-        text: `Texto bíblico sagrado de ${ref} en la versión Reina-Valera 1960.`
+        verse: `${verseStart}-${verseEnd}`,
+        text: getBibleTextForRange(bookName, chapter, verseStart, verseEnd)
       };
     }
   }
 
-  const courseBookMeta: Record<string, { name: string; totalVerses: number }[]> = {
-    pentateuco: [
-      { name: 'Génesis', totalVerses: 1533 },
-      { name: 'Éxodo', totalVerses: 1213 },
-      { name: 'Levítico', totalVerses: 859 },
-      { name: 'Números', totalVerses: 1288 },
-      { name: 'Deuteronomio', totalVerses: 959 }
-    ],
-    historicos: [
-      { name: 'Josué', totalVerses: 658 },
-      { name: 'Jueces', totalVerses: 618 },
-      { name: 'Rut', totalVerses: 85 },
-      { name: '1 Samuel', totalVerses: 810 },
-      { name: '2 Samuel', totalVerses: 695 },
-      { name: '1 Reyes', totalVerses: 816 },
-      { name: '2 Reyes', totalVerses: 719 },
-      { name: '1 Crónicas', totalVerses: 942 },
-      { name: '2 Crónicas', totalVerses: 822 },
-      { name: 'Esdras', totalVerses: 280 },
-      { name: 'Nehemías', totalVerses: 406 },
-      { name: 'Ester', totalVerses: 167 }
-    ],
-    poeticos: [
-      { name: 'Job', totalVerses: 1070 },
-      { name: 'Salmos', totalVerses: 2461 },
-      { name: 'Proverbios', totalVerses: 915 },
-      { name: 'Eclesiastés', totalVerses: 222 },
-      { name: 'Cantares', totalVerses: 117 }
-    ],
-    profetas: [
-      { name: 'Isaías', totalVerses: 1292 },
-      { name: 'Jeremías', totalVerses: 1364 },
-      { name: 'Lamentaciones', totalVerses: 154 },
-      { name: 'Ezequiel', totalVerses: 1273 },
-      { name: 'Daniel', totalVerses: 357 },
-      { name: 'Oseas', totalVerses: 197 },
-      { name: 'Joel', totalVerses: 73 },
-      { name: 'Amós', totalVerses: 146 },
-      { name: 'Abdías', totalVerses: 21 },
-      { name: 'Jonás', totalVerses: 48 },
-      { name: 'Miqueas', totalVerses: 105 },
-      { name: 'Nahúm', totalVerses: 47 },
-      { name: 'Habacuc', totalVerses: 56 },
-      { name: 'Sofonías', totalVerses: 53 },
-      { name: 'Hageo', totalVerses: 38 },
-      { name: 'Zacarías', totalVerses: 211 },
-      { name: 'Malaquías', totalVerses: 55 }
-    ],
-    evangelios: [
-      { name: 'Mateo', totalVerses: 1071 },
-      { name: 'Marcos', totalVerses: 678 },
-      { name: 'Lucas', totalVerses: 1151 },
-      { name: 'Juan', totalVerses: 879 },
-      { name: 'Hechos de los Apóstoles', totalVerses: 1007 }
-    ],
-    pablo: [
-      { name: 'Romanos', totalVerses: 433 },
-      { name: '1 Corintios', totalVerses: 437 },
-      { name: '2 Corintios', totalVerses: 257 },
-      { name: 'Gálatas', totalVerses: 149 },
-      { name: 'Efesios', totalVerses: 155 },
-      { name: 'Filipenses', totalVerses: 104 },
-      { name: 'Colosenses', totalVerses: 95 },
-      { name: '1 Tesalonicenses', totalVerses: 89 },
-      { name: '2 Tesalonicenses', totalVerses: 47 },
-      { name: '1 Timoteo', totalVerses: 113 },
-      { name: '2 Timoteo', totalVerses: 83 },
-      { name: 'Tito', totalVerses: 46 },
-      { name: 'Filemón', totalVerses: 25 },
-      { name: 'Hebreos', totalVerses: 303 },
-      { name: 'Santiago', totalVerses: 108 },
-      { name: '1 Pedro', totalVerses: 105 },
-      { name: '2 Pedro', totalVerses: 61 },
-      { name: '1 Juan', totalVerses: 105 },
-      { name: '2 Juan', totalVerses: 13 },
-      { name: '3 Juan', totalVerses: 14 },
-      { name: 'Judas', totalVerses: 25 },
-      { name: 'Apocalipsis', totalVerses: 404 }
-    ]
-  };
-  courseBookMeta['cartas-pascuales-pablo'] = courseBookMeta['pablo'];
-
-  const booksList = courseBookMeta[courseId] || courseBookMeta['pentateuco'];
-  let currentAccumulated = 0;
-  let selectedBookName = booksList[0].name;
-  let dayInSelectedBook = day;
-
-  for (const b of booksList) {
-    if (day <= currentAccumulated + b.totalVerses) {
-      selectedBookName = b.name;
-      dayInSelectedBook = day - currentAccumulated;
-      break;
-    }
-    currentAccumulated += b.totalVerses;
-  }
-
-  const avgVersesPerChapter = 28;
-  const chapter = Math.floor((dayInSelectedBook - 1) / avgVersesPerChapter) + 1;
-  const verse = ((dayInSelectedBook - 1) % avgVersesPerChapter) + 1;
-
-  const ref = `${selectedBookName} ${chapter}:${verse}`;
+  // Otherwise calculate based on the day (3 verses per day)
+  const range = calculateBibleRange(courseId, day);
 
   return {
-    reference: ref,
-    bookName: selectedBookName,
-    chapter,
-    verse,
-    text: `Texto bíblico sagrado de ${ref} en la versión Reina-Valera 1960.`
+    reference: range.reference,
+    bookName: range.bookName,
+    chapter: range.chapter,
+    verse: `${range.verseStart}-${range.verseEnd}`,
+    text: getBibleTextForRange(range.bookName, range.chapter, range.verseStart, range.verseEnd)
   };
 }
 
@@ -282,6 +263,7 @@ export function generateLessonForDay(courseId: string, day: number, title: strin
   let block3 = '';
   let block4 = '';
   let block5 = '';
+  let block6 = '';
   let keyNotes = '';
   let homeworkDesc = '';
   let examQuestion = '';
@@ -636,75 +618,86 @@ El verdadero objetivo de la erudición especializada no es el orgullo intelectua
     // Override baseVerse
     baseVerse = { reference: verseRef, text: verseText };
 
+    // Check for specific content for this range
+    const specific = BIBLE_STUDY_SPECIFIC_CONTENT[courseId]?.[verseRef];
+
     block1 = `### 1. Lectura, Texto Bíblico e Idiomas Originales de ${verseRef}
 
-**Texto Bíblico Expositivo (RVR1960):**
+**Texto Bíblico Expositivo (RVR1960) — Estudio de 3 Versículos:**
 > *"${verseText}"* — **${verseRef}**
 
-**Análisis Léxico, Gramatical y Lingüístico del Texto Sagrado:**
-* **Idioma Original:** Examen de las raíces lingüísticas en hebreo bíblico, arameo o griego koiné presentes en **${verseRef}**.
-* **Morfología y Cláusulas Clave:** Desglose del verbo principal, los sustantivos teológicos y la sintaxis gramatical inspirada por el Espíritu Santo.
-* **Términos Clave y Números Strong:** Identificación de las palabras con mayor peso doctrinal en la oración, su significado etimológico y su uso repetido en el canon de las Escrituras.`;
+**Análisis Léxico, Gramatical y Lingüístico del Pasaje:**
+${specific ? specific.analysis : `* **Idioma Original:** Examen de las raíces lingüísticas en hebreo bíblico, arameo o griego koiné presentes en los versículos de **${verseRef}**. Analizamos el campo semántico de los términos clave y cómo la morfología verbal (tiempos, modos y voces) determina la fuerza de la declaración inspirada.
+* **Morfología y Cláusulas Clave:** Desglose del flujo narrativo y poético a través de esta tríada de versículos, analizando cómo el Espíritu Santo conecta las verdades inspiradas. Se presta especial atención a los quiasmos, paralelismos y estructuras sintácticas que el autor sagrado empleó para enfatizar el mensaje divino.
+* **Términos Clave y Números Strong:** Identificación de las palabras con mayor peso doctrinal en el pasaje completo, su significado etimológico y su armonía con el resto del capítulo. Buscamos la concordancia interna de la Escritura para asegurar que la interpretación sea coherente con el uso bíblico global.`}`;
 
     block2 = `### 2. Exégesis Teológica Profunda y Trasfondo Histórico-Pactual de ${verseRef}
 
-Al realizar la exégesis de **${verseRef}**, analizamos minuciosamente el contexto histórico del libro de **${bookName}**, la audiencia receptora original y el marco dentro del plan redentor de Dios:
+Al realizar la exégesis de **${verseRef}**, analizamos minuciosamente el contexto histórico del libro de **${bookName}**, la transición entre estos tres versículos y su lugar dentro del plan redentor de Dios. La exégesis no es un mero ejercicio intelectual, sino el intento reverente de "sacar" (ex-agein) el significado que Dios depositó en Su Palabra.
 
-> 📖 **Texto Bíblico de Instrucción Clara:**
+${specific ? specific.exegesis : `> 📖 **Texto Bíblico de Instrucción Clara:**
 > *"Y leían en el libro de la ley de Dios claramente, y ponían el sentido, de modo que entendiesen la lectura."* — **Nehemías 8:8 (RVR1960)**
 
 > ✍️ **Comentario Histórico Expositivo (${theo1.author}):**
 > *"${theo1.text}"* — **${theo1.author}**
 
-#### Puntos Centrales del Desarrollo Exegético:
-1. **Precepto o Declaración Fundamental:** Explicación detallada de la verdad divina revelada de forma directa en **${verseRef}**.
-2. **Atributos Divinos Manifestados:** Qué nos enseña este versículo específico acerca de la santidad, soberanía, amor, justicia o misericordia de Dios.
-3. **Implicación en la Historia del Pacto:** Cómo se conecta este versículo con los pactos bíblicos (Adámico, Noájico, Abrahámico, Mosaico, Davídico y Nuevo Pacto en Cristo).`;
+#### Puntos Centrales del Desarrollo Exegético en esta Tríada:
+1. **Precepto o Declaración Fundamental:** Explicación detallada de la progresión del pensamiento divino a través de **${verseRef}**. No estudiamos versículos aislados, sino el flujo del pensamiento del Espíritu Santo a través del autor humano.
+2. **Atributos Divinos Manifestados:** Qué nos enseñan estos versículos específicos acerca de la santidad, soberanía, amor, justicia o misericordia de Dios en conjunto. Cada pasaje es una ventana al carácter del Creador.
+3. **Implicación en la Historia del Pacto:** Cómo se conecta este segmento bíblico con los pactos progresivos (Adámico, Noájico, Abrahámico, Mosaico, Davídico y Nuevo Pacto en Cristo). Analizamos la continuidad de la revelación y cómo este pasaje contribuye a la narrativa unificada de la Biblia.`}`;
 
-    block3 = `### 3. Comentarios de Grandes Teólogos e Historiadores de la Iglesia sobre ${verseRef}
+    block3 = `### 3. Estructura Literaria, Género y Contexto de ${bookName}
 
-El estudio bíblico responsable escucha el testimonio unánime de los grandes expositores y teólogos de la historia cristiana que han dedicado sus vidas al análisis de **${verseRef}**:
+Para "desmenuzar" correctamente el pasaje de **${verseRef}**, debemos entender el género literario en el que se encuentra. Si es narrativa, buscamos la trama y el conflicto; si es poesía, los paralelismos y las imágenes; si es epístola, la lógica argumentativa y la aplicación comunitaria.
+
+* **Género Literario:** El libro de **${bookName}** emplea un estilo literario específico que determina cómo debemos interpretar sus metáforas y declaraciones.
+* **Estructura del Capítulo:** Cómo estos tres versículos (${verseRef}) encajan en el argumento general del capítulo. ¿Son la introducción de un tema, el clímax de una historia o la conclusión de una enseñanza moral?
+* **Propósito del Autor:** Cuál era la intención original de Dios al inspirar este pasaje específico para los primeros oyentes y para la Iglesia universal hoy.`;
+
+    block4 = `### 4. Comentarios de Grandes Teólogos e Historiadores sobre ${verseRef}
+
+El estudio bíblico sistemático nos permite escuchar el testimonio unánime de los grandes expositores sobre el flujo del texto en **${verseRef}**. No interpretamos la Biblia en el vacío, sino sobre los hombros de gigantes que han servido fielmente a la Iglesia.
 
 > ✍️ **Juan Calvino (Comentarios Bíblicos):**
-> *"Al examinar ${verseRef}, contemplamos la sabiduría infinita de Dios expresada con sencillez y majestuosidad para la instrucción de la iglesia."*
+> *"Al examinar detenidamente ${verseRef}, contemplamos la sabiduría infinita de Dios expresada con sencillez y majestuosidad para la instrucción de la iglesia. Nada hay en la Escritura que sea superfluo."*
 
 > ✍️ **Matthew Henry (Exposición Completa de la Biblia):**
-> *"Cada palabra en ${verseRef} contiene un tesoro inagotable de consuelo y dirección para el creyente que busca sinceramente la voluntad divina."*
+> *"Cada palabra en esta sección de ${verseRef} contiene un tesoro inagotable de consuelo y dirección para el creyente que busca sinceramente la voluntad divina. Es un manantial que nunca se agota."*
 
 > ✍️ **Charles Spurgeon (El Púlpito del Tabernáculo):**
-> *"La verdad proclamada en ${verseRef} es una ancla firme para el alma atribulada y un faro que ilumina nuestro caminar en la fe."*`;
+> *"La verdad proclamada en estos versículos (${verseRef}) es una ancla firme para el alma atribulada y un faro que ilumina nuestro caminar en la fe. Es alimento sólido para el alma hambrienta."*`;
 
-    block4 = `### 4. Conexión Cristocéntrica y Perspectiva Redentora de ${verseRef}
+    block5 = `### 5. Conexión Cristocéntrica y Perspectiva Redentora de ${verseRef}
 
-Toda la Escritura es una sola narrativa de salvación centrada en la persona y obra de Jesucristo. Al estudiar **${verseRef}**, descubrimos su proyección o cumplimiento en el Evangelio:
+Toda la Escritura es una sola narrativa de salvación centrada en la persona y obra de Jesucristo (*Lucas 24:27*). Al estudiar el pasaje de **${verseRef}**, descubrimos su proyección o cumplimiento en el Evangelio de la gloria.
 
-* **Cristo Revelado:** Cómo **${verseRef}** señala hacia nuestro Redentor como nuestro Profeta, Sacerdote y Rey.
-* **Cumplimiento Evangélico:** La forma en que la gracia manifestada en la cruz y la resurrección le da sentido pleno al pasaje de **${bookName}**.
-* **El Pacto de Gracia:** La certeza de que el perdón de pecados y la adopción filial prometidos en la Biblia descansan en la obra terminada de Cristo.`;
+${specific ? `* **Cristo Revelado:** ${specific.christ}` : `* **Cristo Revelado:** Cómo la secuencia de versículos en **${verseRef}** señala hacia nuestro Redentor como nuestro Profeta, Sacerdote y Rey. Identificamos los tipos, sombras y profecías que encuentran su "Sí y Amén" en Jesús.
+* **Cumplimiento Evangélico:** La forma en que la gracia manifestada en la cruz y la resurrección le da sentido pleno al pasaje de **${bookName}** que estamos analizando. Sin Cristo, el pasaje es ley muerta; con Cristo, es espíritu y vida.
+* **El Pacto de Gracia:** La certeza de que el perdón de pecados y la vida eterna prometidos en estos versículos descansan exclusivamente en la obra terminada de Cristo, aplicada por el Espíritu Santo.`}`;
 
-    block5 = `### 5. Aplicación Práctica, Discipulado Personal y Oración sobre ${verseRef}
+    block6 = `### 6. Aplicación Práctica, Discipulado Personal y Oración sobre ${verseRef}
 
-La meta final de estudiar **${verseRef}** es la transformación del corazón y la vida práctica mediante la fe y la obediencia:
+La meta final de estudiar **${verseRef}** es la transformación del corazón y la vida práctica mediante la fe y la obediencia a la totalidad de la Palabra. La teología que no conduce a la doxología (adoración) y a la ortopraxia (conducta recta) es teología estéril.
 
-> 📖 **Texto de Exhortación Práctica:**
+${specific ? specific.application : `> 📖 **Texto de Exhortación Práctica:**
 > *"Pero sed hacedores de la palabra, y no tan solamente oidores, engañándoos a vosotros mismos."* — **Santiago 1:22 (RVR1960)**
 
-#### Pasos Concretos de Aplicación y Meditación:
-1. **Examen del Corazón:** ¿Qué verdad de **${verseRef}** debo creer, qué pecado debo confesar o qué promesa debo abrazar hoy?
-2. **Acción Cotidiana:** Cómo llevar esta enseñanza de **${bookName}** a mi familia, trabajo y congregación local.
-3. **Oración de Respuesta:** *"Señor Dios Todopoderoso, gracias por la luz inestimable de ${verseRef}. Graba esta verdad en mi corazón y concédeme la fortaleza del Espíritu Santo para vivir en obediencia a Ti. En el nombre de Jesús, Amén."*`;
+#### Pasos Concretos de Aplicación para este Pasaje:
+1. **Examen del Corazón:** ¿Qué verdades de estos versículos (${verseRef}) debo creer, qué pecados debo confesar o qué promesas debo abrazar hoy? No lea el texto para otros, léalo para usted mismo ante el rostro de Dios.
+2. **Acción Cotidiana:** Cómo llevar las enseñanzas de **${bookName}** contenidas en esta lección a mi familia, trabajo y congregación local. La fe se demuestra en las obras de amor.
+3. **Oración de Respuesta:** *"Señor Dios Todopoderoso, gracias por la luz inestimable de este pasaje en ${verseRef}. Graba esta verdad en mi corazón y concédeme la fortaleza del Espíritu Santo para vivir en obediencia a Ti, para Tu gloria y mi gozo eterno en Cristo. Amén."*`}`;
 
-    keyNotes = `* **Exégesis de ${verseRef}:** Examen riguroso del texto en su contexto bíblico e histórico original.\n* **Enfoque Cristocéntrico:** Conexión directa del pasaje de ${bookName} con el Evangelio de la gracia en Cristo.\n* **Piedad Transformadora:** Aplicación práctica para la fe cotidiana, la oración y la santidad.`;
-    homeworkDesc = `Redacte un ensayo exegético y devocional de 450 palabras sobre el versículo **${verseRef}**, analizando su significado lingüístico, su teología y su aplicación para la vida cristiana.`;
-    examQuestion = `¿Cuál es el propósito central de estudiar el versículo ${verseRef} con rigor exegético y perspectiva Cristocéntrica?`;
+    keyNotes = `* **Exégesis de ${verseRef}:** Examen riguroso de la tríada de versículos en su contexto bíblico original, respetando la intención del autor inspirado.\n* **Enfoque Cristocéntrico:** Conexión directa del pasaje de ${bookName} con el Evangelio de la gracia y la persona de Cristo.\n* **Piedad Transformadora:** Aplicación práctica de los versículos para la santificación, la oración y la vida eclesial.`;
+    homeworkDesc = `Realice un análisis exegético formal de 600 palabras sobre el pasaje de **${verseRef}**. Debe incluir: 1) Análisis de al menos dos términos clave en su idioma original (hebreo/griego), 2) Contextualización histórica y literaria, 3) Aplicación dogmática y 4) Una reflexión sobre cómo el pasaje señala hacia la obra de Cristo.`;
+    examQuestion = `¿Cuál es el propósito fundamental de realizar un análisis léxico y gramatical detallado de pasajes como ${verseRef}?`;
     examOptions = [
-      'Acumular datos históricos sin relación con la fe personal ni con la vida de la iglesia.',
-      `Comprender el mensaje exacto que el Espíritu inspiró en ${verseRef}, viendo su cumplimiento en Cristo y su aplicación para la santificación del creyente.`,
-      'Sustituir el texto bíblico por filosofías humanas seculares.',
-      'Ignorar el contexto para imponer ideas arbitrarias.'
+      'Acumular datos técnicos para impresionar intelectualmente sin buscar la edificación espiritual.',
+      `Asegurar que la interpretación se mantenga fiel al significado original inspirado por el Espíritu Santo, evitando imponer ideas ajenas al texto (eiségesis).`,
+      'Demostrar que las traducciones modernas son totalmente erróneas e innecesarias.',
+      'Sustituir la fe por un racionalismo crítico puramente académico.'
     ];
     examCorrectIdx = 1;
-    examExplanation = `El estudio expositivo de ${verseRef} busca extraer el sentido literal y teológico del texto inspirado para transformar la vida del creyente.`;
+    examExplanation = `El rigor exegético en ${verseRef} sirve como salvaguarda contra la mala interpretación, permitiendo que la Palabra de Dios hable con su propia autoridad y claridad original.`;
 
   } else {
     // Licentiate / General High-Quality Content Generator with full biblical texts and historic commentary
@@ -905,6 +898,14 @@ Traducir la teología en servicio activo es el objetivo final de la formación t
       type: 'text',
       id: `${courseId}-day-${day}-b-blk5`,
       content: block5
+    });
+  }
+
+  if (block6) {
+    blocks.push({
+      type: 'text',
+      id: `${courseId}-day-${day}-b-blk6`,
+      content: block6
     });
   }
 

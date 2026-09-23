@@ -38,13 +38,13 @@ export const mockDatabase: Database = {
 };
 
 const BIBLE_STUDY_LESSON_COUNTS: Record<string, number> = {
-  pentateuco: 5852,
-  historicos: 7018,
-  poeticos: 4785,
-  profetas: 5490,
-  evangelios: 4786,
-  pablo: 3576,
-  'cartas-pascuales-pablo': 3576
+  pentateuco: 1951,
+  historicos: 2340,
+  poeticos: 1595,
+  profetas: 1830,
+  evangelios: 1596,
+  pablo: 1192,
+  'cartas-pascuales-pablo': 1192
 };
 
 // Pad all courses with expected lessons and ensure every lesson has rich, high-fidelity content
@@ -69,8 +69,15 @@ mockDatabase.courses.forEach(course => {
                      lesson.blocks.length <= 2 || 
                      isFirstBlockShort ||
                      (isAcademicOrBibleStudy && totalTextLength < 2200);
-    if (isSparse) {
-      return generateLessonForDay(course.id, lesson.day, lesson.title, course.type);
+
+    // Force regeneration for Bible Study if it doesn't match the new 3-verse range format
+    const isOldBibleFormat = course.type === 'BIBLE_STUDY' && 
+                             (lesson.title.includes('Versículo por Versículo') || 
+                              !lesson.baseVerse?.reference.includes('-'));
+
+    if (isSparse || isOldBibleFormat) {
+      const updatedTitle = getLessonTitleForDay(course.id, lesson.day);
+      return generateLessonForDay(course.id, lesson.day, updatedTitle, course.type);
     }
     return lesson;
   });

@@ -209,23 +209,51 @@ export function AcademicPanel({
     });
   }, [bookSearchQuery, bookTestamentTab]);
 
+  const combinedVerses = useMemo(() => {
+    // Start with all real verses from API/cache
+    const verseMap = new Map<number, any>();
+    
+    realVerses.forEach(v => {
+      verseMap.set(v.num, { ...v });
+    });
+
+    // Merge curated verses (metadata and missing content)
+    currentChapterContent.verses.forEach(cv => {
+      const existing = verseMap.get(cv.num);
+      
+      // Filter out placeholders
+      const isPlaceholder = (cv.rvr1960.includes("Cargando") || cv.rvr1960.includes("Palabra del Señor registrada"));
+      
+      if (!existing) {
+        // If it's curated (not a placeholder), add it even if not in realVerses
+        if (!isPlaceholder) {
+          verseMap.set(cv.num, { ...cv });
+        }
+      } else {
+        // Merge curated data into existing real verse
+        verseMap.set(cv.num, {
+          ...existing,
+          ...(!isPlaceholder ? cv : {}),
+          // Keep real text if available and long enough, otherwise use curated
+          rvr1960: (existing.rvr1960 && existing.rvr1960.length > 30) ? existing.rvr1960 : cv.rvr1960,
+          lbla: (existing.lbla && existing.lbla.length > 30) ? existing.lbla : cv.lbla,
+          ntv: (existing.ntv && existing.ntv.length > 30) ? existing.ntv : cv.ntv,
+          nvi: (existing.nvi && existing.nvi.length > 30) ? existing.nvi : cv.nvi,
+          // Always keep metadata
+          theologicalNote: cv.theologicalNote || existing.theologicalNote,
+          originalText: cv.originalText || existing.originalText,
+          isKeyPassage: cv.isKeyPassage || existing.isKeyPassage
+        });
+      }
+    });
+
+    return Array.from(verseMap.values()).sort((a, b) => a.num - b.num);
+  }, [realVerses, currentChapterContent]);
+
   const selectedVerseData = useMemo(() => {
     if (selectedVerse === null) return null;
-    const rawVerse = realVerses.length > 0 
-      ? realVerses.find(v => v.num === selectedVerse) 
-      : currentChapterContent.verses.find(v => v.num === selectedVerse);
-      
-    if (!rawVerse) return null;
-    
-    const curatedVerse = currentChapterContent.verses.find(v => v.num === selectedVerse);
-    return { 
-      ...curatedVerse, 
-      ...rawVerse, 
-      theologicalNote: curatedVerse?.theologicalNote, 
-      originalText: curatedVerse?.originalText, 
-      isKeyPassage: curatedVerse?.isKeyPassage 
-    };
-  }, [selectedVerse, realVerses, currentChapterContent]);
+    return combinedVerses.find(v => v.num === selectedVerse) || null;
+  }, [selectedVerse, combinedVerses]);
 
   const selectedVerseComm = useMemo(() => {
     if (!selectedVerseData) return null;
@@ -601,23 +629,7 @@ export function AcademicPanel({
                   </div>
                 ))}
               </div>
-              ) : (currentChapterContent.verses.map(cv => {
-                const rv = realVerses.find(v => v.num === cv.num);
-                // Merge real text into curated structure
-                return { 
-                  ...cv, 
-                  ...(rv || {}),
-                  // Ensure we keep curated metadata if rv doesn't have it
-                  theologicalNote: cv.theologicalNote || (rv as any)?.theologicalNote,
-                  originalText: cv.originalText || (rv as any)?.originalText,
-                  isKeyPassage: cv.isKeyPassage || (rv as any)?.isKeyPassage,
-                  // If rv has real text, use it, otherwise keep cv text (which might be curated or fallback)
-                  rvr1960: (rv?.rvr1960 && rv.rvr1960.length > 50) ? rv.rvr1960 : cv.rvr1960,
-                  lbla: (rv?.lbla && rv.lbla.length > 50) ? rv.lbla : cv.lbla,
-                  ntv: (rv?.ntv && rv.ntv.length > 50) ? rv.ntv : cv.ntv,
-                  nvi: (rv?.nvi && rv.nvi.length > 50) ? rv.nvi : cv.nvi,
-                };
-              })).map(verse => {
+              ) : (combinedVerses).map(verse => {
                 const vNotes = chapterNotes.filter(n => n.verse === verse.num);
                 const mainHighlight = vNotes[0];
                 const colorStyle = mainHighlight ? getColorClasses(mainHighlight.color) : null;

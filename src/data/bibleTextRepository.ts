@@ -702,42 +702,46 @@ export function getBibleChapter(bookId: string, chapterNum: number): ChapterCont
   const bookMeta = findBibleBook(bookId) || BIBLE_BOOKS_CANON[0];
   const safeChapter = Math.max(1, Math.min(chapterNum, bookMeta.chaptersCount));
 
-  // Realistic verse counts for common chapters or higher fallbacks
-  const getVerseCount = () => {
-    if (bookId.toLowerCase() === 'gen') {
-      if (chapterNum === 1) return 31;
-      if (chapterNum === 2) return 25;
-      return 35;
-    }
-    if (bookId.toLowerCase() === 'mat') return 40;
-    if (bookId.toLowerCase() === 'sal') return 50;
-    return 40; // Higher fallback
-  };
+  // 1. Find matches first
+  const curatedMatch = CURATED_CHAPTERS_DB[key];
+  const academicMatch = ACADEMIC_BIBLE_STUDIES.find(study => {
+    const refLower = study.reference.toLowerCase();
+    const book = findBibleBook(bookId);
+    if (!book) return false;
+    return refLower.includes(book.name.toLowerCase()) && 
+           (refLower.includes(` ${chapterNum}:`) || refLower.includes(` ${chapterNum} `) || refLower.endsWith(` ${chapterNum}`));
+  });
 
-  const baseVerseCount = getVerseCount(); 
+  // 2. Determine verse count
+  const baseVerseCount = (curatedMatch || academicMatch) ? Math.max(
+    curatedMatch ? Math.max(...curatedMatch.verses.map(v => typeof v.num === 'string' ? parseInt(v.num.replace(/\D/g, '')) : v.num)) : 0,
+    academicMatch ? Math.max(...academicMatch.verses.map(v => parseInt(v.num.replace(/\D/g, '')))) : 0,
+    1 // Just at least one for base object
+  ) : 0; 
 
   const generatedVerses: ScriptureVerse[] = [];
 
-  for (let i = 1; i <= baseVerseCount; i++) {
-    generatedVerses.push({
-      num: i,
-      rvr1960: `Palabra del Señor registrada en ${bookMeta.name} ${safeChapter}:${i}. Proclamación de Su verdad eterna y soberanía para Su pueblo.`,
-      lbla: `Atestiguado en ${bookMeta.name} ${safeChapter}:${i}. Traducción literal formal y fiel a las Escrituras.`,
-      ntv: `Mensaje de esperanza y fe en ${bookMeta.name} ${safeChapter}:${i}. Comprensión clara de la voluntad divina.`,
-      nvi: `Texto sagrado en ${bookMeta.name} ${safeChapter}:${i}. Fidelidad bíblica para la edificación del creyente.`,
-      originalText: bookMeta.originalLanguage.includes('Hebreo') ? 'יְהוָה אֱלֹהֵינוּ יְהוָה אֶחָד' : 'ἐν ἀρχῇ ἦν ὁ λόγος καὶ ὁ λόγος ἦν πρὸς τὸν θεόν',
-      transliteration: bookMeta.originalLanguage.includes('Hebreo') ? 'Adonai Eloheinu Adonai Echad' : 'En archē ēn ho logos kai ho logos ēn pros ton theon',
-      theologicalNote: `Enseñanza doctrinal de ${bookMeta.name} ${safeChapter} vinculada a: ${bookMeta.theme}.`,
-      isKeyPassage: false
-    });
+  // ONLY generate if we have curated data to show
+  if (baseVerseCount > 0) {
+    for (let i = 1; i <= baseVerseCount; i++) {
+      generatedVerses.push({
+        num: i,
+        rvr1960: `Cargando versículo ${i}...`,
+        lbla: `Cargando versículo ${i}...`,
+        ntv: `Cargando versículo ${i}...`,
+        nvi: `Cargando versículo ${i}...`,
+        originalText: '',
+        transliteration: '',
+        theologicalNote: '',
+        isKeyPassage: false
+      });
+    }
   }
 
-  const curatedMatch = CURATED_CHAPTERS_DB[key];
   if (curatedMatch) {
     curatedMatch.verses.forEach(v => {
       const vNum = typeof v.num === 'string' ? (parseInt((v.num as string).replace(/\D/g, '')) || 1) : (v.num as number);
       const index = vNum - 1;
-      
       if (index >= 0 && index < generatedVerses.length) {
         generatedVerses[index] = v;
       }
@@ -748,17 +752,6 @@ export function getBibleChapter(bookId: string, chapterNum: number): ChapterCont
       verses: generatedVerses
     };
   }
-
-  // Check if we have an academic study for this book/chapter
-  const academicMatch = ACADEMIC_BIBLE_STUDIES.find(study => {
-    const refLower = study.reference.toLowerCase();
-    const book = findBibleBook(bookId);
-    if (!book) return false;
-    
-    // Ensure we match the exact chapter, e.g., "génesis 1:"
-    return refLower.includes(book.name.toLowerCase()) && 
-           (refLower.includes(` ${chapterNum}:`) || refLower.includes(` ${chapterNum} `) || refLower.endsWith(` ${chapterNum}`));
-  });
 
   if (academicMatch) {
     academicMatch.verses.forEach(v => {
@@ -804,6 +797,6 @@ export function getBibleChapter(bookId: string, chapterNum: number): ChapterCont
     summary: bookMeta.summary,
     historicalContext: `Libro de ${bookMeta.name}, escrito por ${bookMeta.author} (${bookMeta.date}). Contexto teológico: ${bookMeta.summary}`,
     keyTheologicalTheme: bookMeta.theme,
-    verses: generatedVerses
+    verses: [] // Return empty for uncurated chapters; AcademicPanel will fill with realVerses
   };
 }

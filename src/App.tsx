@@ -383,19 +383,19 @@ export default function App() {
                 />
               )}
 
-              {activeTool === 'assistant' && (
-              <ChatTeologico />
-              )}
+      {activeTool === 'assistant' && (
+        <VirtualAssistantWidget />
+      )}
 
-              {activeTool === 'bible' && (
-                <BibleVerseModal
-                  isOpen={true}
-                  reference={bibleModalRef}
-                  onClose={handleCloseTool}
-                  onSelectCrossReference={(crossRef) => setBibleModalRef(crossRef)}
-                  isSplitMode={true}
-              )}
-            </div>
+      {activeTool === 'bible' && (
+        <BibleVerseModal
+          isOpen={true}
+          reference={bibleModalRef}
+          onClose={handleCloseTool}
+          onSelectCrossReference={(crossRef) => setBibleModalRef(crossRef)}
+          isSplitMode={true}
+        />
+      )}           
           )}
 
         </div>

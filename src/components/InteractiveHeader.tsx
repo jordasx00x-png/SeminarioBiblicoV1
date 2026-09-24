@@ -19,6 +19,7 @@ interface InteractiveHeaderProps {
   onResetCourseSelection?: () => void;
   onZoomIn?: () => void;
   onZoomOut?: () => void;
+  onResetZoom?: () => void;
   zoomLevel?: number;
 }
 
@@ -36,6 +37,7 @@ export function InteractiveHeader({
   onResetCourseSelection,
   onZoomIn,
   onZoomOut,
+  onResetZoom,
   zoomLevel = 100
 }: InteractiveHeaderProps) {
   const [showProfileMenu, setShowProfileMenu] = useState(false);
@@ -119,9 +121,29 @@ export function InteractiveHeader({
           <div className="flex items-center gap-1 border-r border-stone-200 dark:border-stone-800 pr-3 mr-1">
             {/* Zoom Controls */}
             <div className="hidden lg:flex items-center rounded-md bg-stone-100 dark:bg-stone-900 border border-stone-200 dark:border-stone-800 p-0.5">
-              <button onClick={onZoomOut} className="p-1.5 hover:bg-white dark:hover:bg-stone-800 rounded text-stone-500 transition-colors" title="Zoom Out"><ZoomOut size={14} /></button>
-              <span className="text-[10px] font-bold px-1 text-stone-400 tabular-nums">{zoomLevel}%</span>
-              <button onClick={onZoomIn} className="p-1.5 hover:bg-white dark:hover:bg-stone-800 rounded text-stone-500 transition-colors" title="Zoom In"><ZoomIn size={14} /></button>
+              <button 
+                onClick={onZoomOut} 
+                disabled={zoomLevel <= 50}
+                className="p-1.5 hover:bg-white dark:hover:bg-stone-800 rounded text-stone-500 hover:text-[#7F1D1D] dark:hover:text-amber-500 transition-colors disabled:opacity-30 disabled:cursor-not-allowed" 
+                title="Alejar (Reducir tamaño)"
+              >
+                <ZoomOut size={14} />
+              </button>
+              <button
+                onClick={onResetZoom}
+                className="text-[10px] font-bold px-1.5 py-0.5 text-stone-500 hover:text-[#7F1D1D] dark:hover:text-amber-500 tabular-nums cursor-pointer hover:underline transition-colors"
+                title="Restablecer escala al 100%"
+              >
+                {zoomLevel}%
+              </button>
+              <button 
+                onClick={onZoomIn} 
+                disabled={zoomLevel >= 150}
+                className="p-1.5 hover:bg-white dark:hover:bg-stone-800 rounded text-stone-500 hover:text-[#7F1D1D] dark:hover:text-amber-500 transition-colors disabled:opacity-30 disabled:cursor-not-allowed" 
+                title="Acercar (Aumentar tamaño)"
+              >
+                <ZoomIn size={14} />
+              </button>
             </div>
 
             {/* Dark Mode Toggle */}
@@ -210,31 +232,6 @@ export function InteractiveHeader({
               )}
             </AnimatePresence>
           </div>
-          
-          {/* Zoom Controls */}
-          {(onZoomIn || onZoomOut) && (
-            <div className="hidden sm:flex items-center gap-0.5 bg-slate-800/50 border border-slate-700/80 rounded-xl p-0.5 ml-1">
-              <button
-                onClick={onZoomOut}
-                disabled={zoomLevel <= 50}
-                className="p-1.5 rounded-lg hover:bg-slate-700 text-slate-300 hover:text-white transition-colors cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
-                title="Alejar (Reducir tamaño)"
-              >
-                <ZoomOut size={16} />
-              </button>
-              <div className="w-10 text-center text-[10px] font-mono font-bold text-slate-400 select-none">
-                {zoomLevel}%
-              </div>
-              <button
-                onClick={onZoomIn}
-                disabled={zoomLevel >= 150}
-                className="p-1.5 rounded-lg hover:bg-slate-700 text-slate-300 hover:text-white transition-colors cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
-                title="Acercar (Aumentar tamaño)"
-              >
-                <ZoomIn size={16} />
-              </button>
-            </div>
-          )}
 
         </div>
       </div>

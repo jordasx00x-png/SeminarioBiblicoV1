@@ -313,7 +313,7 @@ export function FloatingNotesWidget({
       {/* FLOATING ACTION BUTTON */}
       {!isOpen && !isMinimized && (
         <motion.div 
-          className="fixed bottom-20 right-4 md:bottom-6 md:right-6 z-50"
+          className="fixed bottom-20 right-4 md:bottom-20 md:right-6 z-50"
           initial={{ scale: 0, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ type: 'spring', stiffness: 260, damping: 20 }}
@@ -339,7 +339,7 @@ export function FloatingNotesWidget({
             initial={{ opacity: 0, y: 30, scale: 0.9 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 30, scale: 0.9 }}
-            className="fixed bottom-20 right-4 md:bottom-6 md:right-6 z-[60] bg-white dark:bg-zinc-900 text-[#1A2533] dark:text-stone-100 border border-stone-200 dark:border-stone-800 rounded shadow-2xl p-4 flex items-center gap-4 font-sans max-w-xs sm:max-w-md"
+            className="fixed bottom-24 right-4 md:bottom-24 md:right-6 z-[60] bg-white dark:bg-zinc-900 text-[#1A2533] dark:text-stone-100 border border-stone-200 dark:border-stone-800 rounded shadow-2xl p-4 flex items-center gap-4 font-sans max-w-xs sm:max-w-md"
           >
             <div className="p-2 bg-[#FAF9F5] dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-[#7F1D1D] dark:text-amber-500 rounded shrink-0">
               <Edit3 size={20} strokeWidth={1.5} />

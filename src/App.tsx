@@ -5,7 +5,7 @@ import { useAuth } from './hooks/useAuth';
 import { useProfile } from './hooks/useProfile';
 import { useStudyReminder } from './hooks/useStudyReminder';
 import { safeStorage } from './utils/safeStorage';
-import { InteractiveHeader } from './components/InteractiveHeader';
+import { InteractiveSidebar } from './components/InteractiveSidebar';
 import { LessonViewer } from './components/LessonViewer';
 import { Dashboard } from './components/Dashboard';
 import { CourseOverview } from './components/CourseOverview';
@@ -30,6 +30,19 @@ export default function App() {
   const [showProfile, setShowProfile] = useState(false);
   const [isAssistantOpen, setIsAssistantOpen] = useState(false);
   const [notesOpenTrigger, setNotesOpenTrigger] = useState(0);
+  const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(() => {
+    const saved = safeStorage.getItem('seminary_sidebar_open');
+    return saved !== null ? saved === 'true' : true;
+  });
+
+  const handleToggleSidebar = () => {
+    setIsSidebarOpen(prev => {
+      const next = !prev;
+      safeStorage.setItem('seminary_sidebar_open', String(next));
+      return next;
+    });
+  };
+
   const { profile: customProfile, saveProfile, isLoading: profileLoading } = useProfile();
   const { progress, markCompleted, resetAllProgress, isLoading: progressLoading } = useProgress();
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -102,6 +115,22 @@ export default function App() {
     });
   };
 
+  const handleResetZoom = () => {
+    setZoomLevel(100);
+    safeStorage.setItem('zoomLevel', '100');
+  };
+
+  useEffect(() => {
+    if (typeof document !== 'undefined') {
+      (document.documentElement.style as any).zoom = `${zoomLevel}%`;
+    }
+    return () => {
+      if (typeof document !== 'undefined') {
+        (document.documentElement.style as any).zoom = '100%';
+      }
+    };
+  }, [zoomLevel]);
+
   useEffect(() => {
     if (darkMode) {
       document.documentElement.classList.add('dark');
@@ -137,11 +166,12 @@ export default function App() {
 
   return (
     <div 
-      className="h-screen h-[100dvh] bg-slate-50/80 dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-sans flex flex-col relative transition-colors duration-300 overflow-hidden"
-      style={{ zoom: `${zoomLevel}%` } as React.CSSProperties}
+      className="h-full w-full flex-1 bg-white dark:bg-zinc-950 text-slate-900 dark:text-slate-100 font-sans flex flex-col lg:flex-row relative transition-colors duration-300 overflow-hidden"
     >
-      {/* Full-width Top Interactive Header */}
-      <InteractiveHeader
+      {/* Left Sidebar Navigation (Desktop left sidebar + Mobile top bar/drawer) */}
+      <InteractiveSidebar
+        isSidebarOpen={isSidebarOpen}
+        onToggleSidebar={handleToggleSidebar}
         activeTab={activeTab}
         onSelectTab={(tab) => {
           setActiveTab(tab);
@@ -162,16 +192,17 @@ export default function App() {
         }}
         onZoomIn={handleZoomIn}
         onZoomOut={handleZoomOut}
+        onResetZoom={handleResetZoom}
         zoomLevel={zoomLevel}
       />
 
       <div 
-        className={`flex-1 min-h-0 flex flex-col w-full relative transition-all duration-300 ease-out overflow-hidden ${
-          activeTab === 'academic' 
-            ? 'pt-0' 
-            : notesLayout.isOpen && !notesLayout.isMinimized
-              ? 'lg:max-w-[calc(100vw-550px)] xl:max-w-[calc(100vw-560px)] lg:ml-0 lg:mr-auto pl-0 sm:pl-2 pr-2 pt-4'
-              : 'max-w-7xl mx-auto px-2 sm:px-4 md:px-6 pt-4'
+        className={`flex-1 min-h-0 min-w-0 flex flex-col h-full relative transition-all duration-300 ease-out overflow-hidden ${
+          notesLayout.isOpen && !notesLayout.isMinimized
+            ? isSidebarOpen
+              ? 'lg:max-w-[calc(100vw-18rem-550px)] xl:max-w-[calc(100vw-18rem-560px)]'
+              : 'lg:max-w-[calc(100vw-4rem-550px)] xl:max-w-[calc(100vw-4rem-560px)]'
+            : 'w-full'
         }`}
       >
         <AnimatePresence>
@@ -187,10 +218,10 @@ export default function App() {
         )}
         </AnimatePresence>
 
-        <main className={`flex-1 flex flex-col min-h-0 w-full relative overflow-hidden bg-white dark:bg-zinc-950 ${activeTab === 'academic' ? 'rounded-none' : 'rounded-t-3xl shadow-2xl'}`}>
+        <main className="flex-1 flex flex-col min-h-0 w-full relative overflow-hidden bg-white dark:bg-zinc-950">
            <div 
              ref={scrollContainerRef}
-             className={`w-full flex flex-col transition-all duration-300 ease-out ${activeTab === 'academic' ? 'flex-1 h-full overflow-hidden' : 'flex-1 overflow-y-auto pb-24 md:pb-12 custom-scrollbar overscroll-contain'}`}
+             className={`w-full flex flex-col transition-all duration-300 ease-out ${activeTab === 'academic' ? 'flex-1 h-full overflow-hidden' : 'flex-1 overflow-y-auto pb-16 custom-scrollbar overscroll-contain'}`}
            >
            <AnimatePresence mode="wait">
              {activeLesson && activeCourse ? (

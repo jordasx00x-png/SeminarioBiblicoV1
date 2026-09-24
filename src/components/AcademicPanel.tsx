@@ -318,7 +318,7 @@ export function AcademicPanel({
   return (
     <div className="flex-1 min-h-0 bg-[#FAF9F5] dark:bg-zinc-950 text-[#1A2533] dark:text-zinc-100 flex flex-col overflow-hidden">
       <header className="bg-white dark:bg-stone-900 border-b border-stone-200 dark:border-stone-800 px-4 lg:px-6 py-3 shrink-0 z-30 shadow-sm">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+        <div className="w-full max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-4 w-full md:w-auto justify-between md:justify-start">
             <div className="flex items-center gap-3">
               <div className="min-w-0">
@@ -610,7 +610,7 @@ export function AcademicPanel({
             </div>
           </div>
 
-          <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-6 flex justify-center pb-64 custom-scrollbar overscroll-contain">
+          <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-6 flex justify-center pb-32 custom-scrollbar overscroll-contain">
             <div className="max-w-4xl w-full">
               <div className={`space-y-4 font-serif text-gray-900 dark:text-gray-100 leading-relaxed ${
                 bibleFontSize === 'sm' ? 'text-sm' :
@@ -1150,7 +1150,7 @@ export function AcademicPanel({
                 </button>
               </div>
 
-              <div className="flex-1 overflow-y-auto px-6 pt-6 pb-64 custom-scrollbar overscroll-contain">
+              <div className="flex-1 overflow-y-auto px-6 pt-6 pb-32 custom-scrollbar overscroll-contain">
                 {activeVerseMenuTab === 'menu' ? (
                   <div className="flex flex-col gap-4">
                     <button 
@@ -1531,7 +1531,7 @@ export function AcademicPanel({
                         const verseText = (selectedVerseData[activeTranslation as keyof typeof selectedVerseData] as string) || selectedVerseData.rvr1960 || '';
                         const stopWords = new Set(['el', 'la', 'los', 'las', 'un', 'una', 'unos', 'unas', 'de', 'del', 'al', 'a', 'en', 'con', 'y', 'o', 'u', 'por', 'para', 'que', 'si', 'no', 'es', 'su', 'sus', 'sus', 'lo', 'esto', 'esta', 'estos', 'estas', 'pero', 'mas', 'porque', 'cuando', 'donde', 'como', 'tan', 'muy', 'nos', 'me', 'le', 'les', 'se', 'su', 'yo', 'tu', 'él', 'ella', 'nosotros', 'vosotros', 'ellos', 'ellas', 'mi', 'mis', 'tu', 'tus', 'todo', 'todos', 'toda', 'todas', 'sobre', 'entre', 'hacia', 'hasta', 'desde', 'ante', 'bajo', 'cupo', 'cuyo', 'cuya', 'cuyos', 'cuyas', 'donde', 'quien', 'quienes', 'cual', 'cuales', 'algún', 'algunos', 'alguna', 'algunas', 'ningún', 'ningunos', 'ninguna', 'ningunas', 'otro', 'otros', 'otra', 'otras', 'tanto', 'tanta', 'tantos', 'tantas']);
                         
-                        const keywords = Array.from(new Set(
+                        const keywords: string[] = Array.from(new Set<string>(
                           verseText
                             .toLowerCase()
                             .replace(/[.,;:( )«»"]/g, ' ')

@@ -714,8 +714,8 @@ export function getBibleChapter(bookId: string, chapterNum: number): ChapterCont
 
   // 2. Determine verse count
   const baseVerseCount = (curatedMatch || academicMatch) ? Math.max(
-    curatedMatch ? Math.max(...curatedMatch.verses.map(v => typeof v.num === 'string' ? parseInt(v.num.replace(/\D/g, '')) : v.num)) : 0,
-    academicMatch ? Math.max(...academicMatch.verses.map(v => parseInt(v.num.replace(/\D/g, '')))) : 0,
+    curatedMatch ? Math.max(...curatedMatch.verses.map(v => typeof v.num === 'string' ? parseInt(String(v.num).replace(/\D/g, '')) || 1 : Number(v.num) || 1)) : 0,
+    academicMatch ? Math.max(...academicMatch.verses.map(v => typeof v.num === 'string' ? parseInt(String(v.num).replace(/\D/g, '')) || 1 : Number(v.num) || 1)) : 0,
     1 // Just at least one for base object
   ) : 0; 
 

@@ -437,7 +437,7 @@ export function LessonViewer({ lesson, course, progress, onComplete, onBack, onO
 
         {/* Floating Bible Action Button (Positioned above Floating Notes) */}
         <motion.div 
-          className="fixed bottom-[9rem] right-4 md:bottom-[5.5rem] md:right-6 z-40"
+          className="fixed bottom-36 right-4 md:bottom-36 md:right-6 z-50"
           initial={{ scale: 0, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ type: 'spring', stiffness: 260, damping: 20, delay: 0.1 }}
@@ -447,20 +447,13 @@ export function LessonViewer({ lesson, course, progress, onComplete, onBack, onO
               reference: lesson.baseVerse?.reference || 'Juan 1:1', 
               text: lesson.baseVerse?.text 
             })}
-            className="group relative flex items-center gap-2.5 px-3.5 py-2.5 bg-[#111827] hover:bg-[#182330] text-stone-100 rounded-lg shadow-xl border border-stone-700/90 hover:border-[#D1B17F] transition-all duration-200 cursor-pointer active:scale-95"
+            className="group relative flex items-center gap-3 px-5 py-3.5 bg-[#451A03] hover:bg-black text-amber-100 rounded-full shadow-2xl border border-amber-500/30 transition-all duration-300 cursor-pointer active:scale-95"
             title="Abrir la Biblia completa y visor de pasajes (cuadro móvil)"
           >
-            <div className="w-6 h-6 rounded bg-[#7F1D1D] flex items-center justify-center text-amber-200 shrink-0">
-              <BookOpen size={14} />
-            </div>
-            <div className="flex flex-col text-left">
-              <span className="font-serif text-xs font-bold tracking-wide text-stone-100">
-                Biblia
-              </span>
-              <span className="font-sans text-[10px] text-[#D1B17F] font-semibold -mt-0.5">
-                Ventana Móvil
-              </span>
-            </div>
+            <BookOpen size={20} className="text-amber-300 group-hover:scale-110 transition-transform" />
+            <span className="text-[10px] font-bold uppercase tracking-[0.2em] hidden md:inline text-amber-100">
+              Visor Bíblico
+            </span>
           </button>
         </motion.div>
 

@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 
 export default function VirtualAssistantWidget() {
   // ⚠️ TU LLAVE DE GROQ (LA QUE EMPIEZA CON gsk_)
-const API_KEY = import.meta.env.VITE_GROQ_API_KEY;
+const API_KEY = (import.meta.env as any).VITE_GROQ_API_KEY;
 
   const [mensajes, setMensajes] = useState<{ rol: 'user' | 'ia', texto: string, hora: string }[]>([]);
   const [input, setInput] = useState('');

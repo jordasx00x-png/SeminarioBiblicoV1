@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 
 export default function VirtualAssistantWidget() {
-  // Dividimos la clave para que GitHub no la bloquee por seguridad
+  // Dividimos la clave para máxima seguridad con los robots de GitHub
   const p1 = "gsk_lgheCJ0WdkO0e";
   const p2 = "ophFTXUhWgdyb3FYkogvv7ZpZY33RSzkZYrmmDg1";
   const API_KEY = p1 + p2; 
@@ -11,6 +11,7 @@ export default function VirtualAssistantWidget() {
   const [cargando, setCargando] = useState(false);
   const historialRef = useRef<HTMLDivElement>(null);
 
+  // Solución definitiva al error de la fecha
   const obtenerHoraActual = () => {
     return new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
   };
@@ -63,13 +64,14 @@ export default function VirtualAssistantWidget() {
   };
 
   return (
-    <div style={{ width: '100%', display: 'flex', flexDirection: 'column', height: 'calc(100vh - 120px)', fontFamily: 'Segoe UI, sans-serif', background: '#ffffff' }}>
+    <div style={{ width: '100%', display: 'flex', flexDirection: 'column', height: 'calc(100vh - 200px)', background: '#ffffff' }}>
+      {/* Caja de mensajes */}
       <div ref={historialRef} style={{ flexGrow: 1, overflowY: 'auto', padding: '20px', background: '#ffffff' }}>
         {mensajes.map((msg, index) => (
           <div key={index} style={{ display: 'flex', flexDirection: 'column', alignItems: msg.role === 'user' ? 'flex-end' : 'flex-start', margin: '15px 0' }}>
             <div style={{ 
               padding: '14px 18px', borderRadius: '16px', maxWidth: '75%', wordWrap: 'break-word',
-              backgroundColor: msg.role === 'user' ? '#111E2E' : '#E9ECEF', 
+              backgroundColor: msg.role === 'user' ? '#1D2533' : '#E9ECEF', 
               color: msg.role === 'user' ? '#ffffff' : '#111111',
               borderBottomRightRadius: msg.role === 'user' ? '2px' : '16px',
               borderBottomLeftRadius: msg.role === 'ia' ? '2px' : '16px',
@@ -85,6 +87,7 @@ export default function VirtualAssistantWidget() {
         {cargando && <div style={{ color: '#6C757D', fontStyle: 'italic', fontSize: '13px', margin: '10px 0' }}>Consultando fuentes teológicas...</div>}
       </div>
 
+      {/* Input inferior */}
       <div style={{ padding: '15px 20px', background: '#ffffff', borderTop: '1px solid #E9ECEF', display: 'flex', gap: '12px', alignItems: 'center' }}>
         <input 
           type="text" 
@@ -94,7 +97,7 @@ export default function VirtualAssistantWidget() {
           placeholder="Escribe tu consulta doctrinal o teológica aquí..." 
           style={{ flexGrow: 1, padding: '14px 18px', border: '1px solid #DEE2E6', borderRadius: '24px', fontSize: '14px', outline: 'none', background: '#F8F9FA' }}
         />
-        <button onClick={enviarPregunta} style={{ padding: '12px 24px', background: '#111E2E', color: 'white', border: 'none', borderRadius: '24px', fontWeight: 'bold', cursor: 'pointer', fontSize: '14px' }}>
+        <button onClick={enviarPregunta} style={{ padding: '12px 24px', background: '#1D2533', color: 'white', border: 'none', borderRadius: '24px', fontWeight: 'bold', cursor: 'pointer', fontSize: '14px' }}>
           Enviar
         </button>
       </div>

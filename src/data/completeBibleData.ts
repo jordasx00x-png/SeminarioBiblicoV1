@@ -918,10 +918,23 @@ export const BIBLE_BOOKS_CANON: BibleBookMeta[] = [
 
 // Helper to get book by id or name
 export function findBibleBook(identifier: string): BibleBookMeta | undefined {
-  const clean = identifier.toLowerCase().trim();
+  if (!identifier) return undefined;
+  
+  const normalize = (str: string) => 
+    str.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
+  
+  const clean = normalize(identifier);
+  
+  // Normalización de alias comunes en español
+  let mapped = clean;
+  if (clean === 'salmo') mapped = 'salmos';
+  if (clean === 'cantar') mapped = 'cantares';
+  if (clean === 'revelacion') mapped = 'apocalipsis';
+  if (clean === 'hechos de los apostoles') mapped = 'hechos';
+
   return BIBLE_BOOKS_CANON.find(b => 
-    b.id.toLowerCase() === clean || 
-    b.name.toLowerCase() === clean || 
-    b.shortName.toLowerCase() === clean
+    normalize(b.id) === mapped || 
+    normalize(b.name) === mapped || 
+    normalize(b.shortName) === mapped
   );
 }

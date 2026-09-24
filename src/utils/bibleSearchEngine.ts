@@ -1,4 +1,4 @@
-import { BIBLE_BOOKS_CANON } from '../data/completeBibleData';
+import { BIBLE_BOOKS_CANON, findBibleBook } from '../data/completeBibleData';
 import { KNOWN_BIBLE_VERSES } from '../data/bibleVerses';
 import { CURATED_CHAPTERS_DB } from '../data/bibleTextRepository';
 import { searchIndexedDBBibleOffline } from './indexedDBBible';
@@ -125,7 +125,7 @@ export async function searchBibleByPhrase(
   Object.values(KNOWN_BIBLE_VERSES).forEach(v => {
     const textToSearch = `${v.rvr1960} ${v.lbla} ${v.nvi} ${v.dhh}`.toLowerCase();
     if (textToSearch.includes(cleanQuery)) {
-      const bookMeta = BIBLE_BOOKS_CANON.find(b => b.name.toLowerCase() === v.book.toLowerCase()) || BIBLE_BOOKS_CANON[0];
+      const bookMeta = findBibleBook(v.book) || BIBLE_BOOKS_CANON[0];
       const verseNum = typeof v.verse === 'number' ? v.verse : parseInt(String(v.verse), 10) || 1;
       const key = `${bookMeta.id}-${v.chapter}-${verseNum}`;
       if (!resultMap.has(key)) {

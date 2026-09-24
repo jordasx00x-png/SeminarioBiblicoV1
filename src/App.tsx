@@ -19,6 +19,7 @@ import { HomePanel } from './components/HomePanel';
 import { OfflineBanner } from './components/OfflineBanner';
 import { FloatingNotesWidget } from './components/FloatingNotesWidget';
 import { VirtualAssistantWidget } from './components/VirtualAssistantWidget';
+import { BibleVerseModal } from './components/BibleVerseModal';
 import { MobileBottomNav } from './components/MobileBottomNav';
 import { AnimatePresence, motion } from 'motion/react';
 
@@ -28,8 +29,8 @@ export default function App() {
   const [activeLessonId, setActiveLessonId] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'home' | 'courses' | 'academic' | 'calendar' | 'grades'>('home');
   const [showProfile, setShowProfile] = useState(false);
-  const [isAssistantOpen, setIsAssistantOpen] = useState(false);
-  const [notesOpenTrigger, setNotesOpenTrigger] = useState(0);
+  const [activeTool, setActiveTool] = useState<'notes' | 'assistant' | 'bible' | null>(null);
+  const [bibleModalRef, setBibleModalRef] = useState('Juan 1:1');
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(() => {
     const saved = safeStorage.getItem('seminary_sidebar_open');
     return saved !== null ? saved === 'true' : true;
@@ -41,6 +42,19 @@ export default function App() {
       safeStorage.setItem('seminary_sidebar_open', String(next));
       return next;
     });
+  };
+
+  const handleOpenTool = (tool: 'notes' | 'assistant' | 'bible') => {
+    setActiveTool(prev => (prev === tool ? null : tool));
+  };
+
+  const handleCloseTool = () => {
+    setActiveTool(null);
+  };
+
+  const handleOpenBibleWithRef = (ref: string, _text?: string) => {
+    setBibleModalRef(ref);
+    setActiveTool('bible');
   };
 
   const { profile: customProfile, saveProfile, isLoading: profileLoading } = useProfile();
@@ -73,22 +87,6 @@ export default function App() {
   };
 
   useStudyReminder(customProfile);
-
-  const [notesLayout, setNotesLayout] = useState<{
-    isOpen: boolean;
-    isMinimized: boolean;
-    isDocked: boolean;
-    width: number;
-    rightOffset: number;
-  }>({
-    isOpen: false,
-    isMinimized: false,
-    isDocked: true,
-    width: 0,
-    rightOffset: 0
-  });
-
-  const isDockedDesktop = notesLayout.isOpen && !notesLayout.isMinimized && notesLayout.isDocked && typeof window !== 'undefined' && window.innerWidth >= 768;
 
   const [darkMode, setDarkMode] = useState<boolean>(() => {
     return safeStorage.getItem('darkMode') === 'true';
@@ -182,7 +180,10 @@ export default function App() {
         customProfile={customProfile}
         progress={progress}
         onOpenProfile={() => setShowProfile(true)}
-        onOpenAssistant={() => setIsAssistantOpen(true)}
+        onOpenAssistant={() => handleOpenTool('assistant')}
+        onOpenNotes={() => handleOpenTool('notes')}
+        onOpenBibleBackground={() => handleOpenTool('bible')}
+        activeTool={activeTool}
         onSignOut={signOut}
         darkMode={darkMode}
         onToggleDarkMode={() => setDarkMode(prev => !prev)}
@@ -197,13 +198,7 @@ export default function App() {
       />
 
       <div 
-        className={`flex-1 min-h-0 min-w-0 flex flex-col h-full relative transition-all duration-300 ease-out overflow-hidden ${
-          notesLayout.isOpen && !notesLayout.isMinimized
-            ? isSidebarOpen
-              ? 'lg:max-w-[calc(100vw-18rem-550px)] xl:max-w-[calc(100vw-18rem-560px)]'
-              : 'lg:max-w-[calc(100vw-4rem-550px)] xl:max-w-[calc(100vw-4rem-560px)]'
-            : 'w-full'
-        }`}
+        className="flex-1 min-h-0 min-w-0 flex flex-col h-full relative transition-all duration-300 ease-out overflow-hidden w-full"
       >
         <AnimatePresence>
         {showProfile && (
@@ -218,167 +213,203 @@ export default function App() {
         )}
         </AnimatePresence>
 
-        <main className="flex-1 flex flex-col min-h-0 w-full relative overflow-hidden bg-white dark:bg-zinc-950">
-           <div 
-             ref={scrollContainerRef}
-             className={`w-full flex flex-col transition-all duration-300 ease-out ${activeTab === 'academic' ? 'flex-1 h-full overflow-hidden' : 'flex-1 overflow-y-auto pb-16 custom-scrollbar overscroll-contain'}`}
-           >
-           <AnimatePresence mode="wait">
-             {activeLesson && activeCourse ? (
-               <motion.div 
-                 key="lesson"
-                 initial={{ opacity: 0, y: 10 }}
-                 animate={{ opacity: 1, y: 0 }}
-                 exit={{ opacity: 0, y: -10 }}
-                 transition={{ duration: 0.25 }}
-               >
-                 <LessonViewer 
-                   key={activeLesson.id}
-                   lesson={activeLesson} 
-                   course={activeCourse}
-                   progress={progress}
-                   onComplete={(score) => markCompleted(activeLesson.id, score)} 
-                   onBack={() => {
-                     setActiveLessonId(null);
-                   }}
-                   onOpenAssistant={() => setIsAssistantOpen(true)}
-                 />
-               </motion.div>
-             ) : activeCourse ? (
-               <motion.div 
-                 key="course-overview"
-                 initial={{ opacity: 0, y: 10 }}
-                 animate={{ opacity: 1, y: 0 }}
-                 exit={{ opacity: 0, y: -10 }}
-                 transition={{ duration: 0.25 }}
-               >
-                 <CourseOverview
-                   course={activeCourse}
-                   progress={progress}
-                   user={user!}
-                   customProfile={customProfile}
-                   onSelectLesson={(lessonId) => setActiveLessonId(lessonId)}
-                   onBack={() => setActiveCourseId(null)}
-                 />
-               </motion.div>
-             ) : activeTab === 'home' ? (
-               <motion.div 
-                 key="home-panel"
-                 initial={{ opacity: 0, y: 10 }}
-                 animate={{ opacity: 1, y: 0 }}
-                 exit={{ opacity: 0, y: -10 }}
-                 transition={{ duration: 0.25 }}
-               >
-                 <HomePanel
-                   user={user}
-                   customProfile={customProfile}
-                   courses={mockDatabase.courses}
-                   progress={progress}
-                   onNavigateTab={(tab) => {
-                     setActiveTab(tab);
-                     setActiveCourseId(null);
-                     setActiveLessonId(null);
-                   }}
-                   onSelectCourse={(courseId) => {
-                     setActiveCourseId(courseId);
-                     setActiveLessonId(null);
-                   }}
-                 />
-               </motion.div>
-             ) : activeTab === 'courses' ? (
-               <motion.div 
-                 key="courses-catalog"
-                 initial={{ opacity: 0, y: 10 }}
-                 animate={{ opacity: 1, y: 0 }}
-                 exit={{ opacity: 0, y: -10 }}
-                 transition={{ duration: 0.25 }}
-               >
-                 <Dashboard 
-                   user={user} 
-                   courses={mockDatabase.courses} 
-                   progress={progress} 
-                   customProfile={customProfile}
-                   onSelectCourse={(courseId) => {
-                     setActiveCourseId(courseId);
-                     setActiveLessonId(null);
-                   }} 
-                 />
-               </motion.div>
-             ) : activeTab === 'academic' ? (
-                <motion.div 
-                  key="academic-panel"
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  transition={{ duration: 0.25 }}
-                  className="flex-1 min-h-0 flex flex-col overflow-hidden"
-                >
-                 <AcademicPanel />
-               </motion.div>
-             ) : activeTab === 'calendar' ? (
-               <motion.div 
-                 key="calendar-panel"
-                 initial={{ opacity: 0, y: 10 }}
-                 animate={{ opacity: 1, y: 0 }}
-                 exit={{ opacity: 0, y: -10 }}
-                 transition={{ duration: 0.25 }}
-               >
-                 <StudyCalendar 
-                   progress={progress} 
-                   totalLessons={mockDatabase.courses.reduce((acc, c) => acc + c.lessons.length, 0)} 
-                 />
-               </motion.div>
-             ) : (
-               <motion.div 
-                 key="grades-panel"
-                 initial={{ opacity: 0, y: 10 }}
-                 animate={{ opacity: 1, y: 0 }}
-                 exit={{ opacity: 0, y: -10 }}
-                 transition={{ duration: 0.25 }}
-               >
-                 <GradesPanel 
-                   courses={mockDatabase.courses} 
-                   progress={progress} 
-                   user={user!} 
-                   customProfile={customProfile}
-                 />
-               </motion.div>
-             )}
-           </AnimatePresence>
-         </div>
-      </main>
+        {/* WORKSPACE: Split 50/50 when any of the 3 tools is open */}
+        <div className="flex-1 flex flex-col lg:flex-row min-h-0 w-full relative overflow-hidden bg-white dark:bg-zinc-950">
+          
+          {/* LEFT HALF: Information / Lesson / Course / Academic / Catalog */}
+          <div 
+            className={`flex flex-col min-h-0 relative overflow-hidden transition-all duration-300 ease-in-out ${
+              activeTool 
+                ? 'w-full lg:w-1/2 h-1/2 lg:h-full border-b lg:border-b-0 lg:border-r border-stone-200 dark:border-stone-800' 
+                : 'w-full h-full'
+            }`}
+          >
+            <main 
+              ref={scrollContainerRef}
+              className={`w-full flex-1 transition-all duration-300 ease-out ${activeTab === 'academic' ? 'h-full overflow-hidden' : 'overflow-y-auto pb-16 custom-scrollbar overscroll-contain'}`}
+            >
+              <AnimatePresence mode="wait">
+                {activeLesson && activeCourse ? (
+                  <motion.div 
+                    key="lesson"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.25 }}
+                  >
+                    <LessonViewer 
+                      key={activeLesson.id}
+                      lesson={activeLesson} 
+                      course={activeCourse}
+                      progress={progress}
+                      onComplete={(score) => markCompleted(activeLesson.id, score)} 
+                      onBack={() => {
+                        setActiveLessonId(null);
+                      }}
+                      onOpenAssistant={() => handleOpenTool('assistant')}
+                      onOpenBible={(ref, text) => handleOpenBibleWithRef(ref, text)}
+                    />
+                  </motion.div>
+                ) : activeCourse ? (
+                  <motion.div 
+                    key="course-overview"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.25 }}
+                  >
+                    <CourseOverview
+                      course={activeCourse}
+                      progress={progress}
+                      user={user!}
+                      customProfile={customProfile}
+                      onSelectLesson={(lessonId) => setActiveLessonId(lessonId)}
+                      onBack={() => setActiveCourseId(null)}
+                    />
+                  </motion.div>
+                ) : activeTab === 'home' ? (
+                  <motion.div 
+                    key="home-panel"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.25 }}
+                  >
+                    <HomePanel
+                      user={user}
+                      customProfile={customProfile}
+                      courses={mockDatabase.courses}
+                      progress={progress}
+                      onNavigateTab={(tab) => {
+                        setActiveTab(tab);
+                        setActiveCourseId(null);
+                        setActiveLessonId(null);
+                      }}
+                      onSelectCourse={(courseId) => {
+                        setActiveCourseId(courseId);
+                        setActiveLessonId(null);
+                      }}
+                    />
+                  </motion.div>
+                ) : activeTab === 'courses' ? (
+                  <motion.div 
+                    key="courses-catalog"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.25 }}
+                  >
+                    <Dashboard 
+                      user={user} 
+                      courses={mockDatabase.courses} 
+                      progress={progress} 
+                      customProfile={customProfile}
+                      onSelectCourse={(courseId) => {
+                        setActiveCourseId(courseId);
+                        setActiveLessonId(null);
+                      }} 
+                    />
+                  </motion.div>
+                ) : activeTab === 'academic' ? (
+                   <motion.div 
+                     key="academic-panel"
+                     initial={{ opacity: 0, y: 10 }}
+                     animate={{ opacity: 1, y: 0 }}
+                     exit={{ opacity: 0, y: -10 }}
+                     transition={{ duration: 0.25 }}
+                     className="flex-1 min-h-0 flex flex-col overflow-hidden h-full"
+                   >
+                     <AcademicPanel />
+                  </motion.div>
+                ) : activeTab === 'calendar' ? (
+                  <motion.div 
+                    key="calendar-panel"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.25 }}
+                  >
+                    <StudyCalendar 
+                      progress={progress} 
+                      totalLessons={mockDatabase.courses.reduce((acc, c) => acc + c.lessons.length, 0)} 
+                    />
+                  </motion.div>
+                ) : (
+                  <motion.div 
+                    key="grades-panel"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.25 }}
+                  >
+                    <GradesPanel 
+                      courses={mockDatabase.courses} 
+                      progress={progress} 
+                      user={user!} 
+                      customProfile={customProfile}
+                    />
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </main>
+          </div>
+
+          {/* RIGHT HALF: Active Tool Window (Notes, Assistant, or Bible) */}
+          {activeTool && (
+            <div className="w-full lg:w-1/2 h-1/2 lg:h-full flex flex-col min-h-0 bg-white dark:bg-zinc-950 relative overflow-hidden shadow-2xl z-20 animate-in fade-in duration-200">
+              {activeTool === 'notes' && (
+                <FloatingNotesWidget 
+                  user={user}
+                  customProfileName={customProfile?.fullName}
+                  activeCourseTitle={activeCourse?.title}
+                  activeLessonTitle={activeLesson?.title}
+                  courseId={activeCourse?.id}
+                  lessonId={activeLesson?.id}
+                  isOpen={true}
+                  onClose={handleCloseTool}
+                  isSplitMode={true}
+                  onNavigateToLesson={(cId, lId) => {
+                    let targetCourseId = cId;
+                    if (!targetCourseId && lId) {
+                      const course = mockDatabase.courses.find(c => c.lessons.some(l => l.id === lId));
+                      if (course) targetCourseId = course.id;
+                    }
+                    if (targetCourseId) {
+                      setActiveTab('courses');
+                      setActiveCourseId(targetCourseId);
+                      setActiveLessonId(lId);
+                    }
+                  }}
+                />
+              )}
+
+              {activeTool === 'assistant' && (
+                <VirtualAssistantWidget 
+                  isOpen={true}
+                  onClose={handleCloseTool}
+                  activeCourseTitle={activeCourse?.title}
+                  activeLessonTitle={activeLesson?.title}
+                  isSplitMode={true}
+                  onSelectVerse={(ref) => {
+                    handleOpenBibleWithRef(ref);
+                  }}
+                />
+              )}
+
+              {activeTool === 'bible' && (
+                <BibleVerseModal
+                  isOpen={true}
+                  reference={bibleModalRef}
+                  onClose={handleCloseTool}
+                  onSelectCrossReference={(crossRef) => setBibleModalRef(crossRef)}
+                  isSplitMode={true}
+                />
+              )}
+            </div>
+          )}
+
+        </div>
       </div>
-
-      <FloatingNotesWidget 
-        user={user}
-        customProfileName={customProfile?.fullName}
-        activeCourseTitle={activeCourse?.title}
-        activeLessonTitle={activeLesson?.title}
-        courseId={activeCourse?.id}
-        lessonId={activeLesson?.id}
-        externalOpenTrigger={notesOpenTrigger}
-        onNavigateToLesson={(cId, lId) => {
-          let targetCourseId = cId;
-          if (!targetCourseId && lId) {
-            const course = mockDatabase.courses.find(c => c.lessons.some(l => l.id === lId));
-            if (course) targetCourseId = course.id;
-          }
-          if (targetCourseId) {
-            setActiveTab('courses');
-            setActiveCourseId(targetCourseId);
-            setActiveLessonId(lId);
-          }
-        }}
-        onLayoutChange={setNotesLayout}
-      />
-
-      <VirtualAssistantWidget 
-        isOpen={isAssistantOpen}
-        onOpen={() => setIsAssistantOpen(true)}
-        onClose={() => setIsAssistantOpen(false)}
-        activeCourseTitle={activeCourse?.title}
-        activeLessonTitle={activeLesson?.title}
-      />
 
       {/* Dedicated Native Mobile Bottom Navigation Bar */}
       {/* Phrase Search Trigger in AcademicPanel is handled inside the component */}

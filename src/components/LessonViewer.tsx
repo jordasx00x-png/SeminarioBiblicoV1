@@ -19,14 +19,23 @@ interface LessonViewerProps {
   onComplete: (score: number) => void;
   onBack: () => void;
   onOpenAssistant?: () => void;
+  onOpenBible?: (reference: string, fallbackText?: string) => void;
 }
 
-export function LessonViewer({ lesson, course, progress, onComplete, onBack, onOpenAssistant }: LessonViewerProps) {
+export function LessonViewer({ lesson, course, progress, onComplete, onBack, onOpenAssistant, onOpenBible }: LessonViewerProps) {
   const isPreviouslyCompleted = !!progress.completedLessons[lesson.id];
   const [fontSize, setFontSize] = useState<'normal' | 'large' | 'xlarge'>('normal');
   const [readingTheme, setReadingTheme] = useState<'paper' | 'sepia' | 'contrast'>('paper');
   const [scrollProgress, setScrollProgress] = useState(0);
   const [activeBibleVerse, setActiveBibleVerse] = useState<{ reference: string; text?: string } | null>(null);
+
+  const handleShowVerse = (reference: string, text?: string) => {
+    if (onOpenBible) {
+      onOpenBible(reference, text);
+    } else {
+      setActiveBibleVerse({ reference, text });
+    }
+  };
 
   // Monitor scroll for reading progress
   useEffect(() => {
@@ -63,7 +72,7 @@ export function LessonViewer({ lesson, course, progress, onComplete, onBack, onO
   }[readingTheme];
 
   return (
-    <VerseContext.Provider value={{ onSelectVerse: (ref) => setActiveBibleVerse({ reference: ref }) }}>
+    <VerseContext.Provider value={{ onSelectVerse: (ref) => handleShowVerse(ref) }}>
       <div className="flex flex-col min-h-full">
         {/* Top Header */}
         <header className="h-16 bg-[#1A2533] text-white border-b border-[#2C3E50] px-4 md:px-8 flex items-center justify-between shadow-sm sticky top-0 z-30 shrink-0">
@@ -83,7 +92,7 @@ export function LessonViewer({ lesson, course, progress, onComplete, onBack, onO
           <div className="flex items-center gap-3 md:gap-6 shrink-0">
             {lesson.baseVerse && (
               <button
-                onClick={() => setActiveBibleVerse({ reference: lesson.baseVerse!.reference, text: lesson.baseVerse!.text })}
+                onClick={() => handleShowVerse(lesson.baseVerse!.reference, lesson.baseVerse!.text)}
                 className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded text-xs font-bold bg-[#D1B17F]/20 hover:bg-[#D1B17F]/30 text-[#E0D7C6] border border-[#D1B17F]/40 transition-all font-sans cursor-pointer"
                 title="Ver versículo en el visor bíblico"
               >
@@ -113,10 +122,10 @@ export function LessonViewer({ lesson, course, progress, onComplete, onBack, onO
           readingTheme={readingTheme}
           setReadingTheme={setReadingTheme}
           scrollProgress={scrollProgress}
-          onOpenBibleViewer={() => setActiveBibleVerse({ 
-            reference: lesson.baseVerse?.reference || 'Gálatas 2:16', 
-            text: lesson.baseVerse?.text 
-          })}
+          onOpenBibleViewer={() => handleShowVerse( 
+            lesson.baseVerse?.reference || 'Gálatas 2:16', 
+            lesson.baseVerse?.text 
+          )}
         />
 
         <div className="flex-1 p-4 md:p-8 flex gap-8 bg-[#FDFCFB] dark:bg-slate-950 justify-center transition-all duration-300 ease-out">
@@ -186,7 +195,7 @@ export function LessonViewer({ lesson, course, progress, onComplete, onBack, onO
                     </div>
                     {lesson.baseVerse && (
                       <button
-                        onClick={() => setActiveBibleVerse({ reference: lesson.baseVerse!.reference, text: lesson.baseVerse!.text })}
+                        onClick={() => handleShowVerse(lesson.baseVerse!.reference, lesson.baseVerse!.text)}
                         className="flex items-center gap-1.5 text-xs font-semibold text-[#7F1D1D] dark:text-amber-400 hover:underline shrink-0 cursor-pointer"
                       >
                         <span>Pasaje: <strong>{lesson.baseVerse.reference}</strong></span>
@@ -200,7 +209,7 @@ export function LessonViewer({ lesson, course, progress, onComplete, onBack, onO
               {lesson.baseVerse && (
                 <div className="space-y-4 my-2">
                   <div 
-                    onClick={() => setActiveBibleVerse({ reference: lesson.baseVerse!.reference, text: lesson.baseVerse!.text })}
+                    onClick={() => handleShowVerse(lesson.baseVerse!.reference, lesson.baseVerse!.text)}
                     className="bg-stone-50/70 dark:bg-stone-900 border-l-2 border-[#7F1D1D] dark:border-amber-400 p-6 rounded-r-lg shadow-xs hover:bg-stone-50 dark:hover:bg-stone-850 border border-stone-200/80 dark:border-stone-800 transition-colors cursor-pointer group relative"
                     title="Haga clic para consultar este versículo en el visor bíblico"
                   >
@@ -305,7 +314,7 @@ export function LessonViewer({ lesson, course, progress, onComplete, onBack, onO
                         <FormattedContent 
                           className={`text-gray-800 dark:text-slate-200 leading-relaxed font-serif ${fontClass}`}
                           content={block.content}
-                          onSelectVerse={(ref) => setActiveBibleVerse({ reference: ref })}
+                          onSelectVerse={(ref) => handleShowVerse(ref)}
                         />
                       </div>
                     );
@@ -333,7 +342,7 @@ export function LessonViewer({ lesson, course, progress, onComplete, onBack, onO
                           <FormattedContent 
                             className="text-[#1A2533] dark:text-slate-200 leading-relaxed font-sans text-sm md:text-base prose prose-sm dark:prose-invert max-w-none"
                             content={block.content}
-                            onSelectVerse={(ref) => setActiveBibleVerse({ reference: ref })}
+                            onSelectVerse={(ref) => handleShowVerse(ref)}
                           />
                         </div>
                       </div>
@@ -385,7 +394,7 @@ export function LessonViewer({ lesson, course, progress, onComplete, onBack, onO
             {lesson.verses && lesson.verses.length > 0 && (
               <ReinforcementVerses 
                 verses={lesson.verses} 
-                onSelectVerse={(v) => setActiveBibleVerse({ reference: v.reference, text: v.text })}
+                onSelectVerse={(v) => handleShowVerse(v.reference, v.text)}
               />
             )}
 
@@ -435,36 +444,16 @@ export function LessonViewer({ lesson, course, progress, onComplete, onBack, onO
           </div>
         </div>
 
-        {/* Floating Bible Action Button (Positioned above Floating Notes) */}
-        <motion.div 
-          className="fixed bottom-36 right-4 md:bottom-36 md:right-6 z-50"
-          initial={{ scale: 0, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ type: 'spring', stiffness: 260, damping: 20, delay: 0.1 }}
-        >
-          <button
-            onClick={() => setActiveBibleVerse({ 
-              reference: lesson.baseVerse?.reference || 'Juan 1:1', 
-              text: lesson.baseVerse?.text 
-            })}
-            className="group relative flex items-center gap-3 px-5 py-3.5 bg-[#451A03] hover:bg-black text-amber-100 rounded-full shadow-2xl border border-amber-500/30 transition-all duration-300 cursor-pointer active:scale-95"
-            title="Abrir la Biblia completa y visor de pasajes (cuadro móvil)"
-          >
-            <BookOpen size={20} className="text-amber-300 group-hover:scale-110 transition-transform" />
-            <span className="text-[10px] font-bold uppercase tracking-[0.2em] hidden md:inline text-amber-100">
-              Visor Bíblico
-            </span>
-          </button>
-        </motion.div>
-
-        {/* Dedicated Secondary Bible Verse Reader Screen */}
-        <BibleVerseModal
-          isOpen={activeBibleVerse !== null}
-          reference={activeBibleVerse?.reference || ''}
-          fallbackText={activeBibleVerse?.text}
-          onClose={() => setActiveBibleVerse(null)}
-          onSelectCrossReference={(crossRef) => setActiveBibleVerse({ reference: crossRef })}
-        />
+        {/* Dedicated Secondary Bible Verse Reader Screen (when not opened in split mode) */}
+        {!onOpenBible && (
+          <BibleVerseModal
+            isOpen={activeBibleVerse !== null}
+            reference={activeBibleVerse?.reference || ''}
+            fallbackText={activeBibleVerse?.text}
+            onClose={() => setActiveBibleVerse(null)}
+            onSelectCrossReference={(crossRef) => setActiveBibleVerse({ reference: crossRef })}
+          />
+        )}
       </div>
     </VerseContext.Provider>
   );

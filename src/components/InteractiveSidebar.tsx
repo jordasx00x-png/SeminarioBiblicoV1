@@ -17,7 +17,9 @@ import {
   ZoomIn, 
   ZoomOut,
   PanelLeftClose,
-  PanelLeftOpen
+  PanelLeftOpen,
+  BookMarked,
+  Layers
 } from 'lucide-react';
 import { User as FirebaseUser } from 'firebase/auth';
 import { UserProgress } from '../types';
@@ -32,6 +34,9 @@ export interface InteractiveSidebarProps {
   progress: UserProgress;
   onOpenProfile: () => void;
   onOpenAssistant?: () => void;
+  onOpenNotes?: () => void;
+  onOpenBibleBackground?: () => void;
+  activeTool?: 'notes' | 'assistant' | 'bible' | null;
   onSignOut?: () => void;
   darkMode?: boolean;
   onToggleDarkMode?: () => void;
@@ -52,6 +57,9 @@ export function InteractiveSidebar({
   progress,
   onOpenProfile,
   onOpenAssistant,
+  onOpenNotes,
+  onOpenBibleBackground,
+  activeTool = null,
   onSignOut,
   darkMode,
   onToggleDarkMode,
@@ -135,7 +143,7 @@ export function InteractiveSidebar({
         )}
       </div>
 
-      {/* Navigation Icons (Clickable to switch sections directly) */}
+      {/* Navigation Icons: Principal Sections */}
       <div className="flex-1 overflow-y-auto w-full py-3 space-y-2 flex flex-col items-center custom-scrollbar">
         {navTabs.map((tab) => {
           const Icon = tab.icon;
@@ -155,7 +163,7 @@ export function InteractiveSidebar({
             >
               <Icon size={20} strokeWidth={isActive ? 2.5 : 2} />
 
-              {/* Active Indicator on the right edge */}
+              {/* Active Indicator */}
               {isActive && (
                 <span className="absolute -right-1 top-1/2 -translate-y-1/2 w-1.5 h-5 bg-amber-400 rounded-l-full shadow-sm" />
               )}
@@ -163,19 +171,65 @@ export function InteractiveSidebar({
           );
         })}
 
-        {/* Quick Assistant Icon */}
-        {onOpenAssistant && (
-          <div className="pt-2 border-t border-stone-200 dark:border-stone-800 w-full flex justify-center">
+        {/* Separator: Apartado de Herramientas en Segundo Plano */}
+        <div className="pt-2.5 mt-1 border-t border-stone-200 dark:border-stone-800 w-full flex flex-col items-center space-y-2">
+          {/* 1. Bitácora de Estudio */}
+          {onOpenNotes && (
+            <button
+              onClick={onOpenNotes}
+              className={`relative p-3 rounded-xl transition-all cursor-pointer flex items-center justify-center ${
+                activeTool === 'notes'
+                  ? 'bg-[#1A2533] text-amber-300 shadow-md ring-2 ring-amber-400/50'
+                  : 'text-stone-500 dark:text-stone-400 hover:text-[#1A2533] dark:hover:text-white hover:bg-stone-100 dark:hover:bg-stone-800'
+              }`}
+              title="Bitácora de Estudio (Apuntes y notas)"
+              aria-label="Bitácora de Estudio"
+            >
+              <BookMarked size={20} strokeWidth={2} />
+              {activeTool === 'notes' && (
+                <span className="absolute -right-1 top-1/2 -translate-y-1/2 w-1.5 h-4 bg-amber-400 rounded-l-full shadow-sm" />
+              )}
+            </button>
+          )}
+
+          {/* 2. Consultor Doctrinal */}
+          {onOpenAssistant && (
             <button
               onClick={onOpenAssistant}
-              className="p-3 rounded-xl text-stone-500 dark:text-stone-400 hover:text-[#7F1D1D] dark:hover:text-amber-400 hover:bg-stone-100 dark:hover:bg-stone-800 transition-all cursor-pointer"
-              title="Consultor Doctrinal (Asistente IA)"
+              className={`relative p-3 rounded-xl transition-all cursor-pointer flex items-center justify-center ${
+                activeTool === 'assistant'
+                  ? 'bg-[#7F1D1D] text-white shadow-md ring-2 ring-[#7F1D1D]/50'
+                  : 'text-stone-500 dark:text-stone-400 hover:text-[#7F1D1D] dark:hover:text-amber-400 hover:bg-stone-100 dark:hover:bg-stone-800'
+              }`}
+              title="Consultor Doctrinal (Asistente Teológico IA)"
               aria-label="Consultor Doctrinal"
             >
               <Bot size={20} strokeWidth={2} />
+              {activeTool === 'assistant' && (
+                <span className="absolute -right-1 top-1/2 -translate-y-1/2 w-1.5 h-4 bg-amber-400 rounded-l-full shadow-sm" />
+              )}
             </button>
-          </div>
-        )}
+          )}
+
+          {/* 3. Biblia en Segundo Plano */}
+          {onOpenBibleBackground && (
+            <button
+              onClick={onOpenBibleBackground}
+              className={`relative p-3 rounded-xl transition-all cursor-pointer flex items-center justify-center ${
+                activeTool === 'bible'
+                  ? 'bg-[#451A03] text-amber-100 shadow-md ring-2 ring-amber-500/50'
+                  : 'text-stone-500 dark:text-stone-400 hover:text-amber-600 dark:hover:text-amber-400 hover:bg-stone-100 dark:hover:bg-stone-800'
+              }`}
+              title="Biblia Canónica (Visor de Pasajes)"
+              aria-label="Biblia Canónica"
+            >
+              <Layers size={20} strokeWidth={2} />
+              {activeTool === 'bible' && (
+                <span className="absolute -right-1 top-1/2 -translate-y-1/2 w-1.5 h-4 bg-amber-400 rounded-l-full shadow-sm" />
+              )}
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Bottom Utilities: Theme & Profile Avatar */}
@@ -250,7 +304,7 @@ export function InteractiveSidebar({
       <div className="flex-1 overflow-y-auto px-3 py-4 space-y-1.5 custom-scrollbar">
         <div className="px-3 pb-2 flex items-center justify-between">
           <span className="text-[9px] font-black tracking-[0.25em] text-stone-400 dark:text-stone-500 uppercase">
-            Navegación
+            Navegación Principal
           </span>
         </div>
 
@@ -294,31 +348,105 @@ export function InteractiveSidebar({
           );
         })}
 
-        {/* Quick Assistant Access */}
-        {onOpenAssistant && (
-          <div className="pt-3 mt-2 border-t border-stone-100 dark:border-stone-800/80">
-            <div className="px-3 pb-2">
-              <span className="text-[9px] font-black tracking-[0.25em] text-stone-400 dark:text-stone-500 uppercase">
-                Herramientas
-              </span>
-            </div>
-            <button
-              onClick={() => {
-                setIsMobileOpen(false);
-                onOpenAssistant();
-              }}
-              className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-left text-stone-600 dark:text-stone-400 hover:text-[#7F1D1D] dark:hover:text-amber-400 hover:bg-stone-100 dark:hover:bg-stone-900 transition-all cursor-pointer group"
-            >
-              <div className="p-2 rounded-lg bg-stone-100 dark:bg-stone-800 text-stone-500 dark:text-stone-400 group-hover:bg-[#7F1D1D]/10 group-hover:text-[#7F1D1D] dark:group-hover:text-amber-400 transition-colors shrink-0">
-                <Bot size={18} strokeWidth={2} />
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-xs font-semibold text-stone-800 dark:text-stone-200 truncate">Consultor Doctrinal</p>
-                <p className="text-[10px] text-stone-400 uppercase tracking-wider truncate">Asistente IA</p>
-              </div>
-            </button>
+        {/* ============================================================ */}
+        {/* SEPARATED SECTION: Estudio en Segundo Plano & Herramientas   */}
+        {/* ============================================================ */}
+        <div className="pt-4 mt-3 border-t border-stone-200 dark:border-stone-800">
+          <div className="px-3 pb-2 flex items-center justify-between">
+            <span className="text-[9px] font-black tracking-[0.25em] text-[#7F1D1D] dark:text-amber-500 uppercase">
+              Segundo Plano & Herramientas
+            </span>
           </div>
-        )}
+
+          <div className="space-y-1.5">
+            {/* 1. Bitácora de Estudio */}
+            {onOpenNotes && (
+              <button
+                onClick={() => {
+                  setIsMobileOpen(false);
+                  onOpenNotes();
+                }}
+                className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-left transition-all cursor-pointer group ${
+                  activeTool === 'notes'
+                    ? 'bg-[#1A2533] text-amber-300 shadow-sm ring-1 ring-amber-400/40 font-bold'
+                    : 'text-stone-600 dark:text-stone-400 hover:text-[#1A2533] dark:hover:text-white hover:bg-stone-100 dark:hover:bg-stone-900'
+                }`}
+              >
+                <div className={`p-2 rounded-lg transition-colors shrink-0 shadow-2xs ${
+                  activeTool === 'notes'
+                    ? 'bg-amber-400 text-[#1A2533]'
+                    : 'bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-400 group-hover:bg-[#1A2533] group-hover:text-amber-200'
+                }`}>
+                  <BookMarked size={17} strokeWidth={2} />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs font-semibold truncate">Bitácora de Estudio</p>
+                  <p className="text-[10px] text-stone-400 uppercase tracking-wider truncate">
+                    {activeTool === 'notes' ? '● En pantalla dividida' : 'Apuntes Personales'}
+                  </p>
+                </div>
+              </button>
+            )}
+
+            {/* 2. Consultor Doctrinal */}
+            {onOpenAssistant && (
+              <button
+                onClick={() => {
+                  setIsMobileOpen(false);
+                  onOpenAssistant();
+                }}
+                className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-left transition-all cursor-pointer group ${
+                  activeTool === 'assistant'
+                    ? 'bg-[#7F1D1D] text-white shadow-sm ring-1 ring-red-400/40 font-bold'
+                    : 'text-stone-600 dark:text-stone-400 hover:text-[#7F1D1D] dark:hover:text-amber-400 hover:bg-stone-100 dark:hover:bg-stone-900'
+                }`}
+              >
+                <div className={`p-2 rounded-lg transition-colors shrink-0 shadow-2xs ${
+                  activeTool === 'assistant'
+                    ? 'bg-amber-400 text-[#7F1D1D]'
+                    : 'bg-stone-100 dark:bg-stone-800 text-stone-500 dark:text-stone-400 group-hover:bg-[#7F1D1D]/10 group-hover:text-[#7F1D1D] dark:group-hover:text-amber-400'
+                }`}>
+                  <Bot size={17} strokeWidth={2} />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs font-semibold truncate">Consultor Doctrinal</p>
+                  <p className="text-[10px] text-stone-400 uppercase tracking-wider truncate">
+                    {activeTool === 'assistant' ? '● En pantalla dividida' : 'Asistente Teológico IA'}
+                  </p>
+                </div>
+              </button>
+            )}
+
+            {/* 3. Biblia en Segundo Plano */}
+            {onOpenBibleBackground && (
+              <button
+                onClick={() => {
+                  setIsMobileOpen(false);
+                  onOpenBibleBackground();
+                }}
+                className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-left transition-all cursor-pointer group ${
+                  activeTool === 'bible'
+                    ? 'bg-[#451A03] text-amber-100 shadow-sm ring-1 ring-amber-500/40 font-bold'
+                    : 'text-stone-600 dark:text-stone-400 hover:text-amber-700 dark:hover:text-amber-400 hover:bg-stone-100 dark:hover:bg-stone-900'
+                }`}
+              >
+                <div className={`p-2 rounded-lg transition-colors shrink-0 shadow-2xs ${
+                  activeTool === 'bible'
+                    ? 'bg-amber-400 text-[#451A03]'
+                    : 'bg-stone-100 dark:bg-stone-800 text-stone-500 dark:text-stone-400 group-hover:bg-amber-100 dark:group-hover:bg-amber-950/50 group-hover:text-amber-700 dark:group-hover:text-amber-400'
+                }`}>
+                  <Layers size={17} strokeWidth={2} />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs font-semibold truncate">Biblia en 2° Plano</p>
+                  <p className="text-[10px] text-stone-400 uppercase tracking-wider truncate">
+                    {activeTool === 'bible' ? '● En pantalla dividida' : 'Visor Flotante Móvil'}
+                  </p>
+                </div>
+              </button>
+            )}
+          </div>
+        </div>
       </div>
 
       {/* 3. Bottom Utility & Profile Section */}

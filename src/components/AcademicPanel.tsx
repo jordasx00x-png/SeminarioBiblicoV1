@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   BookOpen, 
@@ -42,6 +42,7 @@ export interface AcademicPanelProps {
   initialVerse?: number;
   onCloseSecondScreen?: () => void;
   isSecondScreenMode?: boolean;
+  onExegeticalToolsToggle?: (isOpen: boolean) => void;
 }
 
 const POPULAR_PHRASE_SUGGESTIONS = [
@@ -62,7 +63,8 @@ export function AcademicPanel({
   initialChapter,
   initialVerse,
   onCloseSecondScreen,
-  isSecondScreenMode = false
+  isSecondScreenMode = false,
+  onExegeticalToolsToggle
 }: AcademicPanelProps = {}) {
   const [selectedBookId, setSelectedBookId] = useState<string>(initialBookId || 'gen');
   const [selectedChapter, setSelectedChapter] = useState<number>(initialChapter || 1);
@@ -82,6 +84,13 @@ export function AcademicPanel({
   const [selectedColor, setSelectedColor] = useState<HighlightColor>('yellow');
   const [selectedTextSnippet, setSelectedTextSnippet] = useState<{ verse: number; text: string } | null>(null);
 
+  const layoutTransition = {
+    type: 'spring' as const,
+    damping: 30,
+    stiffness: 300,
+    mass: 0.8
+  };
+
   // Phrase search states
   const [isPhraseSearchOpen, setIsPhraseSearchOpen] = useState<boolean>(false);
   const [phraseQuery, setPhraseQuery] = useState<string>('');
@@ -95,10 +104,24 @@ export function AcademicPanel({
   const [concordanceResults, setConcordanceResults] = useState<VerseSearchResult[]>([]);
   const [isSearchingConcordance, setIsSearchingConcordance] = useState<boolean>(false);
 
+  const bibleScrollRef = useRef<HTMLDivElement>(null);
+
+  // Auto-scroll to selected verse
   useEffect(() => {
-    if (initialBookId) setSelectedBookId(initialBookId);
-    if (initialChapter) setSelectedChapter(initialChapter);
-    if (initialVerse !== undefined && initialVerse !== null) {
+    if (selectedVerse && bibleScrollRef.current) {
+      setTimeout(() => {
+        const element = document.getElementById(`verse-${selectedVerse}`);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }, 100);
+    }
+  }, [selectedVerse, selectedBookId, selectedChapter]);
+
+  useEffect(() => {
+    if (initialBookId && initialBookId !== selectedBookId) setSelectedBookId(initialBookId);
+    if (initialChapter && initialChapter !== selectedChapter) setSelectedChapter(initialChapter);
+    if (initialVerse !== undefined && initialVerse !== null && initialVerse !== selectedVerse) {
       setSelectedVerse(initialVerse);
       setActiveVerseMenuTab('comentario_biblico');
     }
@@ -317,104 +340,106 @@ export function AcademicPanel({
 
   return (
     <div className="flex-1 min-h-0 bg-[#FAF9F5] dark:bg-zinc-950 text-[#1A2533] dark:text-zinc-100 flex flex-col overflow-hidden">
-      <header className="bg-white dark:bg-stone-900 border-b border-stone-200 dark:border-stone-800 px-4 lg:px-6 py-3 shrink-0 z-30 shadow-sm">
-        <div className="w-full max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-4 w-full md:w-auto justify-between md:justify-start">
-            <div className="flex items-center gap-3">
-              <div className="min-w-0">
-                <p className="text-lg font-serif font-bold text-[#1A2533] dark:text-stone-100 truncate">
-                  {currentBook.name} {selectedChapter}
-                </p>
+      {!isSecondScreenMode && (
+        <header className="bg-white dark:bg-stone-900 border-b border-stone-200 dark:border-stone-800 px-4 lg:px-6 py-3 shrink-0 z-30 shadow-sm">
+          <div className="w-full max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+            <div className="flex items-center gap-4 w-full md:w-auto justify-between md:justify-start">
+              <div className="flex items-center gap-3">
+                <div className="min-w-0">
+                  <p className="text-lg font-serif font-bold text-[#1A2533] dark:text-stone-100 truncate">
+                    {currentBook.name} {selectedChapter}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2 w-full md:w-auto justify-end overflow-x-auto pb-1 md:pb-0">
+              <div className="flex items-center gap-1.5 border-r border-stone-200 dark:border-stone-800 pr-2 mr-2">
+                <button
+                  onClick={() => {
+                    setBookDrawerStep('books');
+                    setIsBookDrawerOpen(true);
+                  }}
+                  className="px-4 py-2 rounded bg-white hover:bg-[#FAF9F5] text-[#1A2533] dark:bg-stone-900 dark:text-stone-100 text-[10px] font-black uppercase tracking-[0.2em] flex items-center gap-3 border border-stone-300 dark:border-stone-700 transition-all shadow-sm cursor-pointer active:scale-95 shrink-0"
+                >
+                  <BookMarked className="w-4 h-4 text-[#7F1D1D]" strokeWidth={2} />
+                  <span>Libros</span>
+                  <ChevronDown className="w-3 h-3 text-stone-400" />
+                </button>
+
+                <select
+                  value={activeTranslation}
+                  onChange={(e) => setActiveTranslation(e.target.value as any)}
+                  className="px-3 py-2 rounded bg-white dark:bg-stone-900 border border-stone-300 dark:border-stone-700 text-[#1A2533] dark:text-stone-100 text-[10px] font-black uppercase tracking-widest focus:outline-none focus:border-[#7F1D1D] cursor-pointer shadow-sm transition-all"
+                >
+                  <option value="rvr1960">RVR1960</option>
+                  <option value="lbla">LBLA</option>
+                  <option value="ntv">NTV</option>
+                  <option value="nvi">NVI</option>
+                </select>
+              </div>
+
+              <div className="flex items-center gap-1.5 border-r border-stone-200 dark:border-stone-800 pr-2 mr-2">
+                <button
+                  onClick={() => setIsNotesDrawerOpen(true)}
+                  className="px-4 py-2 rounded bg-white hover:bg-[#FAF9F5] text-[#1A2533] dark:bg-stone-900 dark:text-stone-100 text-[10px] font-black uppercase tracking-[0.2em] flex items-center gap-3 border border-stone-300 dark:border-stone-700 shadow-sm transition-all cursor-pointer active:scale-95 shrink-0"
+                >
+                  <Highlighter className="w-4 h-4 text-[#D1B17F]" strokeWidth={2} />
+                  <span>Archivo</span>
+                  {allNotes.length > 0 && (
+                    <span className="px-1.5 py-0.5 rounded bg-[#7F1D1D] text-[9px] font-black text-white">
+                      {allNotes.length}
+                    </span>
+                  )}
+                </button>
+
+                <button
+                  onClick={() => setIsPhraseSearchOpen(true)}
+                  className="px-3 py-1.5 rounded bg-[#7F1D1D] hover:bg-red-800 text-white text-xs font-bold flex items-center gap-2 border border-[#7F1D1D] shadow-xs transition-colors cursor-pointer shrink-0"
+                >
+                  <Search className="w-3.5 h-3.5" />
+                  <span>Búsqueda</span>
+                </button>
+              </div>
+
+              <div className="flex items-center rounded-md bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 p-0.5">
+                <button
+                  onClick={handlePrevChapter}
+                  className="p-1.5 hover:bg-white dark:hover:bg-stone-700 rounded text-stone-600 dark:text-stone-400 hover:text-[#7F1D1D] transition-colors"
+                  title="Anterior"
+                >
+                  <ArrowLeft className="w-3.5 h-3.5" />
+                </button>
+                <span className="text-[11px] font-bold px-2 text-[#1A2533] dark:text-stone-200 uppercase tracking-widest border-x border-stone-200 dark:border-stone-700 mx-1">
+                  Cap. {selectedChapter}
+                </span>
+                <button
+                  onClick={handleNextChapter}
+                  className="p-1.5 hover:bg-white dark:hover:bg-stone-700 rounded text-stone-600 dark:text-stone-400 hover:text-[#7F1D1D] transition-colors"
+                  title="Siguiente"
+                >
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </button>
+              </div>
+
+              <div className="flex items-center rounded-md bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 p-0.5 ml-1">
+                <button
+                  onClick={() => setBibleFontSize(prev => prev === 'xl' ? 'lg' : prev === 'lg' ? 'base' : 'sm')}
+                  className="px-2 py-1 text-[10px] font-bold text-stone-600 hover:text-[#7F1D1D] hover:bg-white dark:hover:bg-stone-700 rounded"
+                >
+                  A-
+                </button>
+                <button
+                  onClick={() => setBibleFontSize(prev => prev === 'sm' ? 'base' : prev === 'base' ? 'lg' : 'xl')}
+                  className="px-2 py-1 text-[10px] font-bold text-stone-600 hover:text-[#7F1D1D] hover:bg-white dark:hover:bg-stone-700 rounded"
+                >
+                  A+
+                </button>
               </div>
             </div>
           </div>
-
-          <div className="flex items-center gap-2 w-full md:w-auto justify-end overflow-x-auto pb-1 md:pb-0">
-            <div className="flex items-center gap-1.5 border-r border-stone-200 dark:border-stone-800 pr-2 mr-2">
-              <button
-                onClick={() => {
-                  setBookDrawerStep('books');
-                  setIsBookDrawerOpen(true);
-                }}
-                className="px-4 py-2 rounded bg-white hover:bg-[#FAF9F5] text-[#1A2533] dark:bg-stone-900 dark:text-stone-100 text-[10px] font-black uppercase tracking-[0.2em] flex items-center gap-3 border border-stone-300 dark:border-stone-700 transition-all shadow-sm cursor-pointer active:scale-95 shrink-0"
-              >
-                <BookMarked className="w-4 h-4 text-[#7F1D1D]" strokeWidth={2} />
-                <span>Libros</span>
-                <ChevronDown className="w-3 h-3 text-stone-400" />
-              </button>
-
-              <select
-                value={activeTranslation}
-                onChange={(e) => setActiveTranslation(e.target.value as any)}
-                className="px-3 py-2 rounded bg-white dark:bg-stone-900 border border-stone-300 dark:border-stone-700 text-[#1A2533] dark:text-stone-100 text-[10px] font-black uppercase tracking-widest focus:outline-none focus:border-[#7F1D1D] cursor-pointer shadow-sm transition-all"
-              >
-                <option value="rvr1960">RVR1960</option>
-                <option value="lbla">LBLA</option>
-                <option value="ntv">NTV</option>
-                <option value="nvi">NVI</option>
-              </select>
-            </div>
-
-            <div className="flex items-center gap-1.5 border-r border-stone-200 dark:border-stone-800 pr-2 mr-2">
-              <button
-                onClick={() => setIsNotesDrawerOpen(true)}
-                className="px-4 py-2 rounded bg-white hover:bg-[#FAF9F5] text-[#1A2533] dark:bg-stone-900 dark:text-stone-100 text-[10px] font-black uppercase tracking-[0.2em] flex items-center gap-3 border border-stone-300 dark:border-stone-700 shadow-sm transition-all cursor-pointer active:scale-95 shrink-0"
-              >
-                <Highlighter className="w-4 h-4 text-[#D1B17F]" strokeWidth={2} />
-                <span>Archivo</span>
-                {allNotes.length > 0 && (
-                  <span className="px-1.5 py-0.5 rounded bg-[#7F1D1D] text-[9px] font-black text-white">
-                    {allNotes.length}
-                  </span>
-                )}
-              </button>
-
-              <button
-                onClick={() => setIsPhraseSearchOpen(true)}
-                className="px-3 py-1.5 rounded bg-[#7F1D1D] hover:bg-red-800 text-white text-xs font-bold flex items-center gap-2 border border-[#7F1D1D] shadow-xs transition-colors cursor-pointer shrink-0"
-              >
-                <Search className="w-3.5 h-3.5" />
-                <span>Búsqueda</span>
-              </button>
-            </div>
-
-            <div className="flex items-center rounded-md bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 p-0.5">
-              <button
-                onClick={handlePrevChapter}
-                className="p-1.5 hover:bg-white dark:hover:bg-stone-700 rounded text-stone-600 dark:text-stone-400 hover:text-[#7F1D1D] transition-colors"
-                title="Anterior"
-              >
-                <ArrowLeft className="w-3.5 h-3.5" />
-              </button>
-              <span className="text-[11px] font-bold px-2 text-[#1A2533] dark:text-stone-200 uppercase tracking-widest border-x border-stone-200 dark:border-stone-700 mx-1">
-                Cap. {selectedChapter}
-              </span>
-              <button
-                onClick={handleNextChapter}
-                className="p-1.5 hover:bg-white dark:hover:bg-stone-700 rounded text-stone-600 dark:text-stone-400 hover:text-[#7F1D1D] transition-colors"
-                title="Siguiente"
-              >
-                <ArrowRight className="w-3.5 h-3.5" />
-              </button>
-            </div>
-
-            <div className="flex items-center rounded-md bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 p-0.5 ml-1">
-              <button
-                onClick={() => setBibleFontSize(prev => prev === 'xl' ? 'lg' : prev === 'lg' ? 'base' : 'sm')}
-                className="px-2 py-1 text-[10px] font-bold text-stone-600 hover:text-[#7F1D1D] hover:bg-white dark:hover:bg-stone-700 rounded"
-              >
-                A-
-              </button>
-              <button
-                onClick={() => setBibleFontSize(prev => prev === 'sm' ? 'base' : prev === 'base' ? 'lg' : 'xl')}
-                className="px-2 py-1 text-[10px] font-bold text-stone-600 hover:text-[#7F1D1D] hover:bg-white dark:hover:bg-stone-700 rounded"
-              >
-                A+
-              </button>
-            </div>
-          </div>
-        </div>
-      </header>
+        </header>
+      )}
 
       {isBookDrawerOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4 animate-in fade-in duration-300">
@@ -570,8 +595,11 @@ export function AcademicPanel({
         </div>
       )}
 
-      <div className="flex-1 flex overflow-hidden bg-white dark:bg-zinc-950">
-        <div className="flex-1 flex flex-col overflow-hidden">
+      <div className="flex-1 flex flex-col lg:flex-row min-h-0 overflow-hidden bg-white dark:bg-zinc-950">
+        <motion.div 
+          transition={layoutTransition}
+          className={`flex-1 flex flex-col min-h-0 overflow-hidden ${selectedVerseData ? 'lg:w-1/2 border-r border-stone-200 dark:border-stone-800' : ''}`}
+        >
           {/* Fixed Header Section for Bible */}
           <div className="shrink-0 px-4 sm:px-6 pt-3 sm:pt-6 flex justify-center bg-white dark:bg-zinc-950 border-b border-stone-100 dark:border-stone-900 shadow-sm z-10">
             <div className="max-w-4xl w-full">
@@ -610,8 +638,11 @@ export function AcademicPanel({
             </div>
           </div>
 
-          <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-6 flex justify-center pb-32 custom-scrollbar overscroll-contain">
-            <div className="max-w-4xl w-full">
+          <div 
+            ref={bibleScrollRef}
+            className="flex-1 overflow-y-auto px-4 sm:px-6 py-6 pb-40 custom-scrollbar scroll-smooth"
+          >
+            <div className="max-w-4xl w-full mx-auto">
               <div className={`space-y-4 font-serif text-gray-900 dark:text-gray-100 leading-relaxed ${
                 bibleFontSize === 'sm' ? 'text-sm' :
                 bibleFontSize === 'base' ? 'text-base' :
@@ -635,7 +666,7 @@ export function AcademicPanel({
                 const colorStyle = mainHighlight ? getColorClasses(mainHighlight.color) : null;
 
                 return (
-              <div key={verse.num} className="relative">
+              <div key={verse.num} id={`verse-${verse.num}`} className="relative">
                 <div 
                   onClick={() => {
                     handleVerseClick(verse.num);
@@ -1117,15 +1148,17 @@ export function AcademicPanel({
           </div>
         </div>
       </div>
-    </div>
+    </motion.div>
 
       <AnimatePresence>
           {selectedVerseData && selectedVerseComm && (
             <motion.aside
+              layout
               initial={{ x: '100%', opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
               exit={{ x: '100%', opacity: 0 }}
-              className="hidden lg:flex w-[400px] border-l border-stone-200 dark:border-stone-800 bg-[#FAF9F5] dark:bg-zinc-950 flex-col overflow-hidden shadow-2xl z-20 overscroll-contain shrink-0"
+              transition={layoutTransition}
+              className="hidden lg:flex lg:w-1/2 bg-[#FAF9F5] dark:bg-zinc-950 flex-col min-h-0 overflow-hidden shadow-2xl z-20 shrink-0"
             >
               <div className="p-5 bg-white dark:bg-stone-900 border-b border-stone-200 dark:border-stone-800 flex items-center justify-between relative">
                 <div className="absolute top-0 left-0 w-full h-1 bg-[#7F1D1D]" />
@@ -1150,7 +1183,7 @@ export function AcademicPanel({
                 </button>
               </div>
 
-              <div className="flex-1 overflow-y-auto px-6 pt-6 pb-32 custom-scrollbar overscroll-contain">
+              <div className="flex-1 overflow-y-auto px-6 pt-6 pb-32 custom-scrollbar">
                 {activeVerseMenuTab === 'menu' ? (
                   <div className="flex flex-col gap-4">
                     <button 

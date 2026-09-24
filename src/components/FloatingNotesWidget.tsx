@@ -43,6 +43,10 @@ interface FloatingNotesWidgetProps {
   onNavigateToLesson?: (courseId: string, lessonId: string) => void;
   onLayoutChange?: (info: { isOpen: boolean; isMinimized: boolean; isDocked: boolean; width: number; rightOffset: number }) => void;
   externalOpenTrigger?: number;
+  hideFloatingTrigger?: boolean;
+  isOpen?: boolean;
+  onClose?: () => void;
+  isSplitMode?: boolean;
 }
 
 export function FloatingNotesWidget({
@@ -54,13 +58,26 @@ export function FloatingNotesWidget({
   lessonId,
   onNavigateToLesson,
   onLayoutChange,
-  externalOpenTrigger
+  externalOpenTrigger,
+  hideFloatingTrigger,
+  isOpen: propIsOpen,
+  onClose,
+  isSplitMode = false
 }: FloatingNotesWidgetProps) {
-  const [isOpen, setIsOpen] = useState(false);
+  const [internalIsOpen, setInternalIsOpen] = useState(false);
+  const isOpen = propIsOpen !== undefined ? propIsOpen : internalIsOpen;
+
+  const handleClose = () => {
+    if (onClose) {
+      onClose();
+    }
+    setInternalIsOpen(false);
+    setIsMinimized(false);
+  };
 
   useEffect(() => {
     if (externalOpenTrigger && externalOpenTrigger > 0) {
-      setIsOpen(true);
+      setInternalIsOpen(true);
       setIsMinimized(false);
     }
   }, [externalOpenTrigger]);
@@ -101,15 +118,20 @@ export function FloatingNotesWidget({
   }, [isOpen, isMinimized, winPos]);
 
   // Notify parent of layout changes
+  const prevLayoutRef = useRef<string>('');
   useEffect(() => {
     if (onLayoutChange) {
-      onLayoutChange({
-        isOpen,
-        isMinimized,
-        isDocked: false,
-        width: winPos?.width || 520,
-        rightOffset: 0
-      });
+      const key = `${isOpen}-${isMinimized}-${winPos?.width || 520}`;
+      if (prevLayoutRef.current !== key) {
+        prevLayoutRef.current = key;
+        onLayoutChange({
+          isOpen,
+          isMinimized,
+          isDocked: false,
+          width: winPos?.width || 520,
+          rightOffset: 0
+        });
+      }
     }
   }, [isOpen, isMinimized, winPos, onLayoutChange]);
 
@@ -131,16 +153,21 @@ export function FloatingNotesWidget({
     return notes.find(n => n.id === activeNoteId) || null;
   }, [notes, activeNoteId]);
 
+  const prevActiveNoteIdRef = useRef<string | null>(null);
   useEffect(() => {
-    if (activeNote) {
-      setTitle(activeNote.title);
-      setContent(activeNote.content);
-    } else if (notes.length > 0 && !activeNoteId) {
+    if (activeNoteId && activeNoteId !== prevActiveNoteIdRef.current) {
+      prevActiveNoteIdRef.current = activeNoteId;
+      const found = notes.find(n => n.id === activeNoteId);
+      if (found) {
+        setTitle(found.title);
+        setContent(found.content);
+      }
+    } else if (!activeNoteId && notes.length > 0) {
       setActiveNoteId(notes[0].id);
       setTitle(notes[0].title);
       setContent(notes[0].content);
     }
-  }, [activeNoteId, activeNote, notes]);
+  }, [activeNoteId, notes]);
 
   const filteredNotes = useMemo(() => {
     const q = searchQuery.toLowerCase().trim();
@@ -308,71 +335,226 @@ export function FloatingNotesWidget({
     return content.trim() ? content.trim().split(/\s+/).length : 0;
   }, [content]);
 
-  return (
-    <>
-      {/* FLOATING ACTION BUTTON */}
-      {!isOpen && !isMinimized && (
-        <motion.div 
-          className="fixed bottom-20 right-4 md:bottom-20 md:right-6 z-50"
-          initial={{ scale: 0, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ type: 'spring', stiffness: 260, damping: 20 }}
-        >
-          <button
-            onClick={() => {
-              setIsOpen(true);
-              setIsMinimized(false);
-            }}
-            className="group relative flex items-center gap-3 px-5 py-3.5 bg-[#1A2533] hover:bg-black text-white rounded-full shadow-2xl border border-stone-700 transition-all duration-300 cursor-pointer active:scale-95"
-            title="Abrir mis notas de clase"
-          >
-            <Edit3 size={22} strokeWidth={1.5} className="text-amber-200" />
-            <span className="text-[10px] font-bold uppercase tracking-[0.2em] hidden md:inline">Bitácora de Estudio</span>
-          </button>
-        </motion.div>
-      )}
-
-      {/* MINIMIZED FLOATING BAR */}
-      <AnimatePresence>
-        {isMinimized && (
-          <motion.div
-            initial={{ opacity: 0, y: 30, scale: 0.9 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 30, scale: 0.9 }}
-            className="fixed bottom-24 right-4 md:bottom-24 md:right-6 z-[60] bg-white dark:bg-zinc-900 text-[#1A2533] dark:text-stone-100 border border-stone-200 dark:border-stone-800 rounded shadow-2xl p-4 flex items-center gap-4 font-sans max-w-xs sm:max-w-md"
-          >
-            <div className="p-2 bg-[#FAF9F5] dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-[#7F1D1D] dark:text-amber-500 rounded shrink-0">
-              <Edit3 size={20} strokeWidth={1.5} />
+  if (isSplitMode) {
+    if (!isOpen) return null;
+    return (
+      <div className="w-full h-full bg-white dark:bg-zinc-950 border-stone-200 dark:border-stone-800 flex flex-col font-sans overflow-hidden">
+        {/* HEADER BAR */}
+        <div className="bg-white dark:bg-stone-900 border-stone-200 dark:border-stone-800 text-[#1A2533] dark:text-stone-100 px-5 py-3.5 border-b flex items-center justify-between shrink-0 select-none relative">
+          <div className="absolute top-0 left-0 w-full h-1 bg-[#1A2533]" />
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="p-2 bg-[#FAF9F5] dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-[#1A2533] dark:text-amber-500 rounded shrink-0">
+              <Edit3 size={18} strokeWidth={1.5} />
             </div>
-            <div className="flex-1 min-w-0">
-              <span className="text-[10px] font-black text-[#1A2533] dark:text-stone-100 uppercase tracking-widest truncate block">
-                {activeNote ? activeNote.title : 'Bitácora'}
-              </span>
-              <p className="text-[10px] text-stone-400 uppercase tracking-widest mt-0.5 truncate font-bold">
-                {activeNote ? (activeNote.content || 'Sin contenido') : `${notes.length} Apuntes`}
+            <div className="min-w-0">
+              <h3 className="text-sm font-serif font-black uppercase tracking-tight truncate">
+                Bitácora Académica
+              </h3>
+              <p className="text-[10px] font-bold text-stone-400 uppercase tracking-widest mt-0.5 truncate">
+                {userName} • {notes.length} Apuntes
               </p>
             </div>
-            <div className="flex items-center gap-2 shrink-0">
-              <button
-                onClick={() => setIsMinimized(false)}
-                className="px-3 py-1.5 bg-[#7F1D1D] hover:bg-black text-white rounded text-[9px] font-black uppercase tracking-[0.2em] transition-all cursor-pointer shadow-sm active:scale-95"
-              >
-                Abrir
-              </button>
-              <button
-                onClick={() => {
-                  setIsOpen(false);
-                  setIsMinimized(false);
-                }}
-                className="p-1.5 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-colors cursor-pointer"
-              >
-                <X size={15} />
-              </button>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+          </div>
 
+          <div className="flex items-center gap-1.5 shrink-0">
+            {/* New Note Button */}
+            <button
+              onClick={handleCreateNew}
+              className="px-3 py-1.5 bg-[#7F1D1D] hover:bg-black text-white font-black rounded text-[9px] uppercase tracking-[0.2em] flex items-center gap-1.5 transition-all cursor-pointer shadow-sm active:scale-95"
+              title="Registrar nueva nota"
+            >
+              <Plus size={13} strokeWidth={2.5} />
+              <span className="hidden sm:inline">Nuevo Apunte</span>
+            </button>
+
+            {/* Sidebar Toggle Button */}
+            <button
+              onClick={() => setShowSidebar(prev => !prev)}
+              className={`p-1.5 rounded transition-colors cursor-pointer ${
+                showSidebar
+                  ? 'bg-stone-100 dark:bg-stone-800 text-[#7F1D1D] dark:text-amber-500'
+                  : 'text-stone-400 hover:text-[#1A2533] dark:hover:text-white hover:bg-stone-50 dark:hover:bg-stone-800'
+              }`}
+              title={showSidebar ? "Ocultar lista" : "Mostrar lista de apuntes"}
+            >
+              {showSidebar ? <PanelLeftClose size={16} /> : <PanelLeftOpen size={16} />}
+            </button>
+
+            {/* Close Button */}
+            <button
+              onClick={handleClose}
+              className="p-1.5 text-stone-400 hover:text-[#7F1D1D] hover:bg-stone-50 dark:hover:bg-stone-800 rounded transition-colors cursor-pointer ml-1"
+              title="Cerrar Bitácora"
+            >
+              <X size={18} />
+            </button>
+          </div>
+        </div>
+
+        {/* BODY: SPLIT VIEW OR FULL EDITOR */}
+        <div className="flex-1 flex overflow-hidden min-h-0 bg-white dark:bg-zinc-950">
+          {/* LEFT SIDEBAR: NOTE LIST */}
+          {showSidebar && (
+            <div className={`w-full sm:w-64 md:w-72 border-r flex flex-col shrink-0 bg-[#FAF9F5] dark:bg-stone-900/50 border-stone-200 dark:border-stone-800 ${
+              activeNoteId ? 'hidden sm:flex' : 'flex'
+            }`}>
+              {/* Search bar */}
+              <div className="p-3 border-b border-stone-200 dark:border-stone-800">
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Buscar notas..."
+                    className="w-full pl-8 pr-3 py-1.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-xs rounded outline-none focus:border-[#7F1D1D] text-stone-800 dark:text-stone-100 font-sans"
+                  />
+                  <Search size={13} className="absolute left-2.5 top-2.5 text-stone-400" />
+                </div>
+              </div>
+
+              {/* Note items */}
+              <div className="flex-1 overflow-y-auto custom-scrollbar p-2 space-y-1">
+                {filteredNotes.length === 0 ? (
+                  <div className="p-4 text-center text-xs text-stone-400">
+                    No se encontraron notas
+                  </div>
+                ) : (
+                  filteredNotes.map(n => {
+                    const isSelected = n.id === activeNoteId;
+                    return (
+                      <div
+                        key={n.id}
+                        onClick={() => {
+                          setActiveNoteId(n.id);
+                          setTitle(n.title);
+                          setContent(n.content);
+                        }}
+                        className={`p-2.5 rounded text-left cursor-pointer transition-all border ${
+                          isSelected
+                            ? 'bg-white dark:bg-stone-800 border-stone-300 dark:border-stone-700 shadow-xs'
+                            : 'border-transparent hover:bg-white/60 dark:hover:bg-stone-800/60'
+                        }`}
+                      >
+                        <div className="flex items-center justify-between gap-1">
+                          <h5 className="font-serif font-bold text-xs text-stone-900 dark:text-stone-100 truncate">
+                            {n.title || 'Sin Título'}
+                          </h5>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDelete(n.id);
+                            }}
+                            className="text-stone-400 hover:text-rose-600 p-1 opacity-60 hover:opacity-100"
+                            title="Eliminar"
+                          >
+                            <Trash2 size={12} />
+                          </button>
+                        </div>
+                        <p className="text-[10px] text-stone-500 truncate mt-0.5">
+                          {n.content || 'Sin contenido'}
+                        </p>
+                        <div className="mt-1 flex items-center justify-between text-[8px] text-stone-400 uppercase tracking-wider font-bold">
+                          <span>{new Date(n.updatedAt).toLocaleDateString([], { month: 'short', day: 'numeric' })}</span>
+                          {n.lessonTitle && <span className="truncate max-w-[120px]">{n.lessonTitle}</span>}
+                        </div>
+                      </div>
+                    );
+                  })
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* RIGHT / MAIN: EDITOR */}
+          <div className="flex-1 min-w-0 flex flex-col bg-white dark:bg-zinc-950">
+            {activeNote ? (
+              <div className="flex-1 flex flex-col h-full overflow-hidden min-w-0">
+                {/* Editor Header: Title & Save Status */}
+                <div className="px-4 py-2.5 border-b bg-[#FAF9F5] dark:bg-stone-900 border-stone-200 dark:border-stone-800 flex items-center justify-between gap-3 shrink-0">
+                  <div className="flex items-center gap-2">
+                    <div className={`w-2 h-2 rounded-full ${isSaving ? 'bg-amber-500 animate-pulse' : 'bg-emerald-500'}`} />
+                    <span className="text-[9px] font-black text-stone-400 uppercase tracking-widest">
+                      {isSaving ? 'Guardando...' : 'Guardado'}
+                    </span>
+                  </div>
+
+                  <div className="flex items-center gap-2 shrink-0">
+                    <button
+                      onClick={() => handleCopy(`${title}\n\n${content}`, activeNote.id)}
+                      className="p-1.5 text-stone-400 hover:text-[#1A2533] dark:hover:text-white rounded hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors cursor-pointer"
+                      title="Copiar contenido"
+                    >
+                      {copiedId === activeNote.id ? <Check size={14} className="text-emerald-600" /> : <Copy size={14} />}
+                    </button>
+
+                    <button
+                      onClick={() => handleDelete(activeNote.id)}
+                      className="p-1.5 text-stone-400 hover:text-rose-600 rounded hover:bg-rose-50 dark:hover:bg-rose-950/20 transition-colors cursor-pointer"
+                      title="Eliminar apunte"
+                    >
+                      <Trash2 size={14} />
+                    </button>
+                  </div>
+                </div>
+
+                {/* Editor Inputs */}
+                <div className="p-4 sm:p-6 flex-1 min-w-0 flex flex-col gap-3 overflow-y-auto custom-scrollbar">
+                  <input
+                    type="text"
+                    value={title}
+                    onChange={(e) => {
+                      setTitle(e.target.value);
+                      handleAutoSave(e.target.value, content);
+                    }}
+                    placeholder="Título del apunte..."
+                    className="w-full text-lg sm:text-xl font-serif font-black text-[#1A2533] dark:text-stone-100 bg-transparent outline-none border-b border-stone-200 dark:border-stone-800 focus:border-[#7F1D1D] pb-2 transition-colors min-w-0"
+                  />
+
+                  {activeNote.lessonTitle && (
+                    <div className="text-[9px] font-bold text-[#7F1D1D] dark:text-amber-500 uppercase tracking-wider">
+                      Lección: {activeNote.lessonTitle}
+                    </div>
+                  )}
+
+                  <textarea
+                    value={content}
+                    onChange={(e) => {
+                      setContent(e.target.value);
+                      handleAutoSave(title, e.target.value);
+                    }}
+                    placeholder="Escriba sus reflexiones, análisis teológico o notas de estudio aquí..."
+                    className="flex-1 w-full bg-transparent resize-none outline-none font-serif text-sm leading-relaxed text-stone-900 dark:text-stone-100 placeholder:text-stone-400 min-h-[200px]"
+                  />
+                </div>
+              </div>
+            ) : (
+              <div className="flex-1 flex flex-col items-center justify-center p-8 text-center space-y-4">
+                <div className="w-16 h-16 rounded bg-[#FAF9F5] dark:bg-stone-900 flex items-center justify-center text-[#7F1D1D] dark:text-amber-500 border border-stone-200 dark:border-stone-800 shadow-xs">
+                  <BookOpen size={24} strokeWidth={1.5} />
+                </div>
+                <div>
+                  <h4 className="font-serif font-black text-stone-900 dark:text-stone-100 text-sm">Bitácora de Estudio</h4>
+                  <p className="text-xs text-stone-400 mt-1 max-w-xs">
+                    Seleccione un apunte de la lista o cree uno nuevo para comenzar a redactar.
+                  </p>
+                </div>
+                <button
+                  onClick={handleCreateNew}
+                  className="px-4 py-2 bg-[#7F1D1D] hover:bg-black text-white font-black rounded text-[9px] uppercase tracking-[0.2em] shadow-sm transition-all cursor-pointer active:scale-95 flex items-center gap-2"
+                >
+                  <Plus size={14} strokeWidth={2.5} />
+                  <span>Crear Nuevo Apunte</span>
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <>
       {/* MAIN NOTES WINDOW */}
       <AnimatePresence>
         {isOpen && !isMinimized && (
@@ -477,7 +659,7 @@ export function FloatingNotesWidget({
 
                 {/* Close Button */}
                 <button
-                  onClick={() => setIsOpen(false)}
+                  onClick={handleClose}
                   className="p-2 text-stone-400 hover:text-[#7F1D1D] hover:bg-[#7F1D1D]/5 rounded transition-colors cursor-pointer ml-1"
                   title="Cerrar Bitácora"
                 >

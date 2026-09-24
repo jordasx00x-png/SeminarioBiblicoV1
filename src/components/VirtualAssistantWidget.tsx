@@ -28,10 +28,12 @@ import { auth } from '../firebase';
 interface VirtualAssistantWidgetProps {
   isOpen: boolean;
   onClose: () => void;
-  onOpen: () => void;
+  onOpen?: () => void;
   activeCourseTitle?: string;
   activeLessonTitle?: string;
   onSelectVerse?: (ref: string) => void;
+  hideFloatingTrigger?: boolean;
+  isSplitMode?: boolean;
 }
 
 export function VirtualAssistantWidget({
@@ -41,6 +43,8 @@ export function VirtualAssistantWidget({
   activeCourseTitle,
   activeLessonTitle,
   onSelectVerse,
+  hideFloatingTrigger,
+  isSplitMode = false
 }: VirtualAssistantWidgetProps) {
   const { 
     messages, 
@@ -91,6 +95,13 @@ export function VirtualAssistantWidget({
       e.preventDefault();
       handleSend();
     }
+  };
+
+  const handleSendSuggestion = (prompt: string) => {
+    sendMessage(prompt, {
+      courseTitle: activeCourseTitle,
+      lessonTitle: activeLessonTitle,
+    });
   };
 
   const handleCopy = (id: string, text: string) => {
@@ -201,72 +212,207 @@ export function VirtualAssistantWidget({
     });
   };
 
-  return (
-    <>
-      {/* FLOATING TRIGGER BUTTON: Institutional Minimalist */}
-      {!isOpen && !isMinimized && (
-        <motion.div 
-          className="fixed bottom-4 right-4 md:bottom-6 md:right-6 z-50"
-          initial={{ scale: 0, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ type: 'spring', stiffness: 260, damping: 20 }}
-        >
-          <button
-            onClick={onOpen}
-            className="group relative flex items-center gap-3 px-5 py-3.5 bg-[#7F1D1D] hover:bg-black text-white rounded-full shadow-2xl border border-[#7F1D1D]/20 transition-all duration-300 cursor-pointer active:scale-95"
-          >
-            <div className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-500 rounded-full border-2 border-white animate-pulse" />
-            <GraduationCap size={22} strokeWidth={1.5} className="text-amber-200" />
-            <span className="text-[10px] font-bold uppercase tracking-[0.2em] hidden md:inline">Consultor Doctrinal</span>
-          </button>
-        </motion.div>
-      )}
-
-      {/* MINIMIZED FLOATING PILL */}
-      <AnimatePresence>
-        {isMinimized && (
-          <motion.div
-            initial={{ opacity: 0, y: 30, scale: 0.9 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 30, scale: 0.9 }}
-            className="fixed bottom-4 right-4 md:bottom-6 md:right-6 z-50 bg-white dark:bg-zinc-900 text-[#1A2533] dark:text-stone-100 border border-stone-200 dark:border-stone-800 rounded shadow-2xl p-4 flex items-center gap-4 font-sans max-w-xs sm:max-w-sm"
-          >
-            <div className="p-2 bg-[#FAF9F5] dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-[#7F1D1D] dark:text-amber-500 rounded shrink-0">
-              <Bot size={20} strokeWidth={1.5} />
+  if (isSplitMode) {
+    if (!isOpen) return null;
+    return (
+      <div className="w-full h-full bg-white dark:bg-zinc-950 border-stone-200 dark:border-stone-800 flex flex-col font-sans overflow-hidden text-[#1A2533] dark:text-stone-100">
+        {/* TOP HEADER: Institutional Paper Style */}
+        <div className="px-5 py-3.5 bg-white dark:bg-stone-900 border-b border-stone-200 dark:border-stone-800 flex items-center justify-between shrink-0 relative">
+          <div className="absolute top-0 left-0 w-full h-1 bg-[#7F1D1D]" />
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="w-10 h-10 rounded bg-[#FAF9F5] dark:bg-stone-800 flex items-center justify-center border border-stone-200 dark:border-stone-700 shadow-sm shrink-0">
+              <Bot size={20} strokeWidth={1.5} className="text-[#7F1D1D] dark:text-amber-500" />
             </div>
-            <div className="flex-1 min-w-0">
+            <div className="min-w-0">
               <div className="flex items-center gap-2">
-                <span className="text-[10px] font-black text-[#1A2533] dark:text-stone-100 uppercase tracking-widest truncate">
-                  Consultoría Activa
+                <h3 className="text-sm font-serif font-black text-[#1A2533] dark:text-stone-100 uppercase tracking-tight truncate">
+                  Consultoría Doctrinal
+                </h3>
+                <span className="flex items-center gap-1 text-[8px] bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800 px-1.5 py-0.5 rounded font-bold uppercase tracking-widest shrink-0">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                  Activo
                 </span>
-                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
               </div>
-              <p className="text-[10px] text-stone-400 uppercase tracking-widest mt-0.5 truncate font-bold">
-                {isLoading ? 'Redactando respuesta...' : 'Listo para asistirle'}
+              <p className="text-[10px] font-bold text-stone-400 uppercase tracking-widest truncate mt-0.5">
+                Campus Virtual • Asistencia Teológica IA
               </p>
             </div>
-            <div className="flex items-center gap-2 shrink-0">
-              <button
-                onClick={() => setIsMinimized(false)}
-                className="px-3 py-1.5 bg-[#7F1D1D] hover:bg-black text-white rounded text-[9px] font-black uppercase tracking-[0.2em] transition-all cursor-pointer shadow-sm active:scale-95"
-              >
-                Abrir
-              </button>
-              <button
-                onClick={() => {
-                  setIsMinimized(false);
-                  onClose();
-                }}
-                className="p-1.5 text-stone-400 hover:text-[#7F1D1D] hover:bg-stone-50 dark:hover:bg-stone-800 rounded transition-colors cursor-pointer"
-                title="Cerrar"
-              >
-                <X size={16} />
-              </button>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+          </div>
 
+          {/* Action Buttons */}
+          <div className="flex items-center gap-1.5 shrink-0">
+            {/* Clear Chat */}
+            {showClearConfirm ? (
+              <div className="flex items-center gap-1.5 bg-[#FAF9F5] dark:bg-stone-800 border border-stone-200 dark:border-stone-700 px-2 py-0.5 rounded">
+                <span className="text-[9px] text-stone-500 dark:text-stone-400 font-black uppercase tracking-widest">¿Borrar?</span>
+                <button
+                  onClick={() => {
+                    startNewConversation();
+                    setShowClearConfirm(false);
+                  }}
+                  className="px-2 py-0.5 bg-[#7F1D1D] hover:bg-black text-white rounded text-[9px] font-black uppercase tracking-widest cursor-pointer"
+                >
+                  Sí
+                </button>
+                <button
+                  onClick={() => setShowClearConfirm(false)}
+                  className="px-2 py-0.5 bg-stone-100 dark:bg-stone-700 text-stone-600 dark:text-stone-300 rounded text-[9px] uppercase font-black tracking-widest cursor-pointer"
+                >
+                  No
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={() => setShowClearConfirm(true)}
+                className="p-1.5 text-stone-400 hover:text-[#7F1D1D] hover:bg-stone-50 dark:hover:bg-stone-800 rounded transition-colors cursor-pointer"
+                title="Reiniciar conversación"
+              >
+                <Trash2 size={16} />
+              </button>
+            )}
+
+            {/* Close */}
+            <button
+              onClick={onClose}
+              className="p-1.5 text-stone-400 hover:text-[#7F1D1D] hover:bg-stone-50 dark:hover:bg-stone-800 rounded transition-colors cursor-pointer ml-1"
+              title="Cerrar consultor"
+            >
+              <X size={18} />
+            </button>
+          </div>
+        </div>
+
+        {/* MESSAGES CONTAINER */}
+        <div 
+          className="flex-1 overflow-y-auto custom-scrollbar p-4 space-y-4 bg-[#FAF9F5]/40 dark:bg-stone-950/40"
+        >
+          {messages.length === 0 ? (
+            <div className="py-8 px-4 flex flex-col items-center text-center max-w-md mx-auto space-y-4">
+              <div className="w-14 h-14 rounded-full bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 flex items-center justify-center text-[#7F1D1D] dark:text-amber-500 shadow-sm">
+                <BookOpen size={24} strokeWidth={1.5} />
+              </div>
+              <div>
+                <h4 className="font-serif font-black text-stone-900 dark:text-stone-100 text-base">
+                  Consultoría Doctrinal y Académica
+                </h4>
+                <p className="text-xs text-stone-500 dark:text-stone-400 mt-1 leading-relaxed">
+                  Consulte sobre pasajes bíblicos, exégesis, marcos confesionales históricos o la lección en curso.
+                </p>
+              </div>
+
+              {activeLessonTitle && (
+                <div className="w-full p-3 rounded-lg bg-amber-50/60 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900/40 text-left">
+                  <span className="text-[9px] font-black uppercase tracking-widest text-[#7F1D1D] dark:text-amber-400 block mb-1">
+                    Contexto de Estudio Actual
+                  </span>
+                  <p className="text-xs font-serif font-bold text-stone-800 dark:text-stone-200 truncate">
+                    {activeLessonTitle}
+                  </p>
+                </div>
+              )}
+
+              <div className="w-full space-y-1.5 pt-2 text-left">
+                <span className="text-[9px] font-black uppercase tracking-widest text-stone-400 px-1 block">
+                  Líneas de Consulta Sugeridas
+                </span>
+                {suggestedPrompts.slice(0, 3).map((prompt, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => handleSendSuggestion(prompt)}
+                    className="w-full p-2 rounded text-xs text-left bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 hover:border-[#7F1D1D] dark:hover:border-amber-500 text-stone-700 dark:text-stone-300 transition-all cursor-pointer shadow-xs"
+                  >
+                    {prompt}
+                  </button>
+                ))}
+              </div>
+            </div>
+          ) : (
+            messages.map((msg) => (
+              <div
+                key={msg.id}
+                className={`flex gap-3 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+              >
+                {msg.role === 'assistant' && (
+                  <div className="w-7 h-7 rounded bg-[#7F1D1D] text-amber-200 flex items-center justify-center font-bold text-xs shrink-0 mt-1">
+                    C
+                  </div>
+                )}
+                <div
+                  className={`max-w-[85%] rounded-lg p-3.5 text-xs leading-relaxed ${
+                    msg.role === 'user'
+                      ? 'bg-[#1A2533] text-white rounded-br-none shadow-sm'
+                      : 'bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 text-stone-800 dark:text-stone-200 rounded-bl-none shadow-xs'
+                  }`}
+                >
+                  <div className="whitespace-pre-wrap font-sans">
+                    {msg.content}
+                  </div>
+                  <div className="mt-2 text-[9px] text-stone-400 dark:text-stone-500 flex items-center justify-between">
+                    <span>{new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                    {msg.role === 'assistant' && (
+                      <button
+                        onClick={() => handleCopy(msg.id, msg.content)}
+                        className="hover:text-stone-700 dark:hover:text-stone-300 transition-colors cursor-pointer"
+                        title="Copiar respuesta"
+                      >
+                        {copiedId === msg.id ? <Check size={12} className="text-emerald-500" /> : <Copy size={12} />}
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ))
+          )}
+          {isLoading && (
+            <div className="flex gap-3 items-center text-xs text-stone-400 py-2">
+              <div className="w-7 h-7 rounded bg-[#7F1D1D] text-amber-200 flex items-center justify-center font-bold text-xs shrink-0 animate-pulse">
+                C
+              </div>
+              <span className="italic">Redactando respuesta teológica con referencias...</span>
+            </div>
+          )}
+          <div ref={messagesEndRef} />
+        </div>
+
+        {/* INPUT BAR */}
+        <div className="p-3 bg-white dark:bg-zinc-950 border-t border-stone-200 dark:border-stone-800 shrink-0">
+          <div className="relative flex items-center gap-2 bg-[#FAF9F5] dark:bg-stone-900 border border-stone-300 dark:border-stone-800 focus-within:border-[#7F1D1D] rounded p-2 transition-colors">
+            <textarea
+              ref={textareaRef}
+              value={inputText}
+              onChange={(e) => setInputText(e.target.value)}
+              onKeyDown={handleKeyDown}
+              placeholder="Redacte su consulta teológica o bíblica..."
+              rows={1}
+              disabled={isLoading}
+              className="flex-1 bg-transparent text-[#1A2533] dark:text-stone-100 text-xs placeholder:text-stone-400 outline-none resize-none custom-scrollbar leading-relaxed font-sans"
+              style={{ minHeight: '24px', maxHeight: '100px' }}
+            />
+
+            <button
+              onClick={handleSend}
+              disabled={!inputText.trim() || isLoading}
+              className="p-2 bg-[#7F1D1D] hover:bg-black disabled:bg-stone-100 dark:disabled:bg-stone-800 disabled:text-stone-400 text-white rounded transition-all cursor-pointer shadow-sm active:scale-95 shrink-0"
+              title="Enviar consulta (Enter)"
+            >
+              <Send size={15} strokeWidth={2} />
+            </button>
+          </div>
+
+          <div className="mt-1.5 text-[8px] font-bold uppercase tracking-wider text-stone-400 flex items-center justify-between px-1">
+            <span>Presiona Enter para enviar</span>
+            <span className="flex items-center gap-1">
+              <Sparkles size={9} className="text-amber-500" />
+              Asesoría Académica
+            </span>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <>
       {/* MAIN ASSISTANT WINDOW */}
       <AnimatePresence>
         {isOpen && !isMinimized && (

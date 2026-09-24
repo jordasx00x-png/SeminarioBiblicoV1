@@ -43,8 +43,9 @@ export function useProgress() {
         setProgress(newProgress);
         safeStorage.setItem('seminario_progress', JSON.stringify(newProgress));
       } else {
-        // Init if missing
-        setDoc(docRef, progress, { merge: true }).catch(console.error);
+        // Init if missing with a static empty progress object to avoid capturing potentially stale state in a loop
+        const initialProgress: UserProgress = { completedLessons: {}, completedBlockExams: {} };
+        setDoc(docRef, initialProgress, { merge: true }).catch(console.error);
       }
       setIsLoading(false);
     }, (error) => {

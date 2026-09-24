@@ -22,7 +22,8 @@ import {
   EyeOff,
   PanelRight,
   PanelLeft,
-  Move
+  Move,
+  Search
 } from 'lucide-react';
 import { BibleVerseDetail, getVerseDetails } from '../data/bibleVerses';
 import { AcademicPanel } from './AcademicPanel';
@@ -34,6 +35,7 @@ interface BibleVerseModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSelectCrossReference?: (ref: string) => void;
+  isSplitMode?: boolean;
 }
 
 export function BibleVerseModal({
@@ -41,7 +43,8 @@ export function BibleVerseModal({
   fallbackText,
   isOpen,
   onClose,
-  onSelectCrossReference
+  onSelectCrossReference,
+  isSplitMode = false
 }: BibleVerseModalProps) {
   const [currentRef, setCurrentRef] = useState(reference);
   const [currentFallback, setCurrentFallback] = useState(fallbackText);
@@ -219,6 +222,383 @@ export function BibleVerseModal({
 
   const isDocked = dockPosition !== 'center';
   const isTransparentOverlay = seeThroughBackdrop || isMoved || isDocked;
+
+  if (isSplitMode) {
+    return (
+      <div className="w-full h-full bg-[#FAF9F5] dark:bg-stone-900 text-[#1A2533] dark:text-stone-100 flex flex-col border-stone-300 dark:border-stone-800 overflow-hidden font-serif">
+        {/* Top Header: Institutional Academic Style */}
+        <header 
+          className="bg-[#FAF9F5] dark:bg-stone-900 px-5 py-3.5 flex items-center justify-between border-b-2 border-[#7F1D1D] shrink-0 font-sans select-none"
+        >
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="w-10 h-10 rounded bg-[#7F1D1D] flex items-center justify-center text-amber-100 shadow-sm shrink-0 border border-[#7F1D1D]/20">
+              <BookOpen size={20} strokeWidth={1.5} />
+            </div>
+            <div className="min-w-0">
+              <div className="flex items-center gap-2 mb-0.5">
+                <span className="text-[9px] font-black tracking-[0.2em] uppercase text-[#7F1D1D] dark:text-amber-500">
+                  Visor Canónico
+                </span>
+                <span className="text-[9px] font-semibold text-stone-400 uppercase tracking-widest hidden sm:inline">&bull; {verseData.book}</span>
+              </div>
+              <h2 className="text-lg sm:text-xl font-serif font-bold text-[#1A2533] dark:text-stone-100 truncate leading-tight">
+                {verseData.reference}
+              </h2>
+            </div>
+          </div>
+
+          {/* Header Right Actions */}
+          <div className="flex items-center gap-2 font-sans">
+            {/* Quick jump input */}
+            <div className="relative hidden xl:block w-36">
+              <input
+                type="text"
+                defaultValue={currentRef}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    const val = (e.target as HTMLInputElement).value;
+                    if (val.trim()) {
+                      setCurrentRef(val.trim());
+                      setCurrentFallback(undefined);
+                    }
+                  }
+                }}
+                placeholder="Ir a pasaje..."
+                className="w-full text-xs px-2.5 py-1 rounded border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-800 text-stone-800 dark:text-stone-200 outline-none focus:border-[#7F1D1D]"
+              />
+              <Search size={13} className="absolute right-2 top-2 text-stone-400 pointer-events-none" />
+            </div>
+
+            <button
+              onClick={onClose}
+              className="px-3.5 py-1.5 rounded-md bg-[#1A2533] hover:bg-black text-white text-xs font-bold uppercase tracking-wider transition-all cursor-pointer shadow-sm active:scale-95 flex items-center gap-1.5"
+              title="Cerrar visor bíblico"
+            >
+              <X size={15} />
+              <span>Cerrar</span>
+            </button>
+          </div>
+        </header>
+
+        {/* Sub-Header: Mode Selector & Secondary Actions */}
+        <div className="bg-white dark:bg-stone-900 px-5 py-2.5 border-b border-stone-200 dark:border-stone-800 flex flex-wrap items-center justify-between gap-2 font-sans shrink-0">
+          <div className="flex items-center gap-4">
+            <button
+              onClick={() => setViewMode('full_panel')}
+              className={`pb-1 text-xs font-bold uppercase tracking-[0.15em] transition-all cursor-pointer border-b-2 ${
+                viewMode === 'full_panel'
+                  ? 'border-[#7F1D1D] text-[#1A2533] dark:text-stone-100'
+                  : 'border-transparent text-stone-400 hover:text-stone-600'
+              }`}
+            >
+              Biblia Completa
+            </button>
+            <button
+              onClick={() => setViewMode('quick_card')}
+              className={`pb-1 text-xs font-bold uppercase tracking-[0.15em] transition-all cursor-pointer border-b-2 ${
+                viewMode === 'quick_card'
+                  ? 'border-[#7F1D1D] text-[#1A2533] dark:text-stone-100'
+                  : 'border-transparent text-stone-400 hover:text-stone-600'
+              }`}
+            >
+              Ficha de Estudio
+            </button>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <button
+              onClick={toggleSpeech}
+              className={`flex items-center gap-1 px-2.5 py-1 rounded text-[10px] font-bold uppercase tracking-widest border transition-all cursor-pointer ${
+                isReadingAudio 
+                  ? 'bg-amber-100 border-amber-300 text-amber-800 animate-pulse' 
+                  : 'bg-white dark:bg-stone-800 border-stone-200 dark:border-stone-700 text-stone-600 hover:bg-stone-50'
+              }`}
+            >
+              {isReadingAudio ? <VolumeX size={13} /> : <Volume2 size={13} />}
+              <span>{isReadingAudio ? 'Detener' : 'Voz'}</span>
+            </button>
+
+            <button
+              onClick={handleCopy}
+              className="flex items-center gap-1 px-2.5 py-1 rounded text-[10px] font-bold uppercase tracking-widest border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-800 text-stone-600 hover:bg-stone-50 transition-all cursor-pointer"
+            >
+              {copied ? <Check size={13} className="text-emerald-600" /> : <Copy size={13} />}
+              <span>{copied ? 'Copiado' : 'Copiar'}</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Dynamic Navigation Subtabs for Full Panel */}
+        {viewMode === 'full_panel' && (
+          <div className="bg-[#FAF9F5] dark:bg-stone-900/60 px-5 pt-2 border-b border-stone-200 dark:border-stone-800 flex items-center gap-2 overflow-x-auto custom-scrollbar font-sans shrink-0">
+            {[
+              { id: 'text', label: 'Texto del Pasaje', icon: BookOpen },
+              { id: 'context', label: 'Contexto Inmediato', icon: Layers },
+              { id: 'exegesis', label: 'Exégesis Teológica', icon: Sparkles },
+              { id: 'cross', label: `Referencias (${verseData.crossReferences.length})`, icon: Bookmark },
+              { id: 'original', label: 'Hebreo / Griego', icon: Compass }
+            ].map(tab => {
+              const TabIcon = tab.icon;
+              const isActive = activeSubTab === tab.id;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveSubTab(tab.id as any)}
+                  className={`flex items-center gap-2 py-2 px-3 text-xs font-semibold rounded-t-lg transition-all border-t-2 shrink-0 cursor-pointer ${
+                    isActive
+                      ? 'bg-white dark:bg-stone-800 text-[#7F1D1D] dark:text-amber-400 border-[#7F1D1D] shadow-xs'
+                      : 'border-transparent text-stone-600 dark:text-stone-400 hover:text-stone-900 hover:bg-stone-100 dark:hover:bg-stone-800/50'
+                  }`}
+                >
+                  <TabIcon size={14} className={isActive ? 'text-[#7F1D1D] dark:text-amber-400' : 'text-stone-400'} />
+                  <span>{tab.label}</span>
+                </button>
+              );
+            })}
+          </div>
+        )}
+
+        {/* Scrollable Main Body */}
+        {viewMode === 'full_panel' ? (
+          <div className="flex-1 min-h-0 overflow-hidden bg-[#FAF9F5] dark:bg-stone-950 flex flex-col">
+            <AcademicPanel
+              initialBookId={parsedRef?.book.id || 'gen'}
+              initialChapter={parsedRef?.chapter || 1}
+              initialVerse={parsedRef?.verse || 1}
+              isSecondScreenMode={true}
+              onCloseSecondScreen={onClose}
+            />
+          </div>
+        ) : (
+          <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar p-4 md:p-6 bg-[#FDFCFB] dark:bg-stone-950/40">
+            {/* SubTab 1: Verse text and versions */}
+            {activeSubTab === 'text' && (
+              <div className="space-y-6 animate-in fade-in duration-300">
+                <div className="bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 rounded-xl p-6 shadow-xs relative">
+                  <div className="flex flex-wrap items-center justify-between gap-3 pb-3 mb-5 border-b border-stone-200 dark:border-stone-800 font-sans">
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-stone-400 mr-1">Versión:</span>
+                      {(['rvr1960', 'nvi', 'lbla', 'dhh', 'original'] as const).map(ver => (
+                        <button
+                          key={ver}
+                          onClick={() => setSelectedVersion(ver)}
+                          className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider transition-all cursor-pointer ${
+                            selectedVersion === ver
+                              ? 'bg-[#7F1D1D] text-white shadow-xs'
+                              : 'bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-400 hover:bg-stone-200'
+                          }`}
+                        >
+                          {ver.toUpperCase()}
+                        </button>
+                      ))}
+                    </div>
+
+                    <div className="flex items-center gap-1 text-[10px] text-stone-400">
+                      <span>Tamaño:</span>
+                      {(['normal', 'large', 'xlarge'] as const).map(size => (
+                        <button
+                          key={size}
+                          onClick={() => setTextSize(size)}
+                          className={`px-1.5 py-0.5 rounded font-bold cursor-pointer ${
+                            textSize === size ? 'bg-stone-200 dark:bg-stone-700 text-stone-900 dark:text-stone-100' : 'hover:text-stone-700'
+                          }`}
+                        >
+                          {size === 'normal' ? 'A' : size === 'large' ? 'A+' : 'A++'}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="relative">
+                    <span className="text-4xl text-[#7F1D1D]/15 font-serif absolute -top-4 -left-2 select-none font-bold">“</span>
+                    <p className={`text-stone-900 dark:text-stone-100 font-serif ${textSizeClass} relative z-10 pl-3 leading-relaxed`}>
+                      {currentVerseText}
+                    </p>
+                    <span className="text-4xl text-[#7F1D1D]/15 font-serif absolute -bottom-6 right-2 select-none font-bold">”</span>
+                  </div>
+
+                  <div className="mt-6 pt-3 border-t border-stone-100 dark:border-stone-800 flex items-center justify-between font-sans text-xs text-stone-400">
+                    <span>{verseData.reference} • Edición Académica</span>
+                    <span className="text-emerald-700 dark:text-emerald-400 font-medium flex items-center gap-1">
+                      <Check size={12} /> Canon Validado
+                    </span>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* SubTab 2: Surrounding Chapter Context */}
+            {activeSubTab === 'context' && (
+              <div className="space-y-4 animate-in fade-in duration-300">
+                <div className="bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 rounded-xl p-5 shadow-xs">
+                  <div className="flex items-center justify-between pb-3 mb-4 border-b border-stone-200 dark:border-stone-800 font-sans">
+                    <div>
+                      <h3 className="text-base font-serif font-bold text-stone-900 dark:text-stone-100">{verseData.context.heading}</h3>
+                      <p className="text-xs text-stone-500">{verseData.book} — Capítulo {verseData.chapter}</p>
+                    </div>
+                    <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-stone-100 dark:bg-stone-800 text-stone-700 dark:text-stone-300 font-sans">
+                      Contexto
+                    </span>
+                  </div>
+
+                  <div className="space-y-2.5 font-serif text-stone-800 dark:text-stone-200">
+                    {verseData.context.surroundingVerses.map((item, idx) => (
+                      <div 
+                        key={idx}
+                        className={`p-3 rounded-lg transition-all flex items-start gap-2.5 ${
+                          item.isTarget 
+                            ? 'bg-amber-50 dark:bg-amber-950/30 border-l-2 border-[#7F1D1D] font-semibold text-stone-900 dark:text-stone-100' 
+                            : 'hover:bg-stone-50 dark:hover:bg-stone-800/40'
+                        }`}
+                      >
+                        <span className={`text-[10px] font-semibold font-sans px-1.5 py-0.5 rounded shrink-0 mt-0.5 ${
+                          item.isTarget ? 'bg-[#7F1D1D] text-white' : 'bg-stone-200 dark:bg-stone-800 text-stone-700 dark:text-stone-300'
+                        }`}>
+                          v. {item.num}
+                        </span>
+                        <p className="text-sm md:text-base leading-relaxed">
+                          {item.text}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="mt-5 pt-3 border-t border-stone-200 dark:border-stone-800 bg-stone-50 dark:bg-stone-800/40 p-3 rounded-lg font-sans">
+                    <h5 className="font-semibold text-xs uppercase tracking-wider text-[#7F1D1D] dark:text-amber-400 mb-1">
+                      Marco Histórico y Canónico
+                    </h5>
+                    <p className="text-xs text-stone-700 dark:text-stone-300 leading-relaxed">
+                      {verseData.context.historicalContext}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* SubTab 3: Exegesis & Theological Commentary */}
+            {activeSubTab === 'exegesis' && (
+              <div className="space-y-4 animate-in fade-in duration-300 font-sans">
+                <div className="bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 rounded-xl p-5 shadow-xs space-y-4">
+                  <div className="flex items-center gap-3 pb-3 border-b border-stone-200 dark:border-stone-800">
+                    <div className="w-8 h-8 rounded-lg bg-[#111827] text-amber-200 flex items-center justify-center font-serif font-bold text-sm">
+                      {verseData.commentary.author.charAt(0)}
+                    </div>
+                    <div>
+                      <h4 className="font-serif font-bold text-stone-900 dark:text-stone-100 text-sm">{verseData.commentary.author}</h4>
+                      <p className="text-[10px] text-stone-500">Tratado Exegético y Teológico</p>
+                    </div>
+                  </div>
+
+                  <div className="space-y-3">
+                    <div>
+                      <h5 className="text-[10px] font-semibold text-[#7F1D1D] dark:text-amber-400 uppercase tracking-wider mb-1">
+                        Comentario Expositivo ({verseData.commentary.author})
+                      </h5>
+                      <p className="text-xs text-stone-700 dark:text-stone-300 leading-relaxed">
+                        {verseData.commentary.notes}
+                      </p>
+                    </div>
+
+                    <div className="p-3 rounded-lg bg-[#FAF9F5] dark:bg-stone-800/60 border border-stone-200 dark:border-stone-700/60 font-serif italic text-xs md:text-sm text-stone-800 dark:text-stone-200 leading-relaxed">
+                      "{verseData.rvr1960}"
+                    </div>
+
+                    <div className="mt-3 pt-3 border-t border-stone-100 dark:border-stone-800">
+                      <h5 className="text-[10px] font-semibold text-stone-500 uppercase tracking-wider mb-1">
+                        Aplicación Ministerial y Expositiva
+                      </h5>
+                      <p className="text-xs text-stone-600 dark:text-stone-400 leading-relaxed">
+                        {verseData.commentary.application}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* SubTab 4: Cross References */}
+            {activeSubTab === 'cross' && (
+              <div className="space-y-3 animate-in fade-in duration-300 font-sans">
+                <div className="flex items-center justify-between pb-2 border-b border-stone-200 dark:border-stone-800">
+                  <span className="text-xs font-bold text-stone-700 dark:text-stone-300">
+                    {verseData.crossReferences.length} Pasajes Paralelos y Correlativos
+                  </span>
+                  <span className="text-[10px] text-stone-400">Clic para saltar al pasaje</span>
+                </div>
+
+                <div className="grid grid-cols-1 gap-2.5">
+                  {verseData.crossReferences.map((refItem, idx) => (
+                    <div
+                      key={idx}
+                      onClick={() => handleCrossRefClick(refItem.reference)}
+                      className="p-3 rounded-lg bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 hover:border-[#7F1D1D] dark:hover:border-amber-500 transition-all cursor-pointer group shadow-xs"
+                    >
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="font-serif font-bold text-xs text-[#7F1D1D] dark:text-amber-400 group-hover:underline">
+                          {refItem.reference}
+                        </span>
+                        <span className="text-[9px] px-1.5 py-0.5 rounded bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-400 uppercase font-semibold">
+                          {refItem.label}
+                        </span>
+                      </div>
+                      {refItem.text && (
+                        <p className="text-xs font-serif text-stone-700 dark:text-stone-300 line-clamp-2">
+                          {refItem.text}
+                        </p>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* SubTab 5: Original Language */}
+            {activeSubTab === 'original' && (
+              <div className="space-y-4 animate-in fade-in duration-300 font-sans">
+                <div className="bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 rounded-xl p-5 shadow-xs space-y-4">
+                  <div className="flex items-center justify-between pb-3 border-b border-stone-200 dark:border-stone-800">
+                    <div>
+                      <h4 className="font-serif font-bold text-stone-900 dark:text-stone-100 text-sm">
+                        Texto en {verseData.originalLanguage?.language || 'Idioma Original'}
+                      </h4>
+                      <p className="text-[10px] text-stone-500">Morfología, Raíz y Transliteración</p>
+                    </div>
+                    <span className="text-xs font-mono px-2 py-0.5 rounded bg-amber-50 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-800">
+                      {verseData.originalLanguage?.language}
+                    </span>
+                  </div>
+
+                  <div className="p-4 rounded-lg bg-stone-50 dark:bg-stone-800/40 border border-stone-200 dark:border-stone-700 text-center space-y-2">
+                    <div className="text-xl md:text-2xl font-serif text-stone-900 dark:text-stone-100 py-1" dir={verseData.originalLanguage?.language === 'Hebreo Bíblico' ? 'rtl' : 'ltr'}>
+                      {verseData.originalLanguage?.originalText}
+                    </div>
+                    <div className="text-xs font-mono text-stone-500 italic">
+                      Transliteración: {verseData.originalLanguage?.transliteration}
+                    </div>
+                  </div>
+
+                  {verseData.originalLanguage && (
+                    <div className="space-y-2 pt-2">
+                      <h5 className="text-[10px] font-semibold uppercase tracking-wider text-stone-500">
+                        Término Clave y Raíz Léxica
+                      </h5>
+                      <div className="p-2.5 rounded bg-stone-50 dark:bg-stone-800/50 border border-stone-200 dark:border-stone-700">
+                        <div className="flex items-center justify-between">
+                          <span className="font-serif font-bold text-xs text-stone-900 dark:text-stone-100">{verseData.originalLanguage.keyWord}</span>
+                          <span className="text-[9px] font-mono text-stone-400">{verseData.originalLanguage.strong}</span>
+                        </div>
+                        <p className="text-[10px] text-[#7F1D1D] dark:text-amber-400 font-medium">{verseData.originalLanguage.meaning}</p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    );
+  }
 
   return (
     <div 

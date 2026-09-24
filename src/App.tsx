@@ -18,7 +18,7 @@ import { GradesPanel } from './components/GradesPanel';
 import { HomePanel } from './components/HomePanel';
 import { OfflineBanner } from './components/OfflineBanner';
 import { FloatingNotesWidget } from './components/FloatingNotesWidget';
-import { VirtualAssistantWidget } from './components/VirtualAssistantWidget';
+import ChatTeologico from './ChatTeologico';
 import { BibleVerseModal } from './components/BibleVerseModal';
 import { MobileBottomNav } from './components/MobileBottomNav';
 import { AnimatePresence, motion } from 'motion/react';
@@ -384,16 +384,7 @@ export default function App() {
               )}
 
               {activeTool === 'assistant' && (
-                <VirtualAssistantWidget 
-                  isOpen={true}
-                  onClose={handleCloseTool}
-                  activeCourseTitle={activeCourse?.title}
-                  activeLessonTitle={activeLesson?.title}
-                  isSplitMode={true}
-                  onSelectVerse={(ref) => {
-                    handleOpenBibleWithRef(ref);
-                  }}
-                />
+              <ChatTeologico />
               )}
 
               {activeTool === 'bible' && (
@@ -403,7 +394,6 @@ export default function App() {
                   onClose={handleCloseTool}
                   onSelectCrossReference={(crossRef) => setBibleModalRef(crossRef)}
                   isSplitMode={true}
-                />
               )}
             </div>
           )}

@@ -798,6 +798,39 @@ export function AcademicPanel({
                               <div className="text-xs text-gray-500 dark:text-gray-400">Contexto de la época, costumbres y lingüística</div>
                             </div>
                           </button>
+
+                          <button 
+                            onClick={() => setActiveVerseMenuTab('estudio_profundo')}
+                            className="flex items-center gap-3 p-3 rounded-lg bg-stone-50 dark:bg-zinc-800/50 hover:bg-amber-50 dark:hover:bg-zinc-800 text-sm font-medium transition-colors border border-transparent hover:border-amber-200 dark:hover:border-zinc-700 text-left"
+                          >
+                            <Library className="w-4 h-4 text-rose-600 dark:text-rose-400 shrink-0" />
+                            <div>
+                              <div className="font-semibold text-gray-800 dark:text-gray-200">Estudio Profundo Exegético</div>
+                              <div className="text-xs text-gray-500 dark:text-gray-400">Análisis académico exhaustivo del texto</div>
+                            </div>
+                          </button>
+
+                          <button 
+                            onClick={() => setActiveVerseMenuTab('diccionario_strong')}
+                            className="flex items-center gap-3 p-3 rounded-lg bg-stone-50 dark:bg-zinc-800/50 hover:bg-amber-50 dark:hover:bg-zinc-800 text-sm font-medium transition-colors border border-transparent hover:border-amber-200 dark:hover:border-zinc-700 text-left"
+                          >
+                            <Languages className="w-4 h-4 text-indigo-600 dark:text-indigo-400 shrink-0" />
+                            <div>
+                              <div className="font-semibold text-gray-800 dark:text-gray-200">Diccionario Strong</div>
+                              <div className="text-xs text-gray-500 dark:text-gray-400">Análisis léxico de términos originales</div>
+                            </div>
+                          </button>
+
+                          <button 
+                            onClick={() => setActiveVerseMenuTab('concordancia')}
+                            className="flex items-center gap-3 p-3 rounded-lg bg-stone-50 dark:bg-zinc-800/50 hover:bg-amber-50 dark:hover:bg-zinc-800 text-sm font-medium transition-colors border border-transparent hover:border-amber-200 dark:hover:border-zinc-700 text-left"
+                          >
+                            <ListFilter className="w-4 h-4 text-teal-600 dark:text-teal-400 shrink-0" />
+                            <div>
+                              <div className="font-semibold text-gray-800 dark:text-gray-200">Concordancia Temática</div>
+                              <div className="text-xs text-gray-500 dark:text-gray-400">Rastreo de términos en todo el canon</div>
+                            </div>
+                          </button>
                         </div>
                       ) : (
                         <div className="flex flex-col">
@@ -996,7 +1029,7 @@ export function AcademicPanel({
                             })()}
 
                             {activeVerseMenuTab === 'comentario_historico' && (
-                              <div className="space-y-3 max-h-[320px] overflow-y-auto custom-scrollbar pr-2">
+                              <div className="space-y-3 max-h-[400px] overflow-y-auto custom-scrollbar pr-2 pb-10">
                                 <div className="bg-blue-50/70 dark:bg-blue-950/30 p-3 rounded-lg border border-blue-200 dark:border-blue-900/50">
                                   <h4 className="font-bold text-xs text-blue-900 dark:text-blue-300 mb-1 flex items-center gap-2 uppercase tracking-wide">
                                     <History className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
@@ -1024,6 +1057,52 @@ export function AcademicPanel({
                                     {verseComm.theologicalInsight}
                                   </p>
                                 </div>
+                              </div>
+                            )}
+
+                            {activeVerseMenuTab === 'estudio_profundo' && (
+                              <div className="space-y-4 max-h-[500px] overflow-y-auto custom-scrollbar pr-2 pb-20">
+                                <div className="p-4 bg-white dark:bg-zinc-950 rounded border border-[#D1B17F]/30 shadow-sm relative overflow-hidden">
+                                  <div className="absolute top-0 left-0 w-1 h-full bg-[#7F1D1D]" />
+                                  <div className="prose prose-sm dark:prose-invert max-w-none">
+                                    <div className="markdown-content font-sans text-xs leading-relaxed text-stone-700 dark:text-stone-300" dangerouslySetInnerHTML={{ 
+                                      __html: verseComm.deepStudy
+                                        .replace(/### (.*)/g, '<h3 class="text-sm font-serif font-black text-[#1A2533] dark:text-stone-100 uppercase tracking-tight mb-2 mt-4">$1</h3>')
+                                        .replace(/#### (.*)/g, '<h4 class="text-[10px] font-serif font-black text-[#7F1D1D] dark:text-amber-500 uppercase tracking-widest mb-2 mt-3">$1</h4>')
+                                        .replace(/\*\*(.*)\*\*/g, '<strong class="font-bold text-[#1A2533] dark:text-stone-100">$1</strong>')
+                                        .replace(/\n/g, '<br/>')
+                                    }} />
+                                  </div>
+                                </div>
+                              </div>
+                            )}
+
+                            {activeVerseMenuTab === 'diccionario_strong' && (
+                              <div className="space-y-3 max-h-[400px] overflow-y-auto custom-scrollbar pr-2 pb-10">
+                                {verseComm.strongsDictionary.map((entry, idx) => (
+                                  <div key={idx} className="p-4 bg-white dark:bg-zinc-950 rounded border border-stone-200 dark:border-stone-800 shadow-sm relative overflow-hidden">
+                                    <div className="absolute top-0 left-0 w-1 h-full bg-indigo-200 dark:bg-indigo-900" />
+                                    <div className="flex items-center justify-between mb-2">
+                                      <div className="flex items-center gap-2">
+                                        <span className="font-serif font-bold text-indigo-700 dark:text-indigo-400">{entry.word}</span>
+                                        <span className="text-[9px] font-black text-stone-400 uppercase bg-stone-50 dark:bg-stone-900 px-1.5 py-0.5 rounded border border-stone-100 dark:border-stone-800">
+                                          {entry.number}
+                                        </span>
+                                      </div>
+                                    </div>
+                                    <p className="text-[11px] text-stone-700 dark:text-stone-300 leading-relaxed">
+                                      {entry.definition}
+                                    </p>
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+
+                            {activeVerseMenuTab === 'concordancia' && (
+                              <div className="space-y-4 max-h-[400px] overflow-y-auto custom-scrollbar pr-2 pb-20">
+                                <p className="text-[10px] text-stone-500 uppercase tracking-widest text-center py-4 italic">
+                                  La concordancia avanzada está disponible en la vista de escritorio para una investigación léxica exhaustiva.
+                                </p>
                               </div>
                             )}
                           </div>
@@ -1071,7 +1150,7 @@ export function AcademicPanel({
                 </button>
               </div>
 
-              <div className="flex-1 overflow-y-auto p-6 custom-scrollbar overscroll-contain">
+              <div className="flex-1 overflow-y-auto px-6 pt-6 pb-64 custom-scrollbar overscroll-contain">
                 {activeVerseMenuTab === 'menu' ? (
                   <div className="flex flex-col gap-4">
                     <button 
@@ -1432,11 +1511,11 @@ export function AcademicPanel({
                       )}
 
                       {activeVerseMenuTab === 'estudio_profundo' && (
-                        <div className="space-y-6">
+                        <div className="space-y-6 pb-20">
                           <div className="p-6 bg-white dark:bg-stone-900 rounded-xl border border-[#D1B17F]/30 shadow-lg relative overflow-hidden">
                             <div className="absolute top-0 left-0 w-1.5 h-full bg-[#7F1D1D]" />
                             <div className="prose prose-sm dark:prose-invert max-w-none prose-headings:font-serif prose-headings:font-black prose-headings:uppercase prose-headings:tracking-tight prose-headings:text-[#1A2533] dark:prose-headings:text-stone-100 prose-p:text-stone-600 dark:prose-p:text-stone-400 prose-p:leading-relaxed prose-strong:text-[#7F1D1D] dark:prose-strong:text-amber-500">
-                              <div className="markdown-content font-sans text-sm leading-loose text-stone-700 dark:text-stone-300" dangerouslySetInnerHTML={{ 
+                              <div className="markdown-content font-sans text-sm leading-loose text-stone-700 dark:text-stone-300 pb-20" dangerouslySetInnerHTML={{ 
                                 __html: selectedVerseComm.deepStudy
                                   .replace(/### (.*)/g, '<h3 class="text-lg font-serif font-black text-[#1A2533] dark:text-stone-100 uppercase tracking-tight mb-4 mt-8">$1</h3>')
                                   .replace(/#### (.*)/g, '<h4 class="text-sm font-serif font-black text-[#7F1D1D] dark:text-amber-500 uppercase tracking-widest mb-3 mt-6">$1</h4>')

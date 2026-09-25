@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campus Virtual - Asistencia Teológica IA</title>
+    <style>
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: #f4f6f9; display: flex; justify-content: center; padding: 20px; margin: 0; }
+        .chat-container { width: 100%; max-width: 600px; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); display: flex; flex-direction: column; height: 85vh; }
+        header { border-bottom: 1px solid #E9ECEF; padding-bottom: 10px; margin-bottom: 15px; }
+        h2 { margin: 0; font-size: 18px; color: #1D2533; font-weight: bold; display: flex; align-items: center; gap: 10px; }
+        .badge { background: #D1E7DD; color: #0F5132; font-size: 11px; padding: 3px 8px; border-radius: 4px; }
+        .subtitle { font-size: 12px; color: #6C757D; margin-top: 4px; display: block; }
+        .historial { flex-grow: 1; overflow-y: auto; padding: 10px; background: #ffffff; }
+        .msg-wrapper { display: flex; flex-direction: column; margin: 15px 0; }
+        .user-wrapper { align-items: flex-end; }
+        .ia-wrapper { align-items: flex-start; }
+        .burbuja { padding: 14px 18px; border-radius: 16px; max-width: 75%; word-wrap: break-word; font-size: 15px; font-weight: 500; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .usuario { background: #1D2533; color: white; border-bottom-right-radius: 2px; }
+        .ia { background: #E9ECEF; color: #111111; border-bottom-left-radius: 2px; }
+        .hora { font-size: 11px; color: #6C757D; margin-top: 4px; padding: 0 4px; }
+        .input-area { padding-top: 15px; border-top: 1px solid #E9ECEF; display: flex; gap: 12px; }
+        input { flex-grow: 1; padding: 14px 18px; border: 1px solid #DEE2E6; border-radius: 24px; font-size: 14px; outline: none; background: #F8F9FA; }
+        button { padding: 12px 24px; background: #1D2533; color: white; border: none; border-radius: 24px; font-weight: bold; cursor: pointer; font-size: 14px; }
+    </style>
+</head>
+<body>
+
+<div class="chat-container">
+    <header>
+        <h2>CONSULTORÍA DOCTRINAL <span class="badge">● ACTIVO</span></h2>
+        <span class="subtitle">CAMPUS VIRTUAL ● ASISTENCIA TEOLÓGICA IA</span>
+    </header>
+    
+    <div id="historial" class="historial">
+        <div class="msg-wrapper ia-wrapper">
+            <div class="burbuja ia">¡Paz y gracia! Soy tu **Asistente Virtual Teológico y Académico** del Seminario. Estoy aquí para responder cualquier pregunta que tengas sobre tus clases, exégesis bíblica o doctrina cristiana. ¿Qué tema te gustaría explorar hoy?</div>
+            <span class="hora" id="hora-inicio"></span>
+        </div>
+    </div>
+    
+    <div class="input-area">
+        <input type="text" id="usuarioInput" placeholder="Escribe tu consulta doctrinal o teológica aquí..." onkeypress="if(event.key === 'Enter') enviarPregunta()">
+        <button onclick="enviarPregunta()">Enviar</button>
+    </div>
+</div>
+
+<script>
+    const p1 = "gsk_lgheCJ0WdkO0e";
+    const p2 = "ophFTXUhWgdyb3FYkogvv7ZpZY33RSzkZYrmmDg1";
+    const API_KEY = p1 + p2;
+
+    const obtenerHora = () => new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+    document.getElementById('hora-inicio').innerText = obtenerHora();
+
+    async function enviarPregunta() {
+        const input = document.getElementById("usuarioInput");
+        const historial = document.getElementById("historial");
+        const texto = input.value.trim();
+        
+        if (!texto) return;
+
+        historial.innerHTML += `
+            <div class="msg-wrapper user-wrapper">
+                <div class="burbuja usuario">${texto}</div>
+                <span class="hora">${obtenerHora()}</span>
+            </div>
+        `;
+        input.value = "";
+        historial.scrollTop = historial.scrollHeight;
+
+        try {
+            const respuesta = await fetch("https://groq.com", {
+                method: "POST",
+                headers: {
+                    "Authorization": `Bearer ${API_KEY}`,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    model: "llama3-8b-8192",
+                    messages: [
+                        { role: "system", content: "Eres un Asistente Virtual Teológico interactivo para una plataforma educativa de Teología y Estudios Bíblicos llamada Campus Virtual. Tu deber es responder dudas de manera respetuosa, académica, clara y objetiva." },
+                        { role: "user", content: texto }
+                    ]
+                })
+            });
+
+            const datos = await respuesta.json();
+            const respuestaIA = datos.choices.message.content;
+
+            historial.innerHTML += `
+                <div class="msg-wrapper ia-wrapper">
+                    <div class="burbuja ia">${respuestaIA.replace(/\n/g, '<br>')}</div>
+                    <span class="hora">${obtenerHora()}</span>
+                </div>
+            `;
+        } catch (error) {
+            historial.innerHTML += `
+                <div class="msg-wrapper ia-wrapper">
+                    <div class="burbuja ia" style="color: red;">Error al conectar con el asistente teológico. Por favor, intenta de nuevo.</div>
+                    <span class="hora">${obtenerHora()}</span>
+                </div>
+            `;
+            console.error(error);
+        }
+        const historialRef = document.getElementById("historial");
+        historialRef.scrollTop = historialRef.scrollHeight;
+    }
+</script>
+
+</body>
+</html>

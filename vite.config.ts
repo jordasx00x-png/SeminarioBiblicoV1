@@ -1,11 +1,45 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import { VitePWA } from 'vite-plugin-pwa';
 
-// https://vitejs.dev
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    react(),
+    VitePWA({
+      registerType: 'autoUpdate',
+      includeAssets: ['favicon.ico', 'apple-touch-icon.png'],
+      manifest: {
+        name: 'Seminario Bíblico',
+        short_name: 'Seminario Bíblico',
+        description: 'Plataforma educativa de Teología y Estudios Bíblicos.',
+        theme_color: '#1D2533',
+        background_color: '#ffffff',
+        display: 'standalone',
+        orientation: 'portrait',
+        start_url: '/',
+        scope: '/',
+        icons: [
+          {
+            src: '/pwa-192x192.png',
+            sizes: '192x192',
+            type: 'image/png'
+          },
+          {
+            src: '/pwa-512x512.png',
+            sizes: '512x512',
+            type: 'image/png'
+          },
+          {
+            src: '/maskable-512x512.png',
+            sizes: '512x512',
+            type: 'image/png',
+            purpose: 'maskable'
+          }
+        ]
+      }
+    })
+  ],
   typescript: {
-    // Ignora errores de TypeScript para poder realizar el build sin bloqueos
     ignoreBuildErrors: true,
   },
   build: {

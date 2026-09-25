@@ -1,4 +1,5 @@
 import { LogIn, BookOpen, ScrollText, GraduationCap, ArrowRight, Library, Users, Sparkles, AlertTriangle, ExternalLink, UserCheck } from 'lucide-react';
+import { PWAInstallButton } from './PWAInstallButton';
 
 interface LandingPageProps {
   onSignIn: () => void;
@@ -18,6 +19,9 @@ export function LandingPage({ onSignIn, onSignInAsGuest, authError }: LandingPag
           </div>
         </div>
         <div className="flex items-center gap-3">
+          <div className="hidden sm:block">
+            <PWAInstallButton />
+          </div>
           {onSignInAsGuest && (
             <button 
               onClick={onSignInAsGuest}

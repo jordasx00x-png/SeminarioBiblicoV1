@@ -38,9 +38,9 @@ async function startServer() {
       // Auto-detect Groq if the key starts with gsk_
       if (openaiKey?.startsWith('gsk_')) {
         aiBaseUrl = aiBaseUrl || "https://api.groq.com/openai/v1";
-        // If the model looks like it's from another provider (e.g. starts with openai/) 
-        // but we are using a Groq key, we default to a high-performance Groq model.
-        if (!aiModel || aiModel.startsWith('openai/')) {
+        // ONLY set a default if the model is completely empty. 
+        // Do NOT overwrite if the user provided something (even if it looks like 'openai/...')
+        if (!aiModel) {
           aiModel = "llama-3.3-70b-versatile";
         }
       }
@@ -59,31 +59,74 @@ Directrices para tus respuestas:
         systemInstruction += `\n\nContexto actual del estudiante:\n- Curso en pantalla: ${context.courseTitle || 'No especificado'}\n- Lección en pantalla: ${context.lessonTitle || 'No especificada'}`;
       }
 
-      // 1. Prefer Custom API (OpenAI-compatible / Groq) if AI_BASE_URL or OPENAI_API_KEY is present
+      // 1. Try Custom API (OpenAI-compatible / Groq) if AI_BASE_URL or OPENAI_API_KEY is present
       if (aiBaseUrl || openaiKey) {
-        const openai = new OpenAI({ 
-          apiKey: openaiKey || "sk-no-key-required",
-          baseURL: aiBaseUrl || undefined
-        });
-        
-        const response = await openai.chat.completions.create({
-          model: aiModel || "gpt-4o", 
-          messages: [
-            { role: "system", content: systemInstruction },
-            ...messages.map((m: any) => ({
-              role: m.role === 'assistant' ? 'assistant' : 'user',
-              content: m.content
-            }))
-          ],
-          temperature: 0.7,
-        });
+        try {
+          const openai = new OpenAI({ 
+            apiKey: openaiKey || "sk-no-key-required",
+            baseURL: aiBaseUrl || undefined
+          });
+          
+          let replyText = '';
+          let lastError = null;
 
-        const replyText = response.choices[0].message.content;
-        return res.json({ reply: replyText });
+          // Priority list for models
+          const customModelsToTry = [
+            aiModel, // 1st choice: User's manual selection (e.g. openai/gpt-oss-20b)
+            "llama-3.3-70b-versatile",
+            "llama-3.1-8b-instant",
+            "llama-3.2-1b-preview",
+            "llama-3.2-3b-preview",
+            "llama-3.2-11b-vision-preview",
+            "llama-3.2-90b-vision-preview",
+            "mixtral-8x7b-32768"
+          ].filter(Boolean) as string[];
+          
+          for (const modelName of customModelsToTry) {
+            try {
+              const response = await openai.chat.completions.create({
+                model: modelName, 
+                messages: [
+                  { role: "system", content: systemInstruction },
+                  ...messages.map((m: any) => ({
+                    role: m.role === 'assistant' ? 'assistant' : 'user',
+                    content: m.content
+                  }))
+                ],
+                temperature: 0.7,
+              });
+
+              replyText = response.choices[0].message.content || '';
+              if (replyText) break;
+            } catch (err: any) {
+              console.error(`Error with custom model ${modelName}:`, err.message);
+              lastError = err;
+              // Continue to next model if it's a model-related error (404/400)
+              if (err.status === 404 || err.status === 400) continue;
+              // If it's auth or quota, don't keep trying models
+              break; 
+            }
+          }
+
+          if (replyText) {
+            return res.json({ reply: replyText });
+          }
+          
+          // If we are here, custom API failed. 
+          // We only fallback to Gemini if there's a key and it's NOT the same as a failed custom key.
+          if (!geminiKey || geminiKey.length < 10) {
+            if (lastError) throw lastError;
+            throw new Error('Todos los modelos de la API personalizada fallaron y no hay una Gemini Key válida.');
+          }
+          console.warn('Custom API failed, falling back to Gemini...');
+        } catch (err: any) {
+          console.error('Custom API critical failure:', err.message);
+          if (!geminiKey || geminiKey.length < 10) throw err;
+        }
       }
 
-      // 2. Fallback to Gemini if requested specifically or if custom API is missing
-      if (geminiKey) {
+      // 2. Fallback to Gemini if custom API failed or is not configured
+      if (geminiKey && geminiKey.length > 10) {
         const ai = new GoogleGenAI({
           apiKey: geminiKey,
           httpOptions: {
@@ -98,7 +141,7 @@ Directrices para tus respuestas:
           parts: [{ text: m.content }],
         }));
 
-        const modelsToTry = ['gemini-2.0-flash', 'gemini-1.5-flash']; // Use standard stable names
+        const modelsToTry = ['gemini-2.0-flash', 'gemini-1.5-flash'];
         let replyText = '';
         let lastError = null;
 
@@ -117,7 +160,7 @@ Directrices para tus respuestas:
               break;
             }
           } catch (err: any) {
-            console.error(`Error with model ${modelName}:`, err);
+            console.error(`Error with model ${modelName}:`, err.message);
             lastError = err;
           }
         }
@@ -129,7 +172,7 @@ Directrices para tus respuestas:
       }
 
       return res.status(503).json({
-        error: 'El asistente requiere configuración de API (AI_BASE_URL, OPENAI_API_KEY o GEMINI_API_KEY). Por favor configúrela en Settings > Secrets.'
+        error: 'El asistente requiere configuración de API válida (Groq/OpenAI o Gemini). Por favor verifique sus claves en Settings > Secrets.'
       });
 
     } catch (err: any) {

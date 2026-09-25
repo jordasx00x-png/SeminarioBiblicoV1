@@ -4,7 +4,27 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>Seminario Teológico Digital</title>
-    <meta name="description" content="Plataforma educativa de Teología y Estudios Bíblicos." />
+    <script>
+      // Force unregister all service workers to clear potentially broken PWA state
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.getRegistrations().then(function(registrations) {
+          for(let registration of registrations) {
+            registration.unregister();
+            console.log('ServiceWorker unregistered');
+          }
+        });
+      }
+      
+      // Error suppression for Vite/WebSocket benign errors
+      (function() {
+        const origError = console.error;
+        console.error = function(...args) {
+          const msg = String(args[0] || '');
+          if (msg.includes('WebSocket') || msg.includes('[vite]')) return;
+          origError.apply(console, args);
+        };
+      })();
+    </script>
     <link rel="icon" type="image/svg+xml" href="/icon.svg" />
   </head>
   <body>

@@ -23,7 +23,9 @@ import { BibleVerseModal } from './components/BibleVerseModal';
 import { MobileBottomNav } from './components/MobileBottomNav';
 
 export default function App() {
+  console.log('App: Component rendering...');
   const { user, isLoading: authLoading, authError, signInWithGoogle, signInAsGuest, signOut } = useAuth();
+  console.log('App: Auth state', { authLoading, hasUser: !!user });
   const [activeCourseId, setActiveCourseId] = useState<string | null>(null);
   const [activeLessonId, setActiveLessonId] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'home' | 'courses' | 'academic' | 'calendar' | 'grades'>('home');

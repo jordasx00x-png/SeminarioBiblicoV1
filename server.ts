@@ -127,8 +127,9 @@ Directrices para tus respuestas:
     }
   });
 
-  // Vite middleware for development
-  if (process.env.NODE_ENV !== 'production') {
+  // Force Vite middleware for development/preview in AI Studio
+  const isDev = true; // Force true for now
+  if (isDev) {
     const vite = await createViteServer({
       server: { 
         middlewareMode: true,

@@ -4,18 +4,23 @@ import App from './App.tsx';
 import { ErrorBoundary } from './components/ErrorBoundary.tsx';
 import './index.css';
 
-console.log('Applet main.tsx starting... v1.0.2');
+console.log('Applet main.tsx starting... v1.0.3');
 
 const container = document.getElementById('root');
 if (!container) {
-  console.error('Root container not found!');
+  document.body.innerHTML = '<div style="background:red; color:white; padding:20px;">ERROR: #root not found</div>';
 } else {
-  console.log('Root container found, mounting...');
-  createRoot(container).render(
-    <StrictMode>
-      <ErrorBoundary>
-        <App />
-      </ErrorBoundary>
-    </StrictMode>,
-  );
+  try {
+    createRoot(container).render(
+      <StrictMode>
+        <ErrorBoundary>
+          <App />
+        </ErrorBoundary>
+      </StrictMode>
+    );
+    console.log('Applet mounted successfully');
+  } catch (err) {
+    console.error('Mounting error:', err);
+    container.innerHTML = `<div style="background:orange; color:black; padding:20px;">CRITICAL MOUNT ERROR: ${String(err)}</div>`;
+  }
 }

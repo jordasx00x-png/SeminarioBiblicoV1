@@ -23,6 +23,8 @@ import {
 } from 'lucide-react';
 import { User as FirebaseUser } from 'firebase/auth';
 import { UserProgress } from '../types';
+import { motion, AnimatePresence } from 'motion/react';
+import { PWAInstallButton } from './PWAInstallButton';
 
 export interface InteractiveSidebarProps {
   activeTab: 'home' | 'courses' | 'academic' | 'calendar' | 'grades';
@@ -121,6 +123,14 @@ export function InteractiveSidebar({
     <div className="flex flex-col h-full justify-between items-center py-3 select-none">
       {/* Top Brand Seal & Expand Button */}
       <div className="flex flex-col items-center gap-2.5 pb-3 border-b border-stone-200 dark:border-stone-800 w-full px-2">
+        <button
+          onClick={() => handleTabClick('home')}
+          className="w-10 h-10 rounded-xl bg-[#7F1D1D] flex items-center justify-center text-amber-50 shadow-sm border border-[#7F1D1D]/20 hover:scale-105 transition-transform cursor-pointer"
+          title="Seminario Digital - Ir a Inicio"
+        >
+          <GraduationCap size={20} strokeWidth={1.75} />
+        </button>
+
         {onToggleSidebar && (
           <button
             onClick={onToggleSidebar}
@@ -257,6 +267,9 @@ export function InteractiveSidebar({
           onClick={() => handleTabClick('home')}
           className="flex items-center gap-3 text-left transition-opacity hover:opacity-90 cursor-pointer group min-w-0"
         >
+          <div className="w-10 h-10 rounded-lg bg-[#7F1D1D] flex items-center justify-center text-amber-50 shadow-sm border border-[#7F1D1D]/20 group-hover:scale-105 transition-transform shrink-0">
+            <GraduationCap size={22} strokeWidth={1.75} />
+          </div>
           <div className="flex flex-col text-left leading-none min-w-0">
             <span className="font-serif tracking-wider text-xs sm:text-sm font-black text-[#1A2533] dark:text-stone-100 uppercase truncate">
               Seminario Digital
@@ -582,7 +595,10 @@ export function InteractiveSidebar({
             <Menu size={20} />
           </button>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded bg-[#7F1D1D] flex items-center justify-center text-amber-50 shadow-sm shrink-0">
+              <GraduationCap size={18} strokeWidth={1.5} />
+            </div>
             <div className="leading-tight">
               <span className="font-serif text-xs font-black text-[#1A2533] dark:text-stone-100 tracking-tight block truncate">
                 Seminario Digital

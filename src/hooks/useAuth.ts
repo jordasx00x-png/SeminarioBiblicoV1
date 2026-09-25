@@ -26,12 +26,6 @@ export function useAuth() {
       setIsLoading(false);
     }, 500);
 
-    if (!auth) {
-      console.error("Auth object is missing");
-      setIsLoading(false);
-      return;
-    }
-
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       clearTimeout(timer);
       if (currentUser) {
@@ -57,10 +51,6 @@ export function useAuth() {
   }, []);
 
   const signInWithGoogle = async () => {
-    if (!auth) {
-      setAuthError('El sistema de autenticación no está disponible.');
-      return;
-    }
     const provider = new GoogleAuthProvider();
     setAuthError(null);
     try {
@@ -109,9 +99,7 @@ export function useAuth() {
   const signOut = () => {
     safeStorage.removeItem('is_guest_mode');
     setUser(null);
-    if (auth) {
-      auth.signOut().catch(() => {});
-    }
+    auth.signOut().catch(() => {});
   };
 
   return { user, isLoading, authError, signInWithGoogle, signInAsGuest, signOut, setAuthError };

@@ -236,7 +236,7 @@ export function BibleVerseModal({
             </div>
             <div className="min-w-0">
               <div className="flex items-center gap-2 mb-0.5">
-                <span className="text-[9px] font-black tracking-[0.2em] uppercase text-[#7F1D1D] dark:text-amber-500">
+                <span className="text-[9px] font-black tracking-wider uppercase text-[#7F1D1D] dark:text-amber-500">
                   Visor Canónico
                 </span>
                 <span className="text-[9px] font-semibold text-stone-400 uppercase tracking-widest hidden sm:inline">&bull; {verseData.book}</span>
@@ -285,7 +285,7 @@ export function BibleVerseModal({
           <div className="flex items-center gap-4">
             <button
               onClick={() => setViewMode('full_panel')}
-              className={`pb-1 text-xs font-bold uppercase tracking-[0.15em] transition-all cursor-pointer border-b-2 ${
+              className={`pb-1 text-xs font-bold uppercase tracking-wider transition-all cursor-pointer border-b-2 ${
                 viewMode === 'full_panel'
                   ? 'border-[#7F1D1D] text-[#1A2533] dark:text-stone-100'
                   : 'border-transparent text-stone-400 hover:text-stone-600'
@@ -295,7 +295,7 @@ export function BibleVerseModal({
             </button>
             <button
               onClick={() => setViewMode('quick_card')}
-              className={`pb-1 text-xs font-bold uppercase tracking-[0.15em] transition-all cursor-pointer border-b-2 ${
+              className={`pb-1 text-xs font-bold uppercase tracking-wider transition-all cursor-pointer border-b-2 ${
                 viewMode === 'quick_card'
                   ? 'border-[#7F1D1D] text-[#1A2533] dark:text-stone-100'
                   : 'border-transparent text-stone-400 hover:text-stone-600'
@@ -661,7 +661,7 @@ export function BibleVerseModal({
             </div>
             <div className="min-w-0">
               <div className="flex items-center gap-2 mb-0.5">
-                <span className="text-[10px] font-bold tracking-[0.2em] uppercase text-[#7F1D1D] dark:text-amber-500">
+                <span className="text-[10px] font-bold tracking-wider uppercase text-[#7F1D1D] dark:text-amber-500">
                   Archivo Canónico
                 </span>
                 <span className="text-[10px] font-medium text-stone-400 uppercase tracking-widest hidden sm:inline">&bull; {verseData.book}</span>
@@ -735,7 +735,7 @@ export function BibleVerseModal({
           <div className="flex items-center gap-6">
             <button
               onClick={() => setViewMode('full_panel')}
-              className={`pb-1 text-xs font-bold uppercase tracking-[0.15em] transition-all cursor-pointer border-b-2 ${
+              className={`pb-1 text-xs font-bold uppercase tracking-wider transition-all cursor-pointer border-b-2 ${
                 viewMode === 'full_panel'
                   ? 'border-[#7F1D1D] text-[#1A2533] dark:text-stone-100'
                   : 'border-transparent text-stone-400 hover:text-stone-600'
@@ -745,7 +745,7 @@ export function BibleVerseModal({
             </button>
             <button
               onClick={() => setViewMode('quick_card')}
-              className={`pb-1 text-xs font-bold uppercase tracking-[0.15em] transition-all cursor-pointer border-b-2 ${
+              className={`pb-1 text-xs font-bold uppercase tracking-wider transition-all cursor-pointer border-b-2 ${
                 viewMode === 'quick_card'
                   ? 'border-[#7F1D1D] text-[#1A2533] dark:text-stone-100'
                   : 'border-transparent text-stone-400 hover:text-stone-600'
@@ -868,7 +868,7 @@ export function BibleVerseModal({
           <div className="flex items-center gap-6 overflow-x-auto py-1">
             <button
               onClick={() => setActiveSubTab('text')}
-              className={`text-[10px] font-bold uppercase tracking-[0.2em] transition-all cursor-pointer flex items-center gap-1.5 border-b-2 pb-1 ${
+              className={`text-[10px] font-bold uppercase tracking-widest transition-all cursor-pointer flex items-center gap-1.5 border-b-2 pb-1 ${
                 activeSubTab === 'text'
                   ? 'border-[#7F1D1D] text-[#1A2533] dark:text-stone-100'
                   : 'border-transparent text-stone-400 hover:text-stone-600'
@@ -879,7 +879,7 @@ export function BibleVerseModal({
             </button>
             <button
               onClick={() => setActiveSubTab('context')}
-              className={`text-[10px] font-bold uppercase tracking-[0.2em] transition-all cursor-pointer flex items-center gap-1.5 border-b-2 pb-1 ${
+              className={`text-[10px] font-bold uppercase tracking-widest transition-all cursor-pointer flex items-center gap-1.5 border-b-2 pb-1 ${
                 activeSubTab === 'context'
                   ? 'border-[#7F1D1D] text-[#1A2533] dark:text-stone-100'
                   : 'border-transparent text-stone-400 hover:text-stone-600'
@@ -890,7 +890,7 @@ export function BibleVerseModal({
             </button>
             <button
               onClick={() => setActiveSubTab('exegesis')}
-              className={`text-[10px] font-bold uppercase tracking-[0.2em] transition-all cursor-pointer flex items-center gap-1.5 border-b-2 pb-1 ${
+              className={`text-[10px] font-bold uppercase tracking-widest transition-all cursor-pointer flex items-center gap-1.5 border-b-2 pb-1 ${
                 activeSubTab === 'exegesis'
                   ? 'border-[#7F1D1D] text-[#1A2533] dark:text-stone-100'
                   : 'border-transparent text-stone-400 hover:text-stone-600'
@@ -901,7 +901,7 @@ export function BibleVerseModal({
             </button>
             <button
               onClick={() => setActiveSubTab('cross')}
-              className={`text-[10px] font-bold uppercase tracking-[0.2em] transition-all cursor-pointer flex items-center gap-1.5 border-b-2 pb-1 ${
+              className={`text-[10px] font-bold uppercase tracking-widest transition-all cursor-pointer flex items-center gap-1.5 border-b-2 pb-1 ${
                 activeSubTab === 'cross'
                   ? 'border-[#7F1D1D] text-[#1A2533] dark:text-stone-100'
                   : 'border-transparent text-stone-400 hover:text-stone-600'
@@ -913,7 +913,7 @@ export function BibleVerseModal({
             {verseData.originalLanguage && (
               <button
                 onClick={() => setActiveSubTab('original')}
-                className={`text-[10px] font-bold uppercase tracking-[0.2em] transition-all cursor-pointer flex items-center gap-1.5 border-b-2 pb-1 ${
+                className={`text-[10px] font-bold uppercase tracking-widest transition-all cursor-pointer flex items-center gap-1.5 border-b-2 pb-1 ${
                   activeSubTab === 'original'
                     ? 'border-[#7F1D1D] text-[#1A2533] dark:text-stone-100'
                     : 'border-transparent text-stone-400 hover:text-stone-600'

@@ -137,7 +137,7 @@ export function LessonViewer({ lesson, course, progress, onComplete, onBack, onO
               {/* Header metadata */}
               <div className="border-b border-[#E0D7C6]/60 dark:border-slate-800 pb-5">
                 <div className="flex items-center gap-2 text-xs font-sans text-stone-500 dark:text-stone-400 mb-2">
-                  <span className="font-semibold text-[#7F1D1D] dark:text-amber-400 uppercase tracking-widest text-[11px]">
+                  <span className="font-semibold text-[#7F1D1D] dark:text-amber-400 uppercase tracking-wider text-[11px]">
                     Día {lesson.day}
                   </span>
                   <span>·</span>
@@ -335,7 +335,7 @@ export function LessonViewer({ lesson, course, progress, onComplete, onBack, onO
                           <div className="absolute top-0 right-0 p-3 opacity-10">
                             <BookOpen size={64} className="text-[#1A2533] dark:text-stone-100" />
                           </div>
-                          <h4 className="text-xs md:text-sm font-bold text-[#7F1D1D] dark:text-amber-400 uppercase tracking-[0.2em] mb-4 flex items-center gap-2 font-sans">
+                          <h4 className="text-xs md:text-sm font-bold text-[#7F1D1D] dark:text-amber-400 uppercase tracking-wider mb-4 flex items-center gap-2 font-sans">
                             <CheckCircle2 size={16} />
                             Puntos Clave para su Libreta Teológica
                           </h4>

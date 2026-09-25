@@ -360,7 +360,7 @@ export function AcademicPanel({
                     setBookDrawerStep('books');
                     setIsBookDrawerOpen(true);
                   }}
-                  className="px-4 py-2 rounded bg-white hover:bg-[#FAF9F5] text-[#1A2533] dark:bg-stone-900 dark:text-stone-100 text-[10px] font-black uppercase tracking-[0.2em] flex items-center gap-3 border border-stone-300 dark:border-stone-700 transition-all shadow-sm cursor-pointer active:scale-95 shrink-0"
+                  className="px-4 py-2 rounded bg-white hover:bg-[#FAF9F5] text-[#1A2533] dark:bg-stone-900 dark:text-stone-100 text-[10px] font-black uppercase tracking-wider flex items-center gap-3 border border-stone-300 dark:border-stone-700 transition-all shadow-sm cursor-pointer active:scale-95 shrink-0"
                 >
                   <BookMarked className="w-4 h-4 text-[#7F1D1D]" strokeWidth={2} />
                   <span>Libros</span>
@@ -382,7 +382,7 @@ export function AcademicPanel({
               <div className="flex items-center gap-1.5 border-r border-stone-200 dark:border-stone-800 pr-2 mr-2">
                 <button
                   onClick={() => setIsNotesDrawerOpen(true)}
-                  className="px-4 py-2 rounded bg-white hover:bg-[#FAF9F5] text-[#1A2533] dark:bg-stone-900 dark:text-stone-100 text-[10px] font-black uppercase tracking-[0.2em] flex items-center gap-3 border border-stone-300 dark:border-stone-700 shadow-sm transition-all cursor-pointer active:scale-95 shrink-0"
+                  className="px-4 py-2 rounded bg-white hover:bg-[#FAF9F5] text-[#1A2533] dark:bg-stone-900 dark:text-stone-100 text-[10px] font-black uppercase tracking-wider flex items-center gap-3 border border-stone-300 dark:border-stone-700 shadow-sm transition-all cursor-pointer active:scale-95 shrink-0"
                 >
                   <Highlighter className="w-4 h-4 text-[#D1B17F]" strokeWidth={2} />
                   <span>Archivo</span>
@@ -499,7 +499,7 @@ export function AcademicPanel({
                   </div>
 
                   <div className="flex items-center gap-1.5 w-full lg:w-auto overflow-x-auto whitespace-nowrap">
-                    <span className="text-[9px] font-black text-stone-400 uppercase tracking-[0.2em] mr-2">Filtrar:</span>
+                    <span className="text-[9px] font-black text-stone-400 uppercase tracking-wider mr-2">Filtrar:</span>
                     {(['ALL', 'Antiguo Testamento', 'Nuevo Testamento'] as const).map(tab => (
                       <button
                         key={tab}
@@ -532,7 +532,7 @@ export function AcademicPanel({
                             : 'bg-white dark:bg-zinc-900 border-stone-100 dark:border-stone-800 hover:border-stone-300 dark:hover:border-stone-600'
                         }`}
                       >
-                        <span className={`text-[8px] font-black uppercase tracking-[0.2em] mb-1 ${
+                        <span className={`text-[8px] font-black uppercase tracking-wider mb-1 ${
                           selectedBookId === book.id ? 'text-[#7F1D1D]' : 'text-stone-400'
                         }`}>
                           {book.division}
@@ -555,7 +555,7 @@ export function AcademicPanel({
                     <h4 className="font-serif font-black text-2xl text-[#1A2533] dark:text-white uppercase tracking-tighter">
                       {currentBook?.name}
                     </h4>
-                    <p className="text-[10px] font-bold text-stone-400 uppercase tracking-[0.2em] mt-2">
+                    <p className="text-[10px] font-bold text-stone-400 uppercase tracking-wider mt-2">
                       Seleccione el capítulo para iniciar el análisis exegético
                     </p>
                   </div>
@@ -586,7 +586,7 @@ export function AcademicPanel({
             <div className="p-4 bg-[#FAF9F5] dark:bg-stone-900 border-t border-stone-200 dark:border-stone-800 flex justify-center">
               <button
                 onClick={() => setIsBookDrawerOpen(false)}
-                className="px-10 py-3 bg-[#1A2533] hover:bg-black text-white text-[10px] font-black uppercase tracking-[0.3em] rounded shadow-lg transition-all"
+                className="px-10 py-3 bg-[#1A2533] hover:bg-black text-white text-[10px] font-black uppercase tracking-widest rounded shadow-lg transition-all"
               >
                 Cerrar Índice
               </button>
@@ -621,7 +621,7 @@ export function AcademicPanel({
                 </div>
                 <button
                   onClick={() => setIsPhraseSearchOpen(true)}
-                  className="w-full sm:w-auto px-4 sm:px-6 py-2 bg-[#1A2533] hover:bg-black text-white text-[8px] sm:text-[9px] font-bold uppercase tracking-[0.2em] rounded transition-all cursor-pointer shadow-sm active:scale-95 whitespace-nowrap"
+                  className="w-full sm:w-auto px-4 sm:px-6 py-2 bg-[#1A2533] hover:bg-black text-white text-[8px] sm:text-[9px] font-bold uppercase tracking-wider rounded transition-all cursor-pointer shadow-sm active:scale-95 whitespace-nowrap"
                 >
                   Búsqueda
                 </button>
@@ -763,7 +763,7 @@ export function AcademicPanel({
                       {activeVerseMenuTab === 'menu' ? (
                         <div className="flex flex-col gap-4">
                           <div className="flex justify-between items-center border-b border-stone-100 dark:border-stone-800 pb-3">
-                            <span className="text-[10px] font-black text-[#1A2533] dark:text-stone-400 uppercase tracking-[0.2em]">
+                            <span className="text-[10px] font-black text-[#1A2533] dark:text-stone-400 uppercase tracking-wider">
                               Herramientas Exegéticas · {currentBook.shortName} {selectedChapter}:{verse.num}
                             </span>
                             <button 
@@ -1042,7 +1042,7 @@ export function AcademicPanel({
                                           <LinkIcon size={14} className="text-stone-400" />
                                           {cr.ref}
                                         </span>
-                                        <span className="text-[9px] font-black uppercase tracking-[0.2em] px-2.5 py-1 rounded bg-[#FAF9F5] dark:bg-stone-900 text-stone-500 dark:text-stone-400 border border-stone-200 dark:border-stone-800">
+                                        <span className="text-[9px] font-black uppercase tracking-wider px-2.5 py-1 rounded bg-[#FAF9F5] dark:bg-stone-900 text-stone-500 dark:text-stone-400 border border-stone-200 dark:border-stone-800">
                                           {cr.type}
                                         </span>
                                       </div>
@@ -1167,7 +1167,7 @@ export function AcademicPanel({
                     <Sparkles className="w-5 h-5" />
                   </div>
                   <div>
-                    <h3 className="text-xs font-black text-[#1A2533] dark:text-stone-100 uppercase tracking-[0.2em]">
+                    <h3 className="text-xs font-black text-[#1A2533] dark:text-stone-100 uppercase tracking-wider">
                       Herramientas Exegéticas
                     </h3>
                     <p className="text-[10px] font-bold text-stone-400 uppercase tracking-widest mt-0.5">
@@ -1278,7 +1278,7 @@ export function AcademicPanel({
                     </button>
 
                     <div className="mt-8 p-6 bg-white dark:bg-stone-900 border border-[#E0D7C6] dark:border-stone-800 rounded-xl">
-                      <h4 className="text-[10px] font-black text-[#7F1D1D] dark:text-amber-500 uppercase tracking-[0.2em] mb-3 flex items-center gap-2">
+                      <h4 className="text-[10px] font-black text-[#7F1D1D] dark:text-amber-500 uppercase tracking-wider mb-3 flex items-center gap-2">
                         <BookOpen size={14} />
                         Texto Original / Exégesis
                       </h4>
@@ -1404,7 +1404,7 @@ export function AcademicPanel({
                           {selectedVerseData.theologicalNote && (
                             <div className="bg-[#FAF9F5] dark:bg-stone-800 p-5 rounded-xl border border-[#D1B17F]/30 relative overflow-hidden">
                               <div className="absolute top-0 left-0 w-1 h-full bg-[#7F1D1D]" />
-                              <h4 className="font-serif font-black text-[11px] text-[#7F1D1D] dark:text-amber-500 mb-3 flex items-center gap-2 uppercase tracking-[0.2em]">
+                              <h4 className="font-serif font-black text-[11px] text-[#7F1D1D] dark:text-amber-500 mb-3 flex items-center gap-2 uppercase tracking-wider">
                                 <Sparkles size={14} />
                                 Insight del Seminario
                               </h4>
@@ -1463,7 +1463,7 @@ export function AcademicPanel({
                                     <LinkIcon size={14} className="text-stone-400" />
                                     {cr.ref}
                                   </span>
-                                  <span className="text-[9px] font-black uppercase tracking-[0.2em] px-2 py-1 rounded bg-stone-50 dark:bg-stone-800 text-stone-400 border border-stone-200 dark:border-stone-800">
+                                  <span className="text-[9px] font-black uppercase tracking-wider px-2 py-1 rounded bg-stone-50 dark:bg-stone-800 text-stone-400 border border-stone-200 dark:border-stone-800">
                                     {cr.type}
                                   </span>
                                 </div>
@@ -1657,7 +1657,7 @@ export function AcademicPanel({
                               ) : (
                                 <div className="flex flex-col items-center justify-center py-12 text-stone-300 dark:text-stone-700 border-2 border-dashed border-stone-100 dark:border-stone-900 rounded-2xl">
                                   <Search className="w-10 h-10 mb-3 opacity-20" />
-                                  <p className="text-[10px] font-black uppercase tracking-[0.2em] max-w-[180px] text-center">
+                                  <p className="text-[10px] font-black uppercase tracking-wider max-w-[180px] text-center">
                                     Inicie una búsqueda seleccionando una palabra clave superior
                                   </p>
                                 </div>
@@ -1691,7 +1691,7 @@ export function AcademicPanel({
                   <h3 className="font-serif font-black text-lg text-[#1A2533] dark:text-stone-100 uppercase tracking-tight flex items-center gap-2">
                     Concordancia Canónica
                   </h3>
-                  <p className="text-[10px] font-black text-stone-400 uppercase tracking-[0.2em] mt-0.5">
+                  <p className="text-[10px] font-black text-stone-400 uppercase tracking-wider mt-0.5">
                     Investigación de Textos Sagrados • Sesenta y Seis Libros
                   </p>
                 </div>
@@ -1734,7 +1734,7 @@ export function AcademicPanel({
                 <button
                   type="submit"
                   disabled={isSearchingPhrase || !phraseQuery.trim()}
-                  className="px-8 py-3.5 bg-[#1A2533] hover:bg-black disabled:bg-stone-200 dark:disabled:bg-stone-800 text-white font-black text-[10px] uppercase tracking-[0.2em] rounded transition-all shadow-md cursor-pointer shrink-0 active:scale-95"
+                  className="px-8 py-3.5 bg-[#1A2533] hover:bg-black disabled:bg-stone-200 dark:disabled:bg-stone-800 text-white font-black text-[10px] uppercase tracking-widest rounded transition-all shadow-md cursor-pointer shrink-0 active:scale-95"
                 >
                   {isSearchingPhrase ? 'Localizando...' : 'Localizar'}
                 </button>
@@ -1742,7 +1742,7 @@ export function AcademicPanel({
 
               {/* Sample Quick Phrase Suggestions */}
               <div className="flex items-center gap-2 overflow-x-auto pb-1 custom-scrollbar scrollbar-hide">
-                <span className="text-[9px] font-black text-stone-400 uppercase tracking-[0.2em] shrink-0 border-r border-stone-300 dark:border-stone-700 pr-3 mr-1">
+                <span className="text-[9px] font-black text-stone-400 uppercase tracking-wider shrink-0 border-r border-stone-300 dark:border-stone-700 pr-3 mr-1">
                   Sugerencias
                 </span>
                 {POPULAR_PHRASE_SUGGESTIONS.map((sug, idx) => (
@@ -1765,7 +1765,7 @@ export function AcademicPanel({
                 <div className="flex items-center justify-between pt-4 border-t border-stone-200 dark:border-stone-800">
                   <div className="flex items-center gap-3">
                     <Filter className="w-4 h-4 text-stone-400" />
-                    <span className="text-[10px] font-black text-stone-500 dark:text-stone-400 uppercase tracking-[0.2em]">
+                    <span className="text-[10px] font-black text-stone-500 dark:text-stone-400 uppercase tracking-wider">
                       Filtrar Testamento:
                     </span>
                   </div>
@@ -1774,7 +1774,7 @@ export function AcademicPanel({
                       <button
                         key={testament}
                         onClick={() => setPhraseFilterTestament(testament)}
-                        className={`px-3 py-1.5 rounded text-[9px] font-black uppercase tracking-[0.2em] transition-all border ${
+                        className={`px-3 py-1.5 rounded text-[9px] font-black uppercase tracking-wider transition-all border ${
                           phraseFilterTestament === testament
                             ? 'bg-[#7F1D1D] border-[#7F1D1D] text-white shadow-sm'
                             : 'bg-white dark:bg-stone-800 border-stone-200 dark:border-stone-700 text-stone-500 hover:border-stone-400'
@@ -1793,7 +1793,7 @@ export function AcademicPanel({
               {isSearchingPhrase ? (
                 <div className="flex flex-col items-center justify-center py-20 gap-4 text-stone-400">
                   <RefreshCw className="w-10 h-10 animate-spin text-[#7F1D1D]" />
-                  <p className="text-[10px] font-black uppercase tracking-[0.2em]">Escaneando el Canon Bíblico...</p>
+                  <p className="text-[10px] font-black uppercase tracking-wider">Escaneando el Canon Bíblico...</p>
                 </div>
               ) : filteredPhraseResults.length > 0 ? (
                 <div className="space-y-6">
@@ -1816,7 +1816,7 @@ export function AcademicPanel({
                             <span className="font-serif font-black text-base text-[#7F1D1D] dark:text-amber-500 uppercase tracking-tight group-hover:underline">
                               {res.bookName} {res.chapter}:{res.verse}
                             </span>
-                            <span className="text-[9px] font-black uppercase tracking-[0.2em] px-2 py-1 rounded bg-[#FAF9F5] dark:bg-stone-800 text-stone-400 dark:text-stone-300 border border-stone-200 dark:border-stone-700">
+                            <span className="text-[9px] font-black uppercase tracking-wider px-2 py-1 rounded bg-[#FAF9F5] dark:bg-stone-800 text-stone-400 dark:text-stone-300 border border-stone-200 dark:border-stone-700">
                               {res.division}
                             </span>
                           </div>
@@ -1864,12 +1864,12 @@ export function AcademicPanel({
 
             {/* Modal Footer: Institutional Badge Style */}
             <div className="p-5 bg-white dark:bg-stone-900 border-t border-stone-200 dark:border-stone-800 flex items-center justify-between shrink-0">
-              <span className="text-[9px] font-black text-stone-400 uppercase tracking-[0.3em]">
+              <span className="text-[9px] font-black text-stone-400 uppercase tracking-wider">
                 Fuente: Textus Receptus / {activeTranslation.toUpperCase()} • Seminario Digital
               </span>
               <button
                 onClick={() => setIsPhraseSearchOpen(false)}
-                className="px-6 py-2 rounded bg-stone-100 dark:bg-stone-800 hover:bg-stone-200 dark:hover:bg-stone-700 text-[#1A2533] dark:text-stone-100 text-[10px] font-black uppercase tracking-[0.2em] transition-all cursor-pointer active:scale-95 border border-stone-200 dark:border-stone-700 shadow-sm"
+                className="px-6 py-2 rounded bg-stone-100 dark:bg-stone-800 hover:bg-stone-200 dark:hover:bg-stone-700 text-[#1A2533] dark:text-stone-100 text-[10px] font-black uppercase tracking-wider transition-all cursor-pointer active:scale-95 border border-stone-200 dark:border-stone-700 shadow-sm"
               >
                 Cerrar Concordancia
               </button>

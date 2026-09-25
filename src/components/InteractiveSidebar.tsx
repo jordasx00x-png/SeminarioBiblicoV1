@@ -123,14 +123,6 @@ export function InteractiveSidebar({
     <div className="flex flex-col h-full justify-between items-center py-3 select-none">
       {/* Top Brand Seal & Expand Button */}
       <div className="flex flex-col items-center gap-2.5 pb-3 border-b border-stone-200 dark:border-stone-800 w-full px-2">
-        <button
-          onClick={() => handleTabClick('home')}
-          className="w-10 h-10 rounded-xl bg-[#7F1D1D] flex items-center justify-center text-amber-50 shadow-sm border border-[#7F1D1D]/20 hover:scale-105 transition-transform cursor-pointer"
-          title="Seminario Digital - Ir a Inicio"
-        >
-          <GraduationCap size={20} strokeWidth={1.75} />
-        </button>
-
         {onToggleSidebar && (
           <button
             onClick={onToggleSidebar}
@@ -267,14 +259,11 @@ export function InteractiveSidebar({
           onClick={() => handleTabClick('home')}
           className="flex items-center gap-3 text-left transition-opacity hover:opacity-90 cursor-pointer group min-w-0"
         >
-          <div className="w-10 h-10 rounded-lg bg-[#7F1D1D] flex items-center justify-center text-amber-50 shadow-sm border border-[#7F1D1D]/20 group-hover:scale-105 transition-transform shrink-0">
-            <GraduationCap size={22} strokeWidth={1.75} />
-          </div>
           <div className="flex flex-col text-left leading-none min-w-0">
-            <span className="font-serif tracking-[0.1em] text-xs sm:text-sm font-black text-[#1A2533] dark:text-stone-100 uppercase truncate">
+            <span className="font-serif tracking-wider text-xs sm:text-sm font-black text-[#1A2533] dark:text-stone-100 uppercase truncate">
               Seminario Digital
             </span>
-            <span className="font-sans text-[8px] sm:text-[9px] tracking-[0.2em] text-[#7F1D1D] dark:text-amber-500 uppercase font-bold mt-1 truncate">
+            <span className="font-sans text-[8px] sm:text-[9px] tracking-widest text-[#7F1D1D] dark:text-amber-500 uppercase font-bold mt-1 truncate">
               Campus Teológico
             </span>
           </div>
@@ -303,7 +292,7 @@ export function InteractiveSidebar({
       {/* 2. Main Navigation Items */}
       <div className="flex-1 overflow-y-auto px-3 py-4 space-y-1.5 custom-scrollbar">
         <div className="px-3 pb-2 flex items-center justify-between">
-          <span className="text-[9px] font-black tracking-[0.25em] text-stone-400 dark:text-stone-500 uppercase">
+          <span className="text-[9px] font-black tracking-widest text-stone-400 dark:text-stone-500 uppercase">
             Navegación Principal
           </span>
         </div>
@@ -353,7 +342,7 @@ export function InteractiveSidebar({
         {/* ============================================================ */}
         <div className="pt-4 mt-3 border-t border-stone-200 dark:border-stone-800">
           <div className="px-3 pb-2 flex items-center justify-between">
-            <span className="text-[9px] font-black tracking-[0.25em] text-[#7F1D1D] dark:text-amber-500 uppercase">
+            <span className="text-[9px] font-black tracking-widest text-[#7F1D1D] dark:text-amber-500 uppercase">
               Segundo Plano & Herramientas
             </span>
           </div>
@@ -595,10 +584,7 @@ export function InteractiveSidebar({
             <Menu size={20} />
           </button>
 
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded bg-[#7F1D1D] flex items-center justify-center text-amber-50 shadow-sm shrink-0">
-              <GraduationCap size={18} strokeWidth={1.5} />
-            </div>
+          <div className="flex items-center gap-3">
             <div className="leading-tight">
               <span className="font-serif text-xs font-black text-[#1A2533] dark:text-stone-100 tracking-tight block truncate">
                 Seminario Digital

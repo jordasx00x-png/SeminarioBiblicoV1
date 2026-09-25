@@ -37,7 +37,7 @@ Estoy aquí para responder cualquier pregunta que tengas:
 - **Orientación pastoral y aplicación práctica.**
 
 ¿Qué pregunta o tema te gustaría explorar hoy?`,
-  timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+  timestamp: 'Sesión Iniciada',
 };
 
 export function useVirtualAssistant() {
@@ -83,11 +83,25 @@ export function useVirtualAssistant() {
     return onSnapshot(q, (snapshot) => {
       const msgs = snapshot.docs.map(doc => {
         const data = doc.data();
+        let timeStr = 'Recién enviado';
+        try {
+          if (data.timestamp) {
+            const date = data.timestamp.toDate ? data.timestamp.toDate() : new Date(data.timestamp);
+            if (date && !isNaN(date.getTime())) {
+              timeStr = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            } else {
+              timeStr = 'Recién enviado';
+            }
+          }
+        } catch (e) {
+          timeStr = 'Recién enviado';
+        }
+        
         return {
           id: doc.id,
           role: data.role,
           content: data.content,
-          timestamp: data.timestamp?.toDate ? data.timestamp.toDate().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Recién enviado'
+          timestamp: timeStr
         };
       }) as AssistantMessage[];
       

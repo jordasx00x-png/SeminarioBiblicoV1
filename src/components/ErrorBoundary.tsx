@@ -33,9 +33,16 @@ export class ErrorBoundary extends Component<Props, State> {
           <h1 className="text-2xl font-bold text-[#1A2533] mb-2 font-serif">
             Seminario Teológico Digital
           </h1>
-          <p className="text-gray-600 max-w-md mb-6 text-sm font-sans">
+          <p className="text-gray-600 max-w-md mb-2 text-sm font-sans">
             Hubo un detalle temporal al cargar la vista. Haz clic en el botón para recargar la aplicación.
           </p>
+          {this.state.error && (
+            <div className="mb-6 p-4 bg-red-50 border border-red-100 rounded-lg text-left overflow-auto max-w-lg">
+              <p className="text-xs font-mono text-red-600 whitespace-pre-wrap">
+                {this.state.error.toString()}
+              </p>
+            </div>
+          )}
           <button
             onClick={() => {
               this.setState({ hasError: false, error: null });

@@ -1,43 +1,11 @@
 <!DOCTYPE html>
 <html lang="es">
   <head>
-    <script>
-      // Ignore benign Vite WebSocket errors in AI Studio iframe environment as specified in system guidelines
-      (function() {
-        const origError = console.error;
-        const origWarn = console.warn;
-        console.error = function(...args) {
-          const msg = args.map(function(a) { return String(a || ''); }).join(' ');
-          if (msg.includes('WebSocket') || msg.includes('[vite]')) return;
-          origError.apply(console, args);
-        };
-        console.warn = function(...args) {
-          const msg = args.map(function(a) { return String(a || ''); }).join(' ');
-          if (msg.includes('WebSocket') || msg.includes('[vite]')) return;
-          origWarn.apply(console, args);
-        };
-        window.addEventListener('unhandledrejection', function(event) {
-          if (event.reason && (String(event.reason).includes('WebSocket') || String(event.reason).includes('[vite]'))) {
-            event.preventDefault();
-          }
-        });
-      })();
-    </script>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>Seminario Teológico Digital</title>
     <meta name="description" content="Plataforma educativa de Teología y Estudios Bíblicos." />
-    
-    <!-- PWA Manifest & Theme Color -->
-    <link rel="manifest" href="/manifest.json" />
-    <meta name="theme-color" content="#1A2533" />
-    
-    <!-- iOS / Mobile Web App Touch capability & styles -->
-    <meta name="mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-    <meta name="apple-mobile-web-app-title" content="Seminario" />
-    <link rel="apple-touch-icon" href="/icon-192.png" />
+    <link rel="icon" type="image/svg+xml" href="/icon.svg" />
   </head>
   <body>
     <div id="root"></div>

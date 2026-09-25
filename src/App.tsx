@@ -21,7 +21,6 @@ import { FloatingNotesWidget } from './components/FloatingNotesWidget';
 import { VirtualAssistantWidget } from './components/VirtualAssistantWidget';
 import { BibleVerseModal } from './components/BibleVerseModal';
 import { MobileBottomNav } from './components/MobileBottomNav';
-import { AnimatePresence, motion } from 'motion/react';
 
 export default function App() {
   const { user, isLoading: authLoading, authError, signInWithGoogle, signInAsGuest, signOut } = useAuth();
@@ -200,7 +199,6 @@ export default function App() {
       <div 
         className="flex-1 min-h-0 min-w-0 flex flex-col h-full relative transition-all duration-300 ease-out overflow-hidden w-full"
       >
-        <AnimatePresence>
         {showProfile && (
           <ProfileModal 
             user={user} 
@@ -211,7 +209,6 @@ export default function App() {
             onToggleDarkMode={() => setDarkMode(prev => !prev)}
           />
         )}
-        </AnimatePresence>
 
         {/* WORKSPACE: Split 50/50 when any of the 3 tools is open */}
         <div className="flex-1 flex flex-col lg:flex-row min-h-0 w-full relative overflow-hidden bg-white dark:bg-zinc-950">
@@ -224,19 +221,12 @@ export default function App() {
                 : 'w-full h-full'
             }`}
           >
-            <main 
-              ref={scrollContainerRef}
-              className={`w-full flex-1 transition-all duration-300 ease-out ${activeTab === 'academic' ? 'h-full overflow-hidden' : 'overflow-y-auto pb-16 custom-scrollbar overscroll-contain'}`}
-            >
-              <AnimatePresence mode="wait">
+              <main 
+                ref={scrollContainerRef}
+                className={`w-full flex-1 transition-all duration-300 ease-out ${activeTab === 'academic' ? 'h-full overflow-hidden' : 'overflow-y-auto pb-16 custom-scrollbar overscroll-contain'}`}
+              >
                 {activeLesson && activeCourse ? (
-                  <motion.div 
-                    key="lesson"
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    transition={{ duration: 0.25 }}
-                  >
+                  <div key="lesson">
                     <LessonViewer 
                       key={activeLesson.id}
                       lesson={activeLesson} 
@@ -249,15 +239,9 @@ export default function App() {
                       onOpenAssistant={() => handleOpenTool('assistant')}
                       onOpenBible={(ref, text) => handleOpenBibleWithRef(ref, text)}
                     />
-                  </motion.div>
+                  </div>
                 ) : activeCourse ? (
-                  <motion.div 
-                    key="course-overview"
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    transition={{ duration: 0.25 }}
-                  >
+                  <div key="course-overview">
                     <CourseOverview
                       course={activeCourse}
                       progress={progress}
@@ -266,15 +250,9 @@ export default function App() {
                       onSelectLesson={(lessonId) => setActiveLessonId(lessonId)}
                       onBack={() => setActiveCourseId(null)}
                     />
-                  </motion.div>
+                  </div>
                 ) : activeTab === 'home' ? (
-                  <motion.div 
-                    key="home-panel"
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    transition={{ duration: 0.25 }}
-                  >
+                  <div key="home-panel">
                     <HomePanel
                       user={user}
                       customProfile={customProfile}
@@ -290,15 +268,9 @@ export default function App() {
                         setActiveLessonId(null);
                       }}
                     />
-                  </motion.div>
+                  </div>
                 ) : activeTab === 'courses' ? (
-                  <motion.div 
-                    key="courses-catalog"
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    transition={{ duration: 0.25 }}
-                  >
+                  <div key="courses-catalog">
                     <Dashboard 
                       user={user} 
                       courses={mockDatabase.courses} 
@@ -309,49 +281,32 @@ export default function App() {
                         setActiveLessonId(null);
                       }} 
                     />
-                  </motion.div>
+                  </div>
                 ) : activeTab === 'academic' ? (
-                   <motion.div 
+                   <div 
                      key="academic-panel"
-                     initial={{ opacity: 0, y: 10 }}
-                     animate={{ opacity: 1, y: 0 }}
-                     exit={{ opacity: 0, y: -10 }}
-                     transition={{ duration: 0.25 }}
                      className="flex-1 min-h-0 flex flex-col overflow-hidden h-full"
                    >
                      <AcademicPanel />
-                  </motion.div>
+                  </div>
                 ) : activeTab === 'calendar' ? (
-                  <motion.div 
-                    key="calendar-panel"
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    transition={{ duration: 0.25 }}
-                  >
+                  <div key="calendar-panel">
                     <StudyCalendar 
                       progress={progress} 
                       totalLessons={mockDatabase.courses.reduce((acc, c) => acc + c.lessons.length, 0)} 
                     />
-                  </motion.div>
+                  </div>
                 ) : (
-                  <motion.div 
-                    key="grades-panel"
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    transition={{ duration: 0.25 }}
-                  >
+                  <div key="grades-panel">
                     <GradesPanel 
                       courses={mockDatabase.courses} 
                       progress={progress} 
                       user={user!} 
                       customProfile={customProfile}
                     />
-                  </motion.div>
+                  </div>
                 )}
-              </AnimatePresence>
-            </main>
+              </main>
           </div>
 
           {/* RIGHT HALF: Active Tool Window (Notes, Assistant, or Bible) */}

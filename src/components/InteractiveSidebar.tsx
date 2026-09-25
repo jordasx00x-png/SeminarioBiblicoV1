@@ -23,8 +23,6 @@ import {
 } from 'lucide-react';
 import { User as FirebaseUser } from 'firebase/auth';
 import { UserProgress } from '../types';
-import { motion, AnimatePresence } from 'motion/react';
-import { PWAInstallButton } from './PWAInstallButton';
 
 export interface InteractiveSidebarProps {
   activeTab: 'home' | 'courses' | 'academic' | 'calendar' | 'grades';

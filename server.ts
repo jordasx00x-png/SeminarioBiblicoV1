@@ -30,8 +30,20 @@ async function startServer() {
         return res.status(400).json({ error: 'Se requiere al menos un mensaje.' });
       }
 
-      const openaiKey = process.env.OPENAI_API_KEY;
+      let openaiKey = process.env.OPENAI_API_KEY;
       const geminiKey = process.env.GEMINI_API_KEY;
+      let aiBaseUrl = process.env.AI_BASE_URL;
+      let aiModel = process.env.AI_MODEL;
+
+      // Auto-detect Groq if the key starts with gsk_
+      if (openaiKey?.startsWith('gsk_')) {
+        aiBaseUrl = aiBaseUrl || "https://api.groq.com/openai/v1";
+        // If the model looks like it's from another provider (e.g. starts with openai/) 
+        // but we are using a Groq key, we default to a high-performance Groq model.
+        if (!aiModel || aiModel.startsWith('openai/')) {
+          aiModel = "llama-3.3-70b-versatile";
+        }
+      }
 
       let systemInstruction = `Eres el "Asistente Virtual Teológico y Pastoral" del Seminario Teológico Digital (STD Campus Interactivo). 
 Tu misión es asistir y responder todas las preguntas que los estudiantes, pastores y usuarios te hagan, ya sean sobre las clases del seminario, dudas bíblicas, teología sistemática, historia de la iglesia, exégesis bíblica o idiomas originales (griego/hebreo).
@@ -47,15 +59,15 @@ Directrices para tus respuestas:
         systemInstruction += `\n\nContexto actual del estudiante:\n- Curso en pantalla: ${context.courseTitle || 'No especificado'}\n- Lección en pantalla: ${context.lessonTitle || 'No especificada'}`;
       }
 
-      // Logic to prefer OpenAI if key is present
-      if (openaiKey) {
+      // 1. Prefer Custom API (OpenAI-compatible / Groq) if AI_BASE_URL or OPENAI_API_KEY is present
+      if (aiBaseUrl || openaiKey) {
         const openai = new OpenAI({ 
-          apiKey: openaiKey,
-          baseURL: process.env.AI_BASE_URL || undefined // Allows using GitHub Models or other providers
+          apiKey: openaiKey || "sk-no-key-required",
+          baseURL: aiBaseUrl || undefined
         });
         
         const response = await openai.chat.completions.create({
-          model: process.env.AI_MODEL || "gpt-4o", // Allows custom models
+          model: aiModel || "gpt-4o", 
           messages: [
             { role: "system", content: systemInstruction },
             ...messages.map((m: any) => ({
@@ -70,7 +82,7 @@ Directrices para tus respuestas:
         return res.json({ reply: replyText });
       }
 
-      // Fallback to Gemini if requested specifically or if OpenAI key is missing
+      // 2. Fallback to Gemini if requested specifically or if custom API is missing
       if (geminiKey) {
         const ai = new GoogleGenAI({
           apiKey: geminiKey,
@@ -86,7 +98,7 @@ Directrices para tus respuestas:
           parts: [{ text: m.content }],
         }));
 
-        const modelsToTry = ['gemini-2.0-flash', 'gemini-1.5-flash'];
+        const modelsToTry = ['gemini-2.0-flash', 'gemini-1.5-flash']; // Use standard stable names
         let replyText = '';
         let lastError = null;
 
@@ -105,6 +117,7 @@ Directrices para tus respuestas:
               break;
             }
           } catch (err: any) {
+            console.error(`Error with model ${modelName}:`, err);
             lastError = err;
           }
         }
@@ -116,7 +129,7 @@ Directrices para tus respuestas:
       }
 
       return res.status(503).json({
-        error: 'El asistente requiere una clave de API (OPENAI_API_KEY o GEMINI_API_KEY). Por favor configúrela en Settings > Secrets.'
+        error: 'El asistente requiere configuración de API (AI_BASE_URL, OPENAI_API_KEY o GEMINI_API_KEY). Por favor configúrela en Settings > Secrets.'
       });
 
     } catch (err: any) {

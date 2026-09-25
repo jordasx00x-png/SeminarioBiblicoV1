@@ -1,49 +1,51 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
   <head>
-    <script>
-      // Ignore benign Vite WebSocket errors in AI Studio iframe environment as specified in system guidelines
-      (function() {
-        const origError = console.error;
-        const origWarn = console.warn;
-        console.error = function(...args) {
-          const msg = args.map(function(a) { return String(a || ''); }).join(' ');
-          if (msg.includes('WebSocket') || msg.includes('[vite]')) return;
-          origError.apply(console, args);
-        };
-        console.warn = function(...args) {
-          const msg = args.map(function(a) { return String(a || ''); }).join(' ');
-          if (msg.includes('WebSocket') || msg.includes('[vite]')) return;
-          origWarn.apply(console, args);
-        };
-        window.addEventListener('unhandledrejection', function(event) {
-          if (event.reason && (String(event.reason).includes('WebSocket') || String(event.reason).includes('[vite]'))) {
-            event.preventDefault();
-          }
-        });
-      })();
-    </script>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Remix Seminario Teológico Digital</title>
-    <meta name="description" content="Plataforma educativa de Teología y Estudios Bíblicos con Asistente Virtual Teológico interactivo." />
-    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>Seminario Teológico Digital</title>
     <link rel="icon" type="image/svg+xml" href="/icon.svg" />
-    <link rel="icon" type="image/png" href="/icon-192.png" />
-    
-    <!-- PWA Manifest & Theme Color -->
-    <link rel="manifest" href="./manifest.json" />
-    <meta name="theme-color" content="#1A2533" />
-    
-    <!-- iOS / Mobile Web App Touch capability & styles -->
-    <meta name="mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-    <meta name="apple-mobile-web-app-title" content="Seminario" />
-    <link rel="apple-touch-icon" href="./icon-192.png" />
   </head>
   <body>
-    <div id="root"></div>
+    <script>
+      document.body.style.background = 'purple';
+      console.log('Inline script executed');
+    </script>
+    <div id="root">
+      <div style="padding: 20px; text-align: center;">
+        <h2>Cargando sistema...</h2>
+        <p>Si este mensaje no desaparece, hay un problema cargando los scripts.</p>
+      </div>
+    </div>
+    <script>
+      window.onerror = function(msg, url, line, col, error) {
+        var errorDiv = document.createElement('div');
+        errorDiv.style.position = 'fixed';
+        errorDiv.style.top = '0';
+        errorDiv.style.left = '0';
+        errorDiv.style.width = '100%';
+        errorDiv.style.background = 'red';
+        errorDiv.style.color = 'white';
+        errorDiv.style.padding = '20px';
+        errorDiv.style.zIndex = '10000';
+        errorDiv.innerHTML = '<strong>Error Crítico:</strong> ' + msg + '<br><em>' + url + ':' + line + '</em>';
+        document.body.appendChild(errorDiv);
+        return false;
+      };
+      window.onunhandledrejection = function(event) {
+        var errorDiv = document.createElement('div');
+        errorDiv.style.position = 'fixed';
+        errorDiv.style.top = '50px';
+        errorDiv.style.left = '0';
+        errorDiv.style.width = '100%';
+        errorDiv.style.background = 'orange';
+        errorDiv.style.color = 'black';
+        errorDiv.style.padding = '20px';
+        errorDiv.style.zIndex = '10001';
+        errorDiv.innerHTML = '<strong>Promesa Rechazada:</strong> ' + event.reason;
+        document.body.appendChild(errorDiv);
+      };
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

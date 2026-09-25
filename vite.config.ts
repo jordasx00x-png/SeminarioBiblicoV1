@@ -74,5 +74,9 @@ export default defineConfig({
   ],
   build: {
     chunkSizeWarningLimit: 1600,
-  }
+  },
+  server: {
+    hmr: false,
+    watch: null,
+  },
 });

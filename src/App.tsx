@@ -418,8 +418,6 @@ export default function App() {
           }}
           onOpenAssistant={() => handleOpenTool('assistant')}
           onOpenNotes={() => handleOpenTool('notes')}
-          onOpenBible={() => handleOpenTool('bible')}
-          activeTool={activeTool}
         />
       </div>
 

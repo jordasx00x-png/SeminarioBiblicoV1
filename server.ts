@@ -57,9 +57,9 @@ Directrices para tus respuestas:
         const response = await openai.chat.completions.create({
           model: process.env.AI_MODEL || "gpt-4o", // Allows custom models
           messages: [
-            { role: "system", content: systemInstruction },
+            { role: "system" as const, content: systemInstruction },
             ...messages.map((m: any) => ({
-              role: m.role === 'assistant' ? 'assistant' : 'user',
+              role: (m.role === 'assistant' ? 'assistant' : 'user') as "assistant" | "user",
               content: m.content
             }))
           ],

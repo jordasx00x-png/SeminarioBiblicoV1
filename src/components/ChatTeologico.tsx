@@ -6,7 +6,7 @@ export default function VirtualAssistantWidget() {
   const p2 = "ophFTXUhWgdyb3FYkogvv7ZpZY33RSzkZYrmmDg1";
   const API_KEY = p1 + p2; 
 
-  const [mensajes, setMensajes] = useState<{ rol: 'user' | 'ia', texto: string, hora: string }[]>([]);
+  const [mensajes, setMensajes] = useState<{ role: 'user' | 'ia', texto: string, hora: string }[]>([]);
   const [input, setInput] = useState('');
   const [cargando, setCargando] = useState(false);
   const historialRef = useRef<HTMLDivElement>(null);
@@ -28,7 +28,7 @@ export default function VirtualAssistantWidget() {
     const textoUsuario = input.trim();
     const horaEnvio = obtenerHoraActual();
     
-    setMensajes(prev => [...prev, { rol: 'user', texto: textoUsuario, hora: horaEnvio }]);
+    setMensajes(prev => [...prev, { role: 'user', texto: textoUsuario, hora: horaEnvio }]);
     setInput('');
 
     try {
@@ -54,9 +54,9 @@ export default function VirtualAssistantWidget() {
       const datos = await respuesta.json();
       const respuestaIA = datos.choices.message.content;
 
-      setMensajes(prev => [...prev, { rol: 'ia', texto: respuestaIA, hora: obtenerHoraActual() }]);
+      setMensajes(prev => [...prev, { role: 'ia', texto: respuestaIA, hora: obtenerHoraActual() }]);
     } catch (error) {
-      setMensajes(prev => [...prev, { rol: 'ia', texto: "Error al conectar con la IA. Por favor, intenta de nuevo.", hora: obtenerHoraActual() }]);
+      setMensajes(prev => [...prev, { role: 'ia', texto: "Error al conectar con la IA. Por favor, intenta de nuevo.", hora: obtenerHoraActual() }]);
       console.error(error);
     } finally {
       setCargando(false);

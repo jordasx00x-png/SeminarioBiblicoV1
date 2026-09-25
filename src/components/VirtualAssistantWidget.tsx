@@ -348,7 +348,7 @@ export function VirtualAssistantWidget({
                     {msg.content}
                   </div>
                   <div className="mt-2 text-[9px] text-stone-400 dark:text-stone-500 flex items-center justify-between">
-                    <span>{msg.timestamp && !msg.timestamp.includes('Invalid') ? msg.timestamp : 'Recién enviado'}</span>
+                    <span>{new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                     {msg.role === 'assistant' && (
                       <button
                         onClick={() => handleCopy(msg.id, msg.content)}
@@ -362,15 +362,6 @@ export function VirtualAssistantWidget({
                 </div>
               </div>
             ))
-          )}
-          {error && (
-            <div className="mx-4 my-2 p-3 bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-900/40 rounded-lg flex items-start gap-3">
-              <X size={16} className="text-red-600 dark:text-red-400 shrink-0 mt-0.5" />
-              <div className="flex-1">
-                <p className="text-[11px] font-bold text-red-700 dark:text-red-400 uppercase tracking-tight">Error en la consulta</p>
-                <p className="text-[10px] text-red-600 dark:text-red-500 mt-0.5 leading-relaxed">{error}</p>
-              </div>
-            </div>
           )}
           {isLoading && (
             <div className="flex gap-3 items-center text-xs text-stone-400 py-2">
@@ -711,7 +702,7 @@ export function VirtualAssistantWidget({
 
                       {/* Timestamp */}
                       <div className={`mt-3 pt-2 border-t border-stone-200/40 dark:border-stone-800/40 text-[9px] font-bold uppercase tracking-widest ${isUser ? 'text-stone-400 text-right' : 'text-stone-500'}`}>
-                        {msg.timestamp && !msg.timestamp.includes('Invalid') ? msg.timestamp : 'Recién enviado'}
+                        {msg.timestamp}
                       </div>
                     </div>
                   </div>
@@ -719,15 +710,6 @@ export function VirtualAssistantWidget({
               })}
 
               {/* Loading Indicator */}
-              {error && (
-                <div className="mx-6 my-2 p-3 bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-900/40 rounded-lg flex items-start gap-3">
-                  <X size={16} className="text-red-600 dark:text-red-400 shrink-0 mt-0.5" />
-                  <div className="flex-1">
-                    <p className="text-[11px] font-bold text-red-700 dark:text-red-400 uppercase tracking-tight">Error en la consulta</p>
-                    <p className="text-[10px] text-red-600 dark:text-red-500 mt-0.5 leading-relaxed">{error}</p>
-                  </div>
-                </div>
-              )}
               {isLoading && (
                 <div className="flex items-center gap-3 bg-[#FAF9F5] dark:bg-stone-900 border border-stone-200 dark:border-stone-800 p-4 rounded shadow-sm">
                   <RefreshCw size={18} className="text-[#7F1D1D] animate-spin" />

@@ -22,8 +22,8 @@ export function useProfile() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const user = auth?.currentUser;
-    if (!user || !db) {
+    const user = auth.currentUser;
+    if (!user) {
       setIsLoading(false);
       return;
     }
@@ -64,12 +64,12 @@ export function useProfile() {
     });
 
     return () => unsubscribe();
-  }, [auth?.currentUser?.uid]);
+  }, [auth.currentUser?.uid]);
 
   const saveProfile = async (newProfile: UserProfileData) => {
     setProfile(newProfile);
-    const user = auth?.currentUser;
-    if (user && db) {
+    const user = auth.currentUser;
+    if (user) {
       safeStorage.setItem(`profile_${user.uid}`, JSON.stringify(newProfile));
       const docRef = doc(db, 'users', user.uid, 'profile', 'default');
       try {

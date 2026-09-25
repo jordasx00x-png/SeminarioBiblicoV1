@@ -27,8 +27,7 @@ service cloud.firestore {
       allow read, update, delete: if isSignedIn() && resource.data.userId == request.auth.uid;
 
       match /messages/{messageId} {
-        // More robust message rules: if you can see the conversation, you can see the messages
-        allow read, write: if isSignedIn(); 
+        allow read, create: if isSignedIn() && get(/databases/$(database)/documents/conversations/$(conversationId)).data.userId == request.auth.uid;
       }
     }
 

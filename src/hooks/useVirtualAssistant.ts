@@ -37,7 +37,7 @@ Estoy aquí para responder cualquier pregunta que tengas:
 - **Orientación pastoral y aplicación práctica.**
 
 ¿Qué pregunta o tema te gustaría explorar hoy?`,
-  timestamp: 'Sesión Iniciada',
+  timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
 };
 
 export function useVirtualAssistant() {
@@ -65,9 +65,6 @@ export function useVirtualAssistant() {
         ...doc.data()
       })) as Conversation[];
       setConversations(convos);
-    }, (err) => {
-      console.error("Error listening to conversations:", err);
-      setError("Error de conexión con la base de datos (Conversaciones).");
     });
   }, [userId]);
 
@@ -86,25 +83,11 @@ export function useVirtualAssistant() {
     return onSnapshot(q, (snapshot) => {
       const msgs = snapshot.docs.map(doc => {
         const data = doc.data();
-        let timeStr = 'Recién enviado';
-        try {
-          if (data.timestamp) {
-            const date = data.timestamp.toDate ? data.timestamp.toDate() : new Date(data.timestamp);
-            if (date && !isNaN(date.getTime())) {
-              timeStr = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            } else {
-              timeStr = 'Recién enviado';
-            }
-          }
-        } catch (e) {
-          timeStr = 'Recién enviado';
-        }
-        
         return {
           id: doc.id,
           role: data.role,
           content: data.content,
-          timestamp: timeStr
+          timestamp: data.timestamp?.toDate ? data.timestamp.toDate().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Recién enviado'
         };
       }) as AssistantMessage[];
       
@@ -113,9 +96,6 @@ export function useVirtualAssistant() {
       } else {
         setMessages(msgs);
       }
-    }, (err) => {
-      console.error("Error listening to messages:", err);
-      setError("Error de conexión con la base de datos (Mensajes).");
     });
   }, [activeConversationId]);
 

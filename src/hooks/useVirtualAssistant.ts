@@ -65,6 +65,9 @@ export function useVirtualAssistant() {
         ...doc.data()
       })) as Conversation[];
       setConversations(convos);
+    }, (err) => {
+      console.error("Error listening to conversations:", err);
+      setError("Error de conexión con la base de datos (Conversaciones).");
     });
   }, [userId]);
 
@@ -110,6 +113,9 @@ export function useVirtualAssistant() {
       } else {
         setMessages(msgs);
       }
+    }, (err) => {
+      console.error("Error listening to messages:", err);
+      setError("Error de conexión con la base de datos (Mensajes).");
     });
   }, [activeConversationId]);
 

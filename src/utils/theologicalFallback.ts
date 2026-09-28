@@ -4,8 +4,97 @@ export function generateClientTheologicalResponse(
 ): string {
   const query = (messageText || '').toLowerCase();
 
+  // Extract Bible passage or topic cleanly from prompt
+  const cleanPassage = messageText
+    .replace(/por favor/gi, '')
+    .replace(/genera/gi, '')
+    .replace(/crear/gi, '')
+    .replace(/un bosquejo/gi, '')
+    .replace(/bosquejo/gi, '')
+    .replace(/homilético/gi, '')
+    .replace(/homiletico/gi, '')
+    .replace(/expositivo/gi, '')
+    .replace(/profundo/gi, '')
+    .replace(/con exégesis/gi, '')
+    .replace(/con exegesis/gi, '')
+    .replace(/3 puntos principales/gi, '')
+    .replace(/aplicaciones e ilustraciones/gi, '')
+    .replace(/aplicaciones/gi, '')
+    .replace(/ilustraciones/gi, '')
+    .replace(/para el pasaje de:/gi, '')
+    .replace(/para el pasaje de/gi, '')
+    .replace(/del pasaje/gi, '')
+    .replace(/sermón/gi, '')
+    .replace(/sermon/gi, '')
+    .replace(/prédica/gi, '')
+    .replace(/predica/gi, '')
+    .trim();
+
   // -------------------------------------------------------------
-  // 1. SPECIFIC PASSAGE MATCH: 1 TIMOTEO 4:12 (Or 1 Timoteo / Timoteo 4)
+  // 1. SPECIFIC MATCH: SALMOS 23 / SALMO 23
+  // -------------------------------------------------------------
+  if (query.includes('salmo 23') || query.includes('salmos 23') || (query.includes('salmo') && query.includes('23'))) {
+    return `### 📜 Bosquejo Homilético Expositivo: Salmo 23
+
+**Título del Sermón:** El Señor es mi Pastor: Provisión, Protección y Gracia Incalculable
+**Texto Bíblico Base:** Salmo 23:1-6 (RVR 1960)
+> *"Jehová es mi pastor; nada me faltará. En lugares de delicados pastos me hará descansar; junto a aguas de reposo me pastoreará."*
+
+---
+
+#### 1. Marco Exegético y Propósito
+- **Contexto Histórico:** Compuesto por David, el rey-pastor de Israel. Usando su profunda experiencia juvenil en los campos de Belén, David contrapone el cuidado abnegado de Dios (*YHVH Ro'i*) a la desolación del desierto de Judea.
+- **Análisis de Palabras en Hebreo Bíblico:**
+  * **YHVH Ro'i (יְהוָה רֹעִי):** "El Señor es mi Pastor". Expresa una relación de pacto íntimo, personal y soberano.
+  * **Lo Echsas (לֹא אֶחְסָר):** "Nada me faltará". Significa "no sufriré escasez ni carencia de lo verdaderamente vital".
+  * **Tzalmaveth (צַלְמָוֶת):** "Valle de sombra de muerte" (oscuridad densa, peligro inminente).
+  * **Hesed (חֶסֶד):** "Amor de pacto, misericordia inquebrantable y fidelidad perenne".
+- **Idea Central del Texto (ICT):** Dios provee, guía, protege y restaura soberanamente la vida de quienes pertenecen a su rebaño.
+- **Idea Central del Sermón (ICS):** En las manos del Buen Pastor, el creyente tiene satisfacción completa hoy, paz en medio de las pruebas y una morada eterna asegurada.
+- **Proposición Homilética:** Al rendir nuestras vidas al cuidado de Cristo, sustituimos la ansiedad por la confianza gozosa en su providencia.
+
+---
+
+#### 2. Introducción Impactante
+- **Gancho Inicial:** Vivimos en una sociedad plagada de agotamiento, insatisfacción constante y temor al futuro.
+- **Conexión Pastoral:** David no escribió este salmo en un palacio libre de problemas, sino recordando las garras de leones, los valles oscuros y los enemigos acechantes.
+- **Pregunta Transicional:** ¿Cómo experimentar descanso real y seguridad inamovible cuando todo a nuestro alrededor parece inestable?
+
+---
+
+#### 3. Bosquejo Expositivo del Pasaje
+
+##### I. La Provisión y Restauración del Pastor (vv. 1-3)
+- **Exégesis:** Los "delicados pastos" (*De'she*) y "aguas de reposo" (*Menuhot*) describen un lugar de reposo seguro donde la oveja puede alimentarse sin temor. El verbo "confortará" (*Shuv*) implica restaurar el alma cansada o descarriada.
+- **Apoyo Bíblico:** Juan 10:11, 14; Isaías 40:11.
+- **Ilustración Pastoral:** Una oveja patas arriba (*cast down*) no puede levantarse por sí misma; necesita la mano tierna del pastor para enderezarla y salvarle la vida.
+- **Aplicación:** Permite que la Palabra de Dios y el Espíritu Santo restauren tus fuerzas en lugar de buscar refugio en cisternas rotas.
+
+##### II. La Presencia y Consuelo en el Valle Oscuro (v. 4)
+- **Exégesis:** La "vara" (*Shevet*) era el garrote para defender al rebaño de los depredadores; el "cayado" (*Mish'enet*) era el bastón curvo para guiar y rescatar. Ambas herramientas comunican protección y disciplina amorosa.
+- **Apoyo Bíblico:** Isaías 43:2; Romanos 8:38-39.
+- **Ilustración Pastoral:** En los valles profundos de Judea, el sol no llega al fondo, pero la voz del pastor resuena más fuerte en las paredes de roca.
+- **Aplicación:** Aunque atravieses enfermedades, pérdidas o crisis, la presencia de Cristo está contigo; no estás solo en la prueba.
+
+##### III. La Mesa Servida y la Morada Eterna (vv. 5-6)
+- **Exégesis:** Dios pasa de la figura del Pastor a la del Anfitrión Divino. Unge la cabeza con aceite (*Shemen* - honor y sanidad) y llena la copa hasta rebozar (*Revayah*). El "bien" (*Tov*) y la "misericordia" (*Hesed*) persiguen al creyente como guardianes divinos.
+- **Apoyo Bíblico:** Juan 14:2-3; Apocalipsis 7:16-17.
+- **Aplicación Práctica:** Vivir hoy con mentalidad de eternidad, sabiendo que nuestro hogar final está en la presencia del Dios Altísimo.
+
+---
+
+#### 4. Conclusión Homilética y Llamado
+- **Resumen:** Con Jehová como tu Pastor, tu pasado está perdonado, tu presente está protegido y tu futuro está asegurado.
+- **Llamado a la Acción:**
+  1. Si nunca has entregado tu vida a Jesucristo, ven hoy al Buen Pastor que dio su vida por las ovejas.
+  2. Rinde tus cargas y ansiedades en oración.
+  3. Camina cada día descansando en su dirección y gracia.
+
+> *"Yo soy el buen pastor; el buen pastor su vida da por las ovejas."* — **Juan 10:11**`;
+  }
+
+  // -------------------------------------------------------------
+  // 2. SPECIFIC MATCH: 1 TIMOTEO 4:12
   // -------------------------------------------------------------
   if (query.includes('1 timoteo 4:12') || query.includes('1 timoteo 4') || (query.includes('timoteo') && query.includes('juventud'))) {
     return `### 📜 Bosquejo Homilético Expositivo: 1 Timoteo 4:12
@@ -17,216 +106,125 @@ export function generateClientTheologicalResponse(
 ---
 
 #### 1. Marco Exegético y Propósito
-- **Contexto Histórico:** El apóstol Pablo escribe a su hijo espiritual Timoteo, a quien había encomendado la compleja labor pastoral en la iglesia de Éfeso. Timoteo enfrentaba el desafío de liderar a creyentes mayores y combatir falsas doctrinas.
+- **Contexto Histórico:** El apóstol Pablo escribe a su hijo espiritual Timoteo, encomendado a la iglesia de Éfeso para enfrentar falsos maestros y estructurar el liderazgo eclesial.
 - **Análisis de Palabras en Griego Koiné:**
-  * **Typos (τύπος):** Significa "modelo", "patrón", "estampa de sello" o "estándar a imitar". El testimonio personal de Timoteo debía ser el molde visible de la fe.
-  * **Neotes (νεότης):** "Juventud". En la cultura grecorromana y judía de la época, los hombres menores de 40 años eran considerados jóvenes respecto al consejo de ancianos (*presbyteros*).
-- **Idea Central del Texto (ICT):** La autoridad espiritual de un siervo de Dios no emana de su edad biológica, sino de la excelencia de su testimonio piadoso.
-- **Idea Central del Sermón (ICS):** El testimonio íntegro en la vida diaria es la mayor apología y el fundamento del liderazgo cristiano.
-- **Proposición Homilética:** Para no ser menospreciados en nuestro servicio a Dios, debemos cultivar una vida que sirva de modelo en cada área práctica de la fe.
+  * **Typos (τύπος):** "Modelo", "patrón", "sello de molde". El testimonio personal de Timoteo debía ser el estándar visible.
+  * **Neotes (νεότης):** "Juventud". Menores de 40 años en el contexto cultural grecorromano de ancianos (*presbyteros*).
+- **Idea Central del Texto (ICT):** La autoridad espiritual emana de la integridad del testimonio piadoso.
+- **Idea Central del Sermón (ICS):** El testimonio íntegro es la mayor apología y el fundamento del servicio cristiano.
 
 ---
 
-#### 2. Introducción Impactante
-- **Gancho Inicial:** A menudo el mundo evalúa la capacidad de una persona por sus títulos, años de experiencia o edad. Sin embargo, en el Reino de Dios, el calibre de un líder se mide por su carácter y fidelidad.
-- **Pregunta Transicional:** ¿Cómo puede un creyente joven o un servidor de Dios ganarse el respeto espiritual en su comunidad y resistir el menosprecio?
-
----
-
-#### 3. Bosquejo Expositivo del Pasaje
+#### 2. Bosquejo Expositivo del Pasaje
 
 ##### I. Superando el Menosprecio Mediante la Autoridad Espiritual ("Ninguno tenga en poco tu juventud")
-- **Exégesis:** La palabra "menospreciar" (*kataphroneo*) implica mirar hacia abajo con desdén. Pablo no le pide a Timoteo que exija respeto por la fuerza, sino que lo inspire a través del carácter.
-- **Apoyo Bíblico:** Jeremías 1:6-8; 1 Corintios 16:11.
-- **Ilustración Pastoral:** Una vela pequeña en medio de una habitación oscura no necesita gritar para ser vista; basta con que brille con luz pura.
-- **Aplicación:** No permitas que tu edad, tu pasado o las dudas de otros apaguen el llamado de Dios sobre tu vida.
+- **Exégesis:** *Kataphroneo* (mirar hacia abajo con desdén). Pablo exhorta a inspirar respeto a través del carácter cristiano.
+- **Aplicación:** No permitas que tu edad o las dudas de otros apaguen el llamado de Dios.
 
 ##### II. Las Seis Columnas del Modelo Cristiano ("Sé ejemplo de los creyentes...")
-Pablo desglosa seis áreas prácticas divididas en dos ámbitos: la vida pública y la devoción interna.
-
-1. **En Palabra (*Logos*):** Cuidar el hablar, evitando la chismografía, la mentira y las palabras corrompidas (*Efesios 4:29*).
-2. **En Conducta (*Anastrophe*):** Un estilo de vida irreprensible en el hogar, el trabajo y la iglesia.
-3. **En Amor (*Agape*):** El amor sacrificial incondicional hacia Dios y hacia el prójimo.
-4. **En Espíritu (*Pneuma*):** Fervor espiritual, celo por la verdad y devoción apasionada.
-5. **En Fe (*Pistis*):** Lealtad inquebrantable a las doctrinas de la Escritura y firmeza en la prueba.
-6. **En Pureza (*Hagneia*):** Santidad moral, castidad y pensamientos limpios en un mundo hipersexualizado.
+1. **En Palabra (*Logos*):** Hablar piadoso, veraz y edificante.
+2. **En Conducta (*Anastrophe*):** Estilo de vida irreprensible.
+3. **En Amor (*Agape*):** Amor incondicional y sacrificial.
+4. **En Espíritu (*Pneuma*):** Fervor y celo por la verdad.
+5. **En Fe (*Pistis*):** Lealtad inquebrantable a las Escrituras.
+6. **En Pureza (*Hagneia*):** Santidad moral e intachabilidad.
 
 ##### III. El Impacto Permanente del Testimonio Público
-- **Exégesis:** Cuando la vida del predicador respalda su mensaje, el Evangelio se vuelve irrefutable para los de afuera y consolidador para los creyentes.
-- **Aplicación Práctica:** Evaluar esta semana en cuál de estas seis áreas el Espíritu Santo te está llamando a ajustar tu conducta.
+- **Aplicación:** Vence las excusas y vive como un referente de Cristo en tu iglesia y comunidad.
 
----
-
-#### 4. Conclusión Homilética y Llamado a la Acción
-- **Resumen:** Dios no busca gigantes de edad, sino siervos dispuestos a ser moldeados como *typos* de Cristo en la tierra.
-- **Desafío Pastoral:**
-  1. Arrepiéntete si has excusado tu tibieza espiritual en tu juventud o inexperiencia.
-  2. Comprométete a ser un referente de pureza, fe y amor en tu congregación.
-  3. Ora pidiendo la llenura del Espíritu Santo para vivir como un modelo irreprensible.
-
-> *"Procura con diligencia presentarte a Dios aprobado, como obrero que no tiene de qué avergonzarse, que usa bien la palabra de verdad."* — **2 Timoteo 2:15**`;
+> *"Procura con diligencia presentarte a Dios aprobado, como obrero que no tiene de qué avergonzarse."* — **2 Timoteo 2:15**`;
   }
 
   // -------------------------------------------------------------
-  // 2. DYNAMIC SERMON GENERATOR FOR ANY OTHER BIBLE PASSAGE / TOPIC
+  // 3. DYNAMIC SERMON GENERATOR FOR ANY OTHER REQUESTED PASSAGE
   // -------------------------------------------------------------
-  if (query.includes('sermon') || query.includes('predica') || query.includes('bosquejo') || query.includes('homiletica') || query.includes('mensaje') || query.includes('predicar')) {
-    // Extract passage or topic if provided in prompt
-    let cleanPrompt = messageText.replace(/por favor/gi, '').replace(/genera/gi, '').replace(/un bosquejo/gi, '').replace(/homiletico/gi, '').replace(/expositivo/gi, '').replace(/profundo/gi, '').replace(/con exegesis/gi, '').replace(/para el pasaje de/gi, '').replace(/sermon/gi, '').replace(/predica/gi, '').trim();
-    if (!cleanPrompt || cleanPrompt.length < 3) {
-      cleanPrompt = 'La Fe Inquebrantable en Tiempos de Prueba';
-    }
+  if (query.includes('sermon') || query.includes('predica') || query.includes('bosquejo') || query.includes('homiletica') || query.includes('mensaje') || query.includes('predicar') || cleanPassage.length > 2) {
+    const targetTopic = cleanPassage && cleanPassage.length > 2 ? cleanPassage.toUpperCase() : 'LA VERDAD Y LA GRACIA DE DIOS';
 
-    return `### 📜 Bosquejo Homilético Expositivo: ${cleanPrompt.toUpperCase()}
+    return `### 📜 Bosquejo Homilético Expositivo: ${targetTopic}
 
-**Título del Sermón:** Firmeza y Gracia: Viviendo con Propósito Eterno
-**Texto Bíblico Base:** ${cleanPrompt}
+**Título del Sermón:** La Fidelidad de Dios y el Llamado a la Santidad
+**Texto Bíblico Base:** ${targetTopic}
 
 ---
 
 #### 1. Marco Exegético y Propósito
-- **Idea Central del Texto (ICT):** Las Sagradas Escrituras revelan que Dios llama a su pueblo a cimentar su vida en la verdad inmutable de su Palabra y en la gracia redentora de Jesucristo.
-- **Idea Central del Sermón (ICS):** Toda instrucción bíblica busca transformar la mente y el corazón del creyente para la gloria de Dios.
-- **Proposición Homilética:** Al examinar y aplicar el pasaje de **${cleanPrompt}**, encontramos sabiduría divina para la edificación espiritual y la vida diaria.
+- **Idea Central del Texto (ICT):** Las Escrituras revelan la gloria, santidad y soberanía de Dios llamando a su pueblo a cimentar su fe en la verdad inmutable de su Palabra.
+- **Idea Central del Sermón (ICS):** Dios nos transforma mediante la exposición fiel de su Palabra y la gracia redentora de Jesucristo.
+- **Proposición Homilética:** Al estudiar e internalizar el pasaje de **${targetTopic}**, hallamos dirección, consuelo y poder para servir a Dios con integridad.
 
 ---
 
 #### 2. Introducción Impactante
-- **Gancho Inicial:** Frente a las presiones de la cultura contemporánea, la iglesia necesita respuestas cimentadas en la verdad bíblica y no en la sabiduría humana.
-- **Contexto:** El pasaje bíblico nos sitúa frente a la soberanía de Dios y su llamado a vivir de manera digna del Evangelio.
-- **Pregunta Transicional:** ¿De qué manera este pasaje transforma nuestro caminar cotidiano y fortalece nuestro ministerio?
+- **Gancho Inicial:** Frente a la incertidumbre del mundo contemporáneo, la Palabra de Dios se levanta como la única ancla inamovible para el alma.
+- **Pregunta Transicional:** ¿De qué manera este pasaje bíblico transforma nuestras decisiones y renueva nuestra esperanza?
 
 ---
 
 #### 3. Bosquejo Expositivo del Pasaje
 
-##### I. El Fundamento de la Verdad Revelada en el Pasaje
-- **Exégesis:** Análisis del contexto histórico y literario del texto. Dios habla a su pueblo con claridad para dar rumbo y convicción.
+##### I. La Verdad Revelada en el Pasaje (${targetTopic})
+- **Exégesis:** Análisis del contexto histórico y literario. Dios habla con autoridad para guiar y corregir a su pueblo.
 - **Apoyo Bíblico:** Salmo 119:105; 2 Timoteo 3:16-17.
-- **Ilustración Pastoral:** Un faro en medio de la tormenta no cambia de lugar; permanece firme para guiar a las embarcaciones hacia puerto seguro.
-- **Aplicación:** Meditar diariamente en las Escrituras para no ser arrastrados por filosofías huecas.
+- **Ilustración Pastoral:** Un faro firme en medio de la tempestad no vacila frente a las olas; guía con luz constante a los navegantes.
+- **Aplicación:** Cimentar nuestras convicciones en la verdad bíblica y no en emociones pasajeras.
 
-##### II. La Aplicación del Principio Doctrinal a la Vida Práctica
-- **Exégesis:** Los verbos de acción en el texto invitan a una respuesta activa de fe y obediencia (*pistis*).
+##### II. La Transformación del Carácter Mediante la Obediencia
+- **Exégesis:** La fe genuina (*Pistis*) se demuestra en obras de amor y santidad cotidiana.
 - **Apoyo Bíblico:** Santiago 1:22; Romanos 12:1-2.
-- **Ilustración Pastoral:** Un cimiento profundo no se ve a simple vista, pero sostiene todo el edificio cuando llegan los vientos.
-- **Aplicación:** Llevar el mensaje del domingo al hogar, al lugar de trabajo y a la comunidad.
+- **Ilustración Pastoral:** Una raíz profunda no se aprecia en la superficie, pero sostiene al árbol maduro contra los vientos más fuertes.
+- **Aplicación:** Llevar la enseñanza de la Escritura a la práctica en el hogar, el trabajo y el ministerio.
 
-##### III. La Esperanza Redentora y el Enfoque Cristocéntrico
-- **Exégesis:** Todo pasaje de las Escrituras apunta al cumplimiento supremo de las promesas de Dios en Jesucristo (*Lucas 24:27*).
-- **Aplicación Práctica:** Fijar la mirada en Jesús, el autor y consumador de la fe, sirviendo a los demás con amor agape.
+##### III. La Esperanza Redentora y el Cumplimiento Cristocéntrico
+- **Exégesis:** Toda la Escritura apunta al Señor Jesucristo y a su obra perfecta en la cruz (*Lucas 24:27*).
+- **Aplicación Práctica:** Vivir con gratitud, sirviendo a los demás con amor agape y testimonio intachable.
 
 ---
 
 #### 4. Conclusión Homilética y Llamado
-- **Resumen:** La Palabra de Dios para **${cleanPrompt}** nos desafía a ser hacedores y no solo oidores olvidadizos.
+- **Resumen:** El mensaje de Dios en **${targetTopic}** nos urge a renovar nuestra mente y caminar en fidelidad.
 - **Llamado a la Acción:**
-  1. Renueva tu compromiso personal con la lectura y estudio de la Biblia.
-  2. Rinde tus temores al Trono de la Gracia.
-  3. Vive como un testimonio vivo de la gracia redentora de Cristo.
+  1. Examina tu corazón a la luz de las Sagradas Escrituras.
+  2. Rinde tus temores y ansiedades al Señor Jesús.
+  3. Compromete tu vida a proclamar y vivir el Evangelio con valentía.
 
 > *"Santifícalos en tu verdad; tu palabra es verdad."* — **Juan 17:17**`;
   }
 
   // -------------------------------------------------------------
-  // 3. EXEGESIS & BIBLE STUDY SPECIFIC RESPONSES
+  // 4. EXEGESIS / BIBLE STUDY FALLBACK
   // -------------------------------------------------------------
-  if (query.includes('exegesis') || query.includes('estudio') || query.includes('analisis') || query.includes('pasaje')) {
-    let cleanText = messageText.replace(/realiza/gi, '').replace(/un analisis/gi, '').replace(/exegetico/gi, '').replace(/profundo/gi, '').replace(/del pasaje/gi, '').trim();
-    if (!cleanText) cleanText = '1 Timoteo 4:12';
-
-    return `### 🔍 Análisis Exegético Profundo: ${cleanText.toUpperCase()}
+  if (query.includes('exegesis') || query.includes('estudio') || query.includes('analisis')) {
+    const studyTarget = cleanPassage && cleanPassage.length > 2 ? cleanPassage.toUpperCase() : 'PASAJE BÍBLICO SOLICITADO';
+    return `### 🔍 Análisis Exegético Profundo: ${studyTarget}
 
 #### 1. Contexto Histórico-Gramatical
-- **Autor y Fecha:** El pasaje debe estudiarse considerando el contexto histórico original de la carta y el propósito del autor inspirado por el Espíritu Santo.
-- **Audiencia Original:** Los destinatarios originales y los desafíos culturales y religiosos que enfrentaban en el primer siglo.
-- **Literario:** Estructura sintáctica y género del libro bíblico.
+- **Autor y Época:** Estudio del contexto histórico, cultural y político del pasaje **${studyTarget}**.
+- **Audiencia Original:** Desafíos espirituales y comunitarios que motivaron la redacción.
+- **Género Literario:** Análisis del estilo sintáctico y estructura del texto.
 
-#### 2. Términos en Idiomas Originales (Griego / Hebreo)
-- **Griego Koiné / Hebreo:** Verbos y sustantivos clave con sus respectivos significados en el léxico bíblico y códigos Strong.
-- **Estructura Gramatical:** Tiempos verbales que indican acción continua, puntual o imperativa.
+#### 2. Idiomas Originales (Griego Koiné / Hebreo Bíblico)
+- **Vocabulario Clave:** Raíces léxicas, códigos Strong y matices teológicos de los verbos y términos principales.
+- **Sintaxis Gramatical:** Tiempos y modos verbales (aoristo, presente continuo, imperativo).
 
-#### 3. Teología Bíblica y Aplicación Pastoral
-- **Cristocentrismo:** Conexión con el Evangelio de Jesucristo y la Teología de la Gracia.
-- **Vida Práctica:** Principios espirituales atemporales para la vida cristiana contemporánea.`;
+#### 3. Aplicación Teológica y Pastoral
+- **Enfoque Redentor:** Conexión con el plan de salvación en Jesucristo.
+- **Transformación Práctica:** Lecciones espirituales atemporales para la vida cristiana hoy.`;
   }
 
   // -------------------------------------------------------------
-  // 4. GREETING & GENERAL THEOLOGICAL FALLBACKS
+  // 5. GREETING & GENERAL FALLBACKS
   // -------------------------------------------------------------
-  if (query.includes('hola') || query.includes('buenos') || query.includes('buenas') || query.includes('saludos')) {
-    return `¡Paz y gracia de nuestro Señor Jesucristo! 
+  return `¡Paz y gracia de nuestro Señor Jesucristo! 
 
-Soy tu **Especialista en Teología, Exégesis y Homilética** del Seminario Teológico Digital. 
-
-Estoy programado para asistirte con precisión en:
-- 📜 **Creación de Sermones Expositivos Profundos** (Estructura homilética, ICT/ICS, exégesis y aplicaciones)
-- 🔍 **Estudio Bíblico y Exégesis** (1 Timoteo 4:12, Romanos, Efesios, Salmos, etc.)
-- 🏛️ **Idiomas Originales** (Análisis en Griego Koiné y Hebreo Bíblico)
-
-¿Qué pasaje bíblico o tema te gustaría trabajar hoy?`;
-  }
-
-  if (query.includes('justificaci') || query.includes('santificaci') || query.includes('salvaci') || query.includes('fe')) {
-    return `### Doctrina de la Justificación por la Fe
-
-La **Justificación** es el acto soberano y judicial de Dios por el cual declara justo al pecador, no por sus méritos o buenas obras, sino imputándole la justicia perfecta de Jesucristo recibida únicamente mediante la fe (*Sola Fide*).
-
-> "Justificados, pues, por la fe, tenemos paz para con Dios por medio de nuestro Señor Jesucristo." — **Romanos 5:1 (RVR 1960)**
-
-#### Distinción Fundamental:
-1. **Justificación**: Acto instantáneo, definitivo e inmutable donde Dios declara al pecador "no culpable".
-2. **Santificación**: Proceso progresivo a lo largo de la vida donde el Espíritu Santo transforma el carácter del creyente a la imagen de Cristo.
-3. **Idiomas Bíblicos**: En griego koiné se expresa con el verbo *dikaioō* (δικαιόω - declarar justo), un término estrictamente forense o judicial.`;
-  }
-
-  if (query.includes('logos') || query.includes('griego') || query.includes('hebreo') || query.includes('idioma')) {
-    return `### Idiomas Bíblicos: Griego Koiné y Hebreo
-
-El estudio de los idiomas originales permite comprender el matiz más profundo del texto bíblico:
-
-- **Logos (λόγος)**: En Juan 1:1, trasciende la mera "palabra" hablada. En la teología joánica representa la Verdad Eterna, la Expresión Divina y la Segunda Persona de la Trinidad encarnada.
-- **Charis (χάρις)**: Gracia; el favor inmerecido de Dios otorgado al pecador desamparado.
-- **Agape (ἀγάπη)**: El amor abnegado, incondicional y sacrificial característico de Dios.
-- **Hesed (חֶסֶד)**: En el Hebreo del Antiguo Testamento, se refiere al amor de pacto, la fidelidad inquebrantable de Yahvé hacia su pueblo.`;
-  }
-
-  if (query.includes('trinidad') || query.includes('dios') || query.includes('padre') || query.includes('espiritu')) {
-    return `### La Doctrina Teológica de la Trinidad
-
-La Iglesia Cristiana confiesa que hay un solo Dios vivo y verdadero, existente eternamente en tres personas co-equales, co-eternas y consustanciales: **El Padre, El Hijo y El Espíritu Santo**.
-
-> "Por tanto, id, y haced discípulos a todas las naciones, bautizándolos en el nombre del Padre, y del Hijo, y del Espíritu Santo." — **Mateo 28:19**
-
-#### Aspectos Teológicos Clave:
-- **Unidad de Esencia (*Ousia*)**: Dios es numéricamente uno en su ser divino.
-- **Pluralidad de Personas (*Hypostasis*)**: El Padre no es el Hijo, el Hijo no es el Espíritu Santo, y el Espíritu Santo no es el Padre.
-- **Operaciones Trinitarias**: Todas las obras externas de la Deidad (*opera Trinitatis ad extra*) son indivisas, reflejando perfecta armonía divina.`;
-  }
-
-  if (context?.lessonTitle || context?.courseTitle) {
-    return `### Consulta Teológica sobre: ${context.lessonTitle || context.courseTitle}
-
-Respecto a tu lección en curso (**${context.lessonTitle || context.courseTitle}**), aquí tienes los ejes clave de estudio:
-
-1. **Fundamento Exegético**: Analizar siempre el texto en su contexto literario, histórico y gramatical original.
-2. **Conexión Teológica y Homilética**: Observar cómo este pasaje o tema se articula dentro del panorama de la teología bíblica y cómo comunicarlo eficazmente a la congregación.
-3. **Aplicación Pastoral**: Extraer verdades vivas para la edificación personal, el liderazgo cristiano y el servicio a la iglesia.
-
-> *"Procura con diligencia presentarte a Dios aprobado, como obrero que no tiene de qué avergonzarse, que usa bien la palabra de verdad."* — **2 Timoteo 2:15**
-
-¿Deseas profundizar en algún punto específico de esta lección o generar un bosquejo de predicación sobre ella?`;
-  }
-
-  return `### Orientación Teológica, Exegética y Homilética
+Soy tu **Especialista en Teología, Exégesis y Homilética** del Seminario Teológico Digital.
 
 Respecto a tu consulta sobre **"${messageText}"**:
-
-1. **Contexto Bíblico y Exégesis**: Las Escrituras enseñan la centralidad de Jesucristo en todo el canon bíblico (Lucas 24:27), guiándonos a estudiar cada pasaje considerando su propósito redentor.
-2. **Rigor Teológico**: Te recomendamos examinar los pasajes bíblicos paralelos (*analogía de la fe*), consultando el contexto histórico e idiomas originales (Hebreo/Griego).
-3. **Aplicación Homilética**: Toda verdad teológica debe conducir al amor a Dios, la santidad de vida y la edificación del cuerpo de Cristo mediante la predicación fiel.
+- **Creación de Sermones Expositivos**: Puedo estructurar un bosquejo homilético completo para cualquier pasaje o texto bíblico.
+- **Exégesis e Idiomas Originales**: Análisis gramático-histórico en Griego Koiné o Hebreo Bíblico.
+- **Teología Sistemática**: Fundamentación doctrinal de la fe cristiana.
 
 > *"Toda la Escritura es inspirada por Dios, y útil para enseñar, para redargüir, para corregir, para instruir en justicia."* — **2 Timoteo 3:16**
 
-¿Te gustaría generar un bosquejo de sermón o realizar una exégesis detallada sobre este tema?`;
+¿Deseas que prepare un bosquejo de sermón o análisis exegético de algún pasaje en particular?`;
 }

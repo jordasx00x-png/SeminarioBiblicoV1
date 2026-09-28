@@ -86,9 +86,9 @@ export function useVirtualAssistant() {
           content: m.content
         }));
 
-      // AbortController with 2.5 second timeout to prevent UI hanging
+      // AbortController with 20 second timeout to allow complete AI generation
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 2500);
+      const timeoutId = setTimeout(() => controller.abort(), 20000);
 
       try {
         const res = await fetch('/api/assistant/chat', {

@@ -3,9 +3,17 @@ import { AssistantMessage } from '../types';
 import { generateClientTheologicalResponse } from '../utils/theologicalFallback';
 import { safeStorage } from '../utils/safeStorage';
 
-const STORAGE_KEY = 'std_campus_chat_history_v2';
+const STORAGE_KEY = 'std_campus_chat_history_v5';
 
-const formatNow = () => new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+const formatNow = () => {
+  const d = new Date();
+  let hours = d.getHours();
+  const minutes = d.getMinutes().toString().padStart(2, '0');
+  const ampm = hours >= 12 ? 'PM' : 'AM';
+  hours = hours % 12;
+  hours = hours ? hours : 12;
+  return `${hours}:${minutes} ${ampm}`;
+};
 
 const INITIAL_GREETING: AssistantMessage = {
   id: 'welcome-msg',
@@ -30,7 +38,10 @@ export function useVirtualAssistant() {
       if (saved) {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed) && parsed.length > 0) {
-          return parsed;
+          return parsed.map((m: any) => ({
+            ...m,
+            timestamp: (m.timestamp && typeof m.timestamp === 'string' && !m.timestamp.includes('Invalid')) ? m.timestamp : formatNow()
+          }));
         }
       }
     } catch (e) {}

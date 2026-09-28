@@ -177,7 +177,7 @@ Directrices para tus respuestas:
             parts: [{ text: String(m.content) }],
           }));
 
-          const modelsToTry = ['gemini-3.8-flash', 'gemini-flash-latest', 'gemini-2.5-flash'];
+          const modelsToTry = ['gemini-3.8-flash', 'gemini-flash-latest', 'gemini-3.1-pro-preview'];
           let replyText = '';
 
           for (const modelName of modelsToTry) {

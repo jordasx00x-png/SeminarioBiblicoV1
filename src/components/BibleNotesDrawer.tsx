@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { safeFormatDate } from '../utils/dateUtils';
 import { 
   X, 
   Search, 
@@ -60,7 +61,7 @@ export function BibleNotesDrawer({
         (n.selectedText || '').toLowerCase().includes(q);
       
       return matchesColor && matchesSearch;
-    }).sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime());
+    }).sort((a, b) => (new Date(b.updatedAt).getTime() || 0) - (new Date(a.updatedAt).getTime() || 0));
   }, [notes, searchQuery, selectedColorFilter]);
 
   if (!isOpen) return null;
@@ -265,7 +266,7 @@ export function BibleNotesDrawer({
                   <div className="mt-4 pt-3 border-t border-stone-100 dark:border-stone-800 flex items-center justify-between text-[9px] font-black uppercase tracking-widest text-stone-400">
                     <div className="flex items-center gap-1.5">
                       <Calendar size={12} className="opacity-50" />
-                      <span>{new Date(note.updatedAt).toLocaleDateString(undefined, { day: 'numeric', month: 'long', year: 'numeric' })}</span>
+                      <span>{safeFormatDate(note.updatedAt, 'Hoy')}</span>
                     </div>
                     <span className="opacity-50">Seminario Digital</span>
                   </div>

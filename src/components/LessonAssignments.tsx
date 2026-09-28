@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { safeFormatDate, safeFormatTime } from '../utils/dateUtils';
 import { 
   FileText, 
   UploadCloud, 
@@ -524,7 +525,7 @@ ${currentEvaluation.theologicalSummary}
               Guardado automático local activo
             </span>
             {activeSubmission?.updatedAt && (
-              <span>Última modificación: {new Date(activeSubmission.updatedAt).toLocaleTimeString('es-ES')}</span>
+              <span>Última modificación: {safeFormatTime(activeSubmission.updatedAt, 'Reciente')}</span>
             )}
           </div>
         </div>
@@ -595,7 +596,7 @@ ${currentEvaluation.theologicalSummary}
                     {currentEvaluation.statusText}
                   </h4>
                   <p className="text-xs text-gray-300">
-                    Evaluado el {new Date(currentEvaluation.evaluatedAt).toLocaleDateString('es-ES')} a las {new Date(currentEvaluation.evaluatedAt).toLocaleTimeString('es-ES')}
+                    Evaluado el {safeFormatDate(currentEvaluation.evaluatedAt, 'Hoy')} a las {safeFormatTime(currentEvaluation.evaluatedAt, 'Reciente')}
                   </p>
                 </div>
               </div>

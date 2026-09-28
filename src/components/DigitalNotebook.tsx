@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { safeFormatDate } from '../utils/dateUtils';
 import { Save, FileText, Trash2, Edit3, Plus, Search, Check, X as CloseIcon } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useAuth } from '../hooks/useAuth';
@@ -120,7 +121,7 @@ export function DigitalNotebook({ isModal = false }: { isModal?: boolean }) {
                   {note.content.replace(/<[^>]+>/g, '').substring(0, 50) || 'Sin contenido...'}
                 </div>
                 <div className="text-[10px] text-gray-400 mt-2 font-sans">
-                  {new Date(note.updatedAt).toLocaleDateString()}
+                  {safeFormatDate(note.updatedAt, 'Hoy')}
                 </div>
               </button>
             ))

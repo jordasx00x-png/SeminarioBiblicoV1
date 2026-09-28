@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
+import { safeFormatDate } from '../utils/dateUtils';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   FileText, 
@@ -454,7 +455,7 @@ export function FloatingNotesWidget({
                           {n.content || 'Sin contenido'}
                         </p>
                         <div className="mt-1 flex items-center justify-between text-[8px] text-stone-400 uppercase tracking-wider font-bold">
-                          <span>{new Date(n.updatedAt).toLocaleDateString([], { month: 'short', day: 'numeric' })}</span>
+                          <span>{safeFormatDate(n.updatedAt, 'Hoy')}</span>
                           {n.lessonTitle && <span className="truncate max-w-[120px]">{n.lessonTitle}</span>}
                         </div>
                       </div>
@@ -725,7 +726,7 @@ export function FloatingNotesWidget({
                             <div className="flex items-center justify-between">
                               <span className="text-[9px] font-black text-stone-400 uppercase tracking-widest flex items-center gap-1.5">
                                 <Clock size={10} />
-                                {new Date(n.updatedAt).toLocaleDateString('es-ES', { month: 'short', day: 'numeric' })}
+                                {safeFormatDate(n.updatedAt, 'Hoy')}
                               </span>
                               {n.lessonTitle && (
                                 <span className="text-[8px] font-black text-[#7F1D1D] dark:text-amber-500 bg-[#7F1D1D]/5 dark:bg-amber-950/40 px-1.5 py-0.5 rounded uppercase tracking-tighter truncate max-w-[80px]">

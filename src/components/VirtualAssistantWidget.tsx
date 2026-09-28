@@ -286,7 +286,7 @@ export function VirtualAssistantWidget({
                   )}
 
                   <div className="mt-2 text-[9px] text-stone-400 dark:text-stone-500 flex items-center justify-between border-t border-stone-100 dark:border-stone-800/60 pt-1.5">
-                    <span>{msg.timestamp}</span>
+                    <span>{msg.timestamp && !String(msg.timestamp).includes('Invalid') ? msg.timestamp : '12:00 PM'}</span>
                     {!isUser && (
                       <button
                         onClick={() => handleCopy(msg.id, msg.content)}
@@ -504,7 +504,7 @@ export function VirtualAssistantWidget({
                       )}
 
                       <div className={`mt-3 pt-2 border-t border-stone-200/40 dark:border-stone-800/40 text-[9px] font-bold uppercase tracking-widest ${isUser ? 'text-stone-400 text-right' : 'text-stone-500'}`}>
-                        {msg.timestamp}
+                        {msg.timestamp && !String(msg.timestamp).includes('Invalid') ? msg.timestamp : '12:00 PM'}
                       </div>
                     </div>
                   </div>

@@ -1,9 +1,10 @@
 import { useState, useEffect, useCallback } from 'react';
-import { AssistantMessage } from '../types';
+import { AssistantMessage, ChatSession } from '../types';
 import { generateClientTheologicalResponse } from '../utils/theologicalFallback';
 import { safeStorage } from '../utils/safeStorage';
 
-const STORAGE_KEY = 'std_campus_chat_history_v6';
+const SESSIONS_STORAGE_KEY = 'std_campus_chat_sessions_v7';
+const ACTIVE_SESSION_KEY = 'std_campus_active_session_v7';
 
 const formatNow = () => {
   const d = new Date();
@@ -13,6 +14,11 @@ const formatNow = () => {
   hours = hours % 12;
   hours = hours ? hours : 12;
   return `${hours}:${minutes} ${ampm}`;
+};
+
+const formatDateShort = () => {
+  const d = new Date();
+  return `${d.getDate()}/${d.getMonth() + 1} ${formatNow()}`;
 };
 
 const INITIAL_GREETING: AssistantMessage = {
@@ -28,32 +34,82 @@ Mi programación está optimizada para guiarte en dos áreas maestras:
   timestamp: formatNow(),
 };
 
+const createFreshSession = (id?: string): ChatSession => ({
+  id: id || 'session-' + Date.now(),
+  title: 'Nuevo Chat',
+  updatedAt: formatDateShort(),
+  messages: [{ ...INITIAL_GREETING, timestamp: formatNow() }],
+});
+
 export function useVirtualAssistant() {
-  const [messages, setMessages] = useState<AssistantMessage[]>(() => {
+  const [sessions, setSessions] = useState<ChatSession[]>(() => {
     try {
-      const saved = safeStorage.getItem(STORAGE_KEY);
+      const saved = safeStorage.getItem(SESSIONS_STORAGE_KEY);
       if (saved) {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed) && parsed.length > 0) {
-          return parsed.map((m: any) => ({
-            ...m,
-            timestamp: (m.timestamp && typeof m.timestamp === 'string' && !m.timestamp.includes('Invalid')) ? m.timestamp : formatNow()
-          }));
+          return parsed;
         }
       }
     } catch (e) {}
-    return [{ ...INITIAL_GREETING, timestamp: formatNow() }];
+    const defaultSession = createFreshSession();
+    return [defaultSession];
+  });
+
+  const [activeSessionId, setActiveSessionId] = useState<string>(() => {
+    try {
+      const savedId = safeStorage.getItem(ACTIVE_SESSION_KEY);
+      if (savedId) return savedId;
+    } catch (e) {}
+    return sessions[0]?.id || 'session-1';
   });
 
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const activeSession = sessions.find(s => s.id === activeSessionId) || sessions[0] || createFreshSession();
+  const messages = activeSession ? activeSession.messages : [];
+
   // Sync to safeStorage
   useEffect(() => {
     try {
-      safeStorage.setItem(STORAGE_KEY, JSON.stringify(messages));
+      safeStorage.setItem(SESSIONS_STORAGE_KEY, JSON.stringify(sessions));
+      if (activeSessionId) {
+        safeStorage.setItem(ACTIVE_SESSION_KEY, activeSessionId);
+      }
     } catch (e) {}
-  }, [messages]);
+  }, [sessions, activeSessionId]);
+
+  const createNewChat = useCallback(() => {
+    const newSession = createFreshSession();
+    setSessions(prev => [newSession, ...prev]);
+    setActiveSessionId(newSession.id);
+  }, []);
+
+  const loadSession = useCallback((sessionId: string) => {
+    setActiveSessionId(sessionId);
+  }, []);
+
+  const deleteSession = useCallback((sessionId: string) => {
+    setSessions(prev => {
+      const filtered = prev.filter(s => s.id !== sessionId);
+      if (filtered.length === 0) {
+        const fresh = createFreshSession();
+        setActiveSessionId(fresh.id);
+        return [fresh];
+      }
+      if (sessionId === activeSessionId) {
+        setActiveSessionId(filtered[0].id);
+      }
+      return filtered;
+    });
+  }, [activeSessionId]);
+
+  const clearAllHistory = useCallback(() => {
+    const fresh = createFreshSession();
+    setSessions([fresh]);
+    setActiveSessionId(fresh.id);
+  }, []);
 
   const sendMessage = useCallback(async (
     text: string, 
@@ -73,20 +129,43 @@ export function useVirtualAssistant() {
       timestamp: userTimeStr,
     };
 
-    // 1. Add user message synchronously
-    setMessages(prev => [...prev, userMsg]);
+    let updatedTitle = activeSession.title;
+    const userMsgCount = activeSession.messages.filter(m => m.role === 'user').length;
+    if (userMsgCount === 0 || activeSession.title === 'Nuevo Chat') {
+      const clean = trimmed
+        .replace(/por favor/gi, '')
+        .replace(/genera/gi, '')
+        .replace(/un bosquejo/gi, '')
+        .replace(/para el pasaje de:/gi, '')
+        .replace(/para el pasaje de/gi, '')
+        .trim();
+      updatedTitle = clean.length > 28 ? clean.slice(0, 28) + '...' : (clean || 'Consulta Teológica');
+    }
+
+    const updatedMessagesWithUser = [...activeSession.messages, userMsg];
+
+    setSessions(prev => prev.map(s => {
+      if (s.id === activeSessionId) {
+        return {
+          ...s,
+          title: updatedTitle,
+          updatedAt: formatDateShort(),
+          messages: updatedMessagesWithUser,
+        };
+      }
+      return s;
+    }));
 
     let replyContent = '';
 
     try {
-      const apiMessages = [...messages, userMsg]
+      const apiMessages = updatedMessagesWithUser
         .filter(m => m.id !== 'welcome-msg')
         .map(m => ({
           role: m.role,
           content: m.content
         }));
 
-      // AbortController with 20 second timeout to allow complete AI generation
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 20000);
 
@@ -115,7 +194,6 @@ export function useVirtualAssistant() {
       console.warn('Backend API request error:', err);
     }
 
-    // 2. Fallback if API returned empty, failed, or timed out
     if (!replyContent) {
       replyContent = generateClientTheologicalResponse(trimmed, context);
     }
@@ -127,24 +205,31 @@ export function useVirtualAssistant() {
       timestamp: formatNow(),
     };
 
-    setMessages(prev => [...prev, assistantMsg]);
-    setIsLoading(false);
-  }, [messages, isLoading]);
+    setSessions(prev => prev.map(s => {
+      if (s.id === activeSessionId) {
+        return {
+          ...s,
+          updatedAt: formatDateShort(),
+          messages: [...s.messages, assistantMsg],
+        };
+      }
+      return s;
+    }));
 
-  const clearChat = useCallback(() => {
-    const freshMessages = [{
-      ...INITIAL_GREETING,
-      timestamp: formatNow()
-    }];
-    setMessages(freshMessages);
-    safeStorage.setItem(STORAGE_KEY, JSON.stringify(freshMessages));
-  }, []);
+    setIsLoading(false);
+  }, [activeSession, activeSessionId, isLoading]);
 
   return {
+    sessions,
+    activeSessionId,
+    activeSession,
     messages,
     isLoading,
     error,
     sendMessage,
-    clearChat,
+    createNewChat,
+    loadSession,
+    deleteSession,
+    clearAllHistory,
   };
 }

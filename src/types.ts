@@ -95,6 +95,13 @@ export type AssistantMessage = {
   timestamp: string;
 };
 
+export type ChatSession = {
+  id: string;
+  title: string;
+  updatedAt: string;
+  messages: AssistantMessage[];
+};
+
 export type Database = {
   courses: Course[];
 };

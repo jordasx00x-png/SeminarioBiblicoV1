@@ -14,7 +14,12 @@ import {
   GraduationCap,
   MessageSquare,
   RefreshCw,
-  RotateCcw
+  RotateCcw,
+  Plus,
+  History,
+  Clock,
+  Search,
+  ChevronRight
 } from 'lucide-react';
 import { useVirtualAssistant } from '../hooks/useVirtualAssistant';
 
@@ -37,10 +42,16 @@ export function VirtualAssistantWidget({
   isSplitMode = false
 }: VirtualAssistantWidgetProps) {
   const { 
+    sessions,
+    activeSessionId,
+    activeSession,
     messages, 
     isLoading, 
     sendMessage, 
-    clearChat 
+    createNewChat,
+    loadSession,
+    deleteSession,
+    clearAllHistory
   } = useVirtualAssistant();
 
   const [inputText, setInputText] = useState('');
@@ -48,22 +59,25 @@ export function VirtualAssistantWidget({
   const [isExpanded, setIsExpanded] = useState(false);
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [showClearConfirm, setShowClearConfirm] = useState(false);
+  const [showHistoryDrawer, setShowHistoryDrawer] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   // Auto-scroll on new messages
   useEffect(() => {
-    if (isOpen && !isMinimized) {
+    if (isOpen && !isMinimized && !showHistoryDrawer) {
       messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }
-  }, [messages, isLoading, isOpen, isMinimized]);
+  }, [messages, isLoading, isOpen, isMinimized, showHistoryDrawer]);
 
   // Focus input when opened
   useEffect(() => {
-    if (isOpen && !isMinimized) {
+    if (isOpen && !isMinimized && !showHistoryDrawer) {
       setTimeout(() => textareaRef.current?.focus(), 150);
     }
-  }, [isOpen, isMinimized]);
+  }, [isOpen, isMinimized, showHistoryDrawer]);
 
   const handleSend = () => {
     if (!inputText.trim() || isLoading) return;
@@ -98,102 +112,111 @@ export function VirtualAssistantWidget({
   const suggestedPrompts = activeLessonTitle
     ? [
         `¿Cómo puedo aplicar los principios de "${activeLessonTitle}" pastoralmente?`,
-        `¿Qué pasajes bíblicos respaldan las doctrinas explicadas en esta lección?`,
-        `¿Cuáles son las palabras clave en griego o hebreo relacionadas con esta clase?`,
-        `Dame un resumen explicativo en 3 puntos fundamentales de este tema.`,
+        `Genera un bosquejo homilético de predicación sobre la lección "${activeLessonTitle}"`,
+        `Realiza una exégesis e idiomas originales del tema de "${activeLessonTitle}"`,
       ]
     : [
-        '¿Cuál es la diferencia entre justificación y santificación en la teología bíblica?',
-        '¿Qué significa el término "Logos" en Juan 1:1 según el griego koiné?',
-        '¿Cuáles son los principios fundamentales de la hermenéutica reformada?',
-        '¿Cómo estructurar un estudio bíblico expositivo paso a paso?',
-        'Explícame la doctrina del pacto en el Antiguo y Nuevo Testamento.',
+        `Genera un bosquejo homilético expositivo de Salmo 23`,
+        `Análisis exegético y vocabulario en Griego Koiné de 1 Timoteo 4:12`,
+        `Explicación de la doctrina de la Justificación por la Fe (Sola Fide)`,
       ];
 
+  // Simple Markdown renderer
   const renderFormattedContent = (content: string) => {
     const lines = content.split('\n');
-    return (
-      <div className="space-y-3 text-xs sm:text-sm leading-relaxed font-sans text-[#1A2533] dark:text-stone-200">
-        {lines.map((line, idx) => {
-          const trimmed = line.trim();
-          if (!trimmed) {
-            return <div key={idx} className="h-2" />;
-          }
+    return lines.map((line, idx) => {
+      let trimmed = line.trim();
 
-          if (trimmed.startsWith('### ')) {
-            return (
-              <h4 key={idx} className="font-serif font-black text-sm sm:text-base text-[#1A2533] dark:text-white pt-2 uppercase tracking-tight">
-                {trimmed.replace('### ', '')}
-              </h4>
-            );
-          }
-          if (trimmed.startsWith('## ')) {
-            return (
-              <h3 key={idx} className="font-serif font-black text-base sm:text-lg text-[#7F1D1D] dark:text-amber-500 pt-3 border-b border-stone-200 dark:border-stone-800 pb-1 uppercase tracking-tighter">
-                {trimmed.replace('## ', '')}
-              </h3>
-            );
-          }
-
-          if (trimmed.startsWith('- ') || trimmed.startsWith('* ')) {
-            const itemText = trimmed.replace(/^[-*]\s+/, '');
-            return (
-              <div key={idx} className="flex items-start gap-2.5 pl-1">
-                <span className="text-[#7F1D1D] dark:text-amber-500 mt-1 text-base leading-none">•</span>
-                <span className="flex-1">{formatInline(itemText)}</span>
-              </div>
-            );
-          }
-
-          const numMatch = trimmed.match(/^(\d+)\.\s+(.*)/);
-          if (numMatch) {
-            return (
-              <div key={idx} className="flex items-start gap-2 pl-1">
-                <span className="text-[#7F1D1D] dark:text-amber-500 font-mono text-[10px] font-bold mt-1">{numMatch[1]}.</span>
-                <span className="flex-1">{formatInline(numMatch[2])}</span>
-              </div>
-            );
-          }
-
-          if (trimmed.startsWith('> ')) {
-            return (
-              <blockquote key={idx} className="border-l-4 border-[#7F1D1D] dark:border-amber-500 pl-3.5 py-1.5 my-2 bg-[#FAF9F5] dark:bg-stone-800/60 text-[#1A2533] dark:text-stone-200 font-serif italic rounded-r">
-                {formatInline(trimmed.replace(/^>\s+/, ''))}
-              </blockquote>
-            );
-          }
-
-          return <p key={idx}>{formatInline(trimmed)}</p>;
-        })}
-      </div>
-    );
-  };
-
-  const formatInline = (text: string) => {
-    const parts = text.split(/(\*\*.*?\*\*|`.*?`)/g);
-    return parts.map((part, i) => {
-      if (part.startsWith('**') && part.endsWith('**')) {
+      if (trimmed.startsWith('### ')) {
         return (
-          <strong key={i} className="font-bold text-[#1A2533] dark:text-white">
-            {part.slice(2, -2)}
-          </strong>
+          <h4 key={idx} className="font-serif font-black text-sm text-[#7F1D1D] dark:text-amber-500 uppercase tracking-wide mt-3 mb-1.5 pb-1 border-b border-stone-200 dark:border-stone-800">
+            {trimmed.replace('### ', '')}
+          </h4>
         );
       }
-      if (part.startsWith('`') && part.endsWith('`')) {
+      if (trimmed.startsWith('#### ')) {
         return (
-          <code key={i} className="px-1.5 py-0.5 bg-stone-100 dark:bg-stone-800 text-[#7F1D1D] dark:text-amber-400 font-mono text-[11px] rounded border border-stone-200 dark:border-stone-700">
-            {part.slice(1, -1)}
-          </code>
+          <h5 key={idx} className="font-serif font-bold text-xs text-[#1A2533] dark:text-stone-200 uppercase tracking-wider mt-2.5 mb-1">
+            {trimmed.replace('#### ', '')}
+          </h5>
         );
+      }
+      if (trimmed.startsWith('##### ')) {
+        return (
+          <h6 key={idx} className="font-sans font-black text-xs text-amber-900 dark:text-amber-400 mt-2 mb-1">
+            {trimmed.replace('##### ', '')}
+          </h6>
+        );
+      }
+      if (trimmed.startsWith('> ')) {
+        return (
+          <blockquote key={idx} className="my-2 p-2.5 bg-[#FAF9F5] dark:bg-stone-900 border-l-2 border-[#7F1D1D] dark:border-amber-600 text-xs italic text-stone-700 dark:text-stone-300 font-serif rounded-r">
+            {trimmed.replace('> ', '')}
+          </blockquote>
+        );
+      }
+      if (trimmed.startsWith('- ') || trimmed.startsWith('* ')) {
+        const itemText = trimmed.substring(2);
+        return (
+          <li key={idx} className="ml-4 list-disc text-xs text-stone-700 dark:text-stone-300 my-0.5 leading-relaxed font-sans">
+            {formatInlineText(itemText)}
+          </li>
+        );
+      }
+      if (/^\d+\.\s/.test(trimmed)) {
+        const match = trimmed.match(/^(\d+\.)\s*(.*)/);
+        return (
+          <li key={idx} className="ml-4 list-decimal text-xs text-stone-700 dark:text-stone-300 my-0.5 leading-relaxed font-sans">
+            {match ? formatInlineText(match[2]) : trimmed}
+          </li>
+        );
+      }
+      if (trimmed === '---') {
+        return <hr key={idx} className="my-2 border-stone-200 dark:border-stone-800" />;
+      }
+
+      if (!trimmed) {
+        return <div key={idx} className="h-1.5" />;
+      }
+
+      return (
+        <p key={idx} className="text-xs text-stone-800 dark:text-stone-200 my-1 leading-relaxed font-sans">
+          {formatInlineText(line)}
+        </p>
+      );
+    });
+  };
+
+  const formatInlineText = (text: string) => {
+    const parts = text.split(/(\*\*.*?\*\*|\*.*?\*|`.*?`)/g);
+    return parts.map((part, i) => {
+      if (part.startsWith('**') && part.endsWith('**')) {
+        return <strong key={i} className="font-bold text-[#1A2533] dark:text-white">{part.slice(2, -2)}</strong>;
+      }
+      if (part.startsWith('*') && part.endsWith('*')) {
+        return <em key={i} className="italic text-stone-600 dark:text-stone-400">{part.slice(1, -1)}</em>;
+      }
+      if (part.startsWith('`') && part.endsWith('`')) {
+        return <code key={i} className="px-1 py-0.5 bg-stone-100 dark:bg-stone-800 text-amber-800 dark:text-amber-400 rounded text-[11px] font-mono">{part.slice(1, -1)}</code>;
       }
       return part;
     });
   };
 
+  // Filter sessions by search query
+  const filteredSessions = sessions.filter(s => {
+    if (!searchQuery.trim()) return true;
+    const q = searchQuery.toLowerCase();
+    return s.title.toLowerCase().includes(q) || s.messages.some(m => m.content.toLowerCase().includes(q));
+  });
+
+  // -------------------------------------------------------------------
+  // RENDER: SPLIT MODE
+  // -------------------------------------------------------------------
   if (isSplitMode) {
     if (!isOpen) return null;
     return (
-      <div className="w-full h-full bg-white dark:bg-zinc-950 border-stone-200 dark:border-stone-800 flex flex-col font-sans overflow-hidden text-[#1A2533] dark:text-stone-100">
+      <div className="w-full h-full bg-white dark:bg-zinc-950 border-stone-200 dark:border-stone-800 flex flex-col font-sans overflow-hidden text-[#1A2533] dark:text-stone-100 relative">
         {/* TOP HEADER */}
         <div className="px-5 py-3.5 bg-white dark:bg-stone-900 border-b border-stone-200 dark:border-stone-800 flex items-center justify-between shrink-0 relative">
           <div className="absolute top-0 left-0 w-full h-1 bg-[#7F1D1D]" />
@@ -204,7 +227,7 @@ export function VirtualAssistantWidget({
             <div className="min-w-0">
               <div className="flex items-center gap-2">
                 <h3 className="text-sm font-serif font-black text-[#1A2533] dark:text-stone-100 uppercase tracking-tight truncate">
-                  Consultoría Doctrinal
+                  {activeSession?.title && activeSession.title !== 'Nuevo Chat' ? activeSession.title : 'Consultoría Doctrinal'}
                 </h3>
                 <span className="flex items-center gap-1 text-[8px] bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800 px-1.5 py-0.5 rounded font-bold uppercase tracking-widest shrink-0">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
@@ -212,51 +235,171 @@ export function VirtualAssistantWidget({
                 </span>
               </div>
               <p className="text-[10px] font-bold text-stone-400 uppercase tracking-widest truncate mt-0.5">
-                Campus Virtual • Asistencia Teológica IA
+                Campus Virtual • Asistencia Teológica
               </p>
             </div>
           </div>
 
           {/* Action Buttons */}
           <div className="flex items-center gap-1.5 shrink-0">
-            {showClearConfirm ? (
-              <div className="flex items-center gap-1.5 bg-[#FAF9F5] dark:bg-stone-800 border border-stone-200 dark:border-stone-700 px-2 py-0.5 rounded">
-                <span className="text-[9px] text-stone-500 dark:text-stone-400 font-black uppercase tracking-widest">¿Borrar?</span>
-                <button
-                  onClick={() => {
-                    clearChat();
-                    setShowClearConfirm(false);
-                  }}
-                  className="px-2 py-0.5 bg-[#7F1D1D] hover:bg-black text-white rounded text-[9px] font-black uppercase tracking-widest cursor-pointer"
-                >
-                  Sí
-                </button>
-                <button
-                  onClick={() => setShowClearConfirm(false)}
-                  className="px-2 py-0.5 bg-stone-100 dark:bg-stone-700 text-stone-600 dark:text-stone-300 rounded text-[9px] uppercase font-black tracking-widest cursor-pointer"
-                >
-                  No
-                </button>
-              </div>
-            ) : (
-              <button
-                onClick={() => setShowClearConfirm(true)}
-                className="p-1.5 text-stone-400 hover:text-[#7F1D1D] hover:bg-stone-50 dark:hover:bg-stone-800 rounded transition-colors cursor-pointer"
-                title="Reiniciar chat"
-              >
-                <RotateCcw size={16} />
-              </button>
-            )}
+            {/* New Chat Button */}
+            <button
+              onClick={() => {
+                createNewChat();
+                setShowHistoryDrawer(false);
+              }}
+              className="flex items-center gap-1 px-2 py-1 bg-[#7F1D1D] hover:bg-black text-white rounded text-[10px] font-black uppercase tracking-wider transition-colors cursor-pointer shadow-sm shrink-0"
+              title="Crear un nuevo chat"
+            >
+              <Plus size={13} strokeWidth={2.5} />
+              <span className="hidden sm:inline">Nuevo Chat</span>
+            </button>
+
+            {/* History Toggle Button */}
+            <button
+              onClick={() => setShowHistoryDrawer(!showHistoryDrawer)}
+              className={`flex items-center gap-1 px-2 py-1 border rounded text-[10px] font-bold uppercase tracking-wider transition-colors cursor-pointer shrink-0 ${
+                showHistoryDrawer
+                  ? 'bg-amber-100 dark:bg-amber-950/50 text-[#7F1D1D] dark:text-amber-400 border-amber-300 dark:border-amber-700'
+                  : 'bg-stone-100 dark:bg-stone-800 hover:bg-stone-200 dark:hover:bg-stone-700 text-stone-700 dark:text-stone-200 border-stone-200 dark:border-stone-700'
+              }`}
+              title="Historial de conversaciones"
+            >
+              <History size={13} />
+              <span className="hidden sm:inline">Historial</span>
+              <span className="px-1.5 py-0.2 bg-[#7F1D1D] text-white rounded-full text-[8px] font-bold">
+                {sessions.length}
+              </span>
+            </button>
 
             <button
               onClick={onClose}
-              className="p-1.5 text-stone-400 hover:text-[#7F1D1D] hover:bg-stone-50 dark:hover:bg-stone-800 rounded transition-colors cursor-pointer ml-1"
+              className="p-1.5 text-stone-400 hover:text-[#7F1D1D] hover:bg-stone-50 dark:hover:bg-stone-800 rounded transition-colors cursor-pointer"
               title="Cerrar consultor"
             >
               <X size={18} />
             </button>
           </div>
         </div>
+
+        {/* HISTORY DRAWER (SPLIT MODE) */}
+        <AnimatePresence>
+          {showHistoryDrawer && (
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              className="absolute inset-x-0 top-[52px] bottom-0 z-40 bg-white dark:bg-stone-950 flex flex-col font-sans border-r border-stone-200 dark:border-stone-800 shadow-xl"
+            >
+              <div className="p-3 bg-[#1A2533] text-white flex items-center justify-between shrink-0">
+                <div className="flex items-center gap-2">
+                  <History size={16} className="text-amber-400" />
+                  <h4 className="text-xs font-serif font-black uppercase tracking-widest text-amber-200">
+                    Historial de Chats
+                  </h4>
+                </div>
+                <button
+                  onClick={() => setShowHistoryDrawer(false)}
+                  className="p-1 text-stone-300 hover:text-white rounded transition-colors"
+                >
+                  <X size={16} />
+                </button>
+              </div>
+
+              <div className="p-2.5 bg-[#FAF9F5] dark:bg-stone-900 border-b border-stone-200 dark:border-stone-800 flex items-center justify-between gap-2">
+                <button
+                  onClick={() => {
+                    createNewChat();
+                    setShowHistoryDrawer(false);
+                  }}
+                  className="flex-1 py-1.5 px-3 bg-[#7F1D1D] hover:bg-black text-white text-[10px] font-black uppercase tracking-wider rounded flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+                >
+                  <Plus size={14} />
+                  + Nuevo Chat
+                </button>
+                <button
+                  onClick={() => {
+                    if (window.confirm('¿Desea borrar todo el historial?')) {
+                      clearAllHistory();
+                      setShowHistoryDrawer(false);
+                    }
+                  }}
+                  className="py-1.5 px-2 bg-stone-200 dark:bg-stone-800 hover:bg-red-900 hover:text-white text-stone-700 dark:text-stone-300 text-[9px] font-bold uppercase tracking-wider rounded flex items-center gap-1 transition-colors cursor-pointer"
+                >
+                  <Trash2 size={12} />
+                  Vaciar
+                </button>
+              </div>
+
+              <div className="p-2 border-b border-stone-200 dark:border-stone-800 bg-white dark:bg-zinc-950">
+                <div className="flex items-center gap-2 px-2.5 py-1 bg-[#FAF9F5] dark:bg-stone-900 border border-stone-300 dark:border-stone-800 rounded text-xs">
+                  <Search size={13} className="text-stone-400" />
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Buscar chats..."
+                    className="flex-1 bg-transparent text-stone-800 dark:text-stone-200 outline-none text-xs"
+                  />
+                </div>
+              </div>
+
+              <div className="flex-1 overflow-y-auto p-2.5 space-y-2 custom-scrollbar">
+                {filteredSessions.length === 0 ? (
+                  <div className="text-center py-6 text-stone-400 text-xs">
+                    No se encontraron conversaciones.
+                  </div>
+                ) : (
+                  filteredSessions.map((session) => {
+                    const isActive = session.id === activeSessionId;
+                    const userMsgCount = session.messages.filter(m => m.role === 'user').length;
+                    const lastMsg = session.messages[session.messages.length - 1]?.content || '';
+
+                    return (
+                      <div
+                        key={session.id}
+                        onClick={() => {
+                          loadSession(session.id);
+                          setShowHistoryDrawer(false);
+                        }}
+                        className={`group p-2.5 rounded-lg border transition-all cursor-pointer flex items-center justify-between gap-2 ${
+                          isActive
+                            ? 'bg-[#FAF9F5] dark:bg-stone-900 border-[#7F1D1D] dark:border-amber-500/80 shadow-xs'
+                            : 'bg-white dark:bg-stone-900/40 border-stone-200 dark:border-stone-800 hover:border-stone-300 dark:hover:border-stone-700'
+                        }`}
+                      >
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center gap-1.5">
+                            <MessageSquare size={12} className={isActive ? 'text-[#7F1D1D] dark:text-amber-500' : 'text-stone-400'} />
+                            <h5 className="text-xs font-bold text-stone-800 dark:text-stone-100 truncate">
+                              {session.title || 'Nuevo Chat'}
+                            </h5>
+                          </div>
+                          <div className="flex items-center gap-2 mt-0.5 text-[9px] text-stone-400">
+                            <Clock size={9} />
+                            <span>{session.updatedAt}</span>
+                            <span>• {userMsgCount} msg</span>
+                          </div>
+                        </div>
+
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            deleteSession(session.id);
+                          }}
+                          className="p-1 text-stone-300 hover:text-red-600 dark:hover:text-red-400 transition-colors opacity-0 group-hover:opacity-100 rounded"
+                          title="Eliminar chat"
+                        >
+                          <Trash2 size={13} />
+                        </button>
+                      </div>
+                    );
+                  })
+                )}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* MESSAGES CONTAINER */}
         <div className="flex-1 overflow-y-auto custom-scrollbar p-4 space-y-4 bg-[#FAF9F5]/40 dark:bg-stone-950/40">
@@ -390,6 +533,9 @@ export function VirtualAssistantWidget({
     );
   }
 
+  // -------------------------------------------------------------------
+  // RENDER: FLOATING MODAL MODE
+  // -------------------------------------------------------------------
   return (
     <AnimatePresence>
       {isOpen && !isMinimized && (
@@ -405,16 +551,16 @@ export function VirtualAssistantWidget({
           }`}
         >
           {/* TOP HEADER */}
-          <div className="px-5 py-4 bg-white dark:bg-stone-900 border-b border-stone-200 dark:border-stone-800 flex items-center justify-between shrink-0 relative">
+          <div className="px-5 py-3.5 bg-white dark:bg-stone-900 border-b border-stone-200 dark:border-stone-800 flex items-center justify-between shrink-0 relative">
             <div className="absolute top-0 left-0 w-full h-1 bg-[#7F1D1D]" />
-            <div className="flex items-center gap-4 min-w-0">
-              <div className="w-10 h-10 rounded bg-[#FAF9F5] dark:bg-stone-800 flex items-center justify-center border border-stone-200 dark:border-stone-700 shadow-sm shrink-0">
-                <Bot size={22} strokeWidth={1.5} className="text-[#7F1D1D] dark:text-amber-500" />
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="w-9 h-9 rounded bg-[#FAF9F5] dark:bg-stone-800 flex items-center justify-center border border-stone-200 dark:border-stone-700 shadow-sm shrink-0">
+                <Bot size={20} strokeWidth={1.5} className="text-[#7F1D1D] dark:text-amber-500" />
               </div>
               <div className="min-w-0">
                 <div className="flex items-center gap-2">
                   <h3 className="text-sm font-serif font-black text-[#1A2533] dark:text-stone-100 uppercase tracking-tight truncate">
-                    Consultoría Doctrinal
+                    {activeSession?.title && activeSession.title !== 'Nuevo Chat' ? activeSession.title : 'Consultoría Doctrinal'}
                   </h3>
                   <span className="flex items-center gap-1.5 text-[9px] bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800 px-2 py-0.5 rounded font-bold uppercase tracking-widest shrink-0">
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
@@ -428,78 +574,182 @@ export function VirtualAssistantWidget({
             </div>
 
             {/* Action Buttons */}
-            <div className="flex items-center gap-1 shrink-0">
-              {showClearConfirm ? (
-                <div className="flex items-center gap-2 bg-[#FAF9F5] dark:bg-stone-800 border border-stone-200 dark:border-stone-700 px-3 py-1.5 rounded">
-                  <span className="text-[9px] text-stone-500 dark:text-stone-400 font-black uppercase tracking-widest">¿Borrar?</span>
-                  <button
-                    onClick={() => {
-                      clearChat();
-                      setShowClearConfirm(false);
-                    }}
-                    className="px-2 py-0.5 bg-[#7F1D1D] hover:bg-black text-white rounded text-[10px] font-black uppercase tracking-widest cursor-pointer"
-                  >
-                    Sí
-                  </button>
-                  <button
-                    onClick={() => setShowClearConfirm(false)}
-                    className="px-2 py-0.5 bg-stone-100 dark:bg-stone-700 text-stone-600 dark:text-stone-300 rounded text-[10px] uppercase font-black tracking-widest cursor-pointer"
-                  >
-                    No
-                  </button>
-                </div>
-              ) : (
-                <button
-                  onClick={() => setShowClearConfirm(true)}
-                  className="p-2 text-stone-400 hover:text-[#7F1D1D] hover:bg-stone-50 dark:hover:bg-stone-800 rounded transition-colors cursor-pointer"
-                  title="Reiniciar chat"
-                >
-                  <RotateCcw size={18} />
-                </button>
-              )}
-
+            <div className="flex items-center gap-1.5 shrink-0">
+              {/* + Nuevo Chat Button */}
               <button
-                onClick={() => setIsMinimized(true)}
-                className="p-2 text-stone-400 hover:text-[#1A2533] dark:hover:text-white hover:bg-stone-50 dark:hover:bg-stone-800 rounded transition-colors cursor-pointer"
-                title="Minimizar"
+                onClick={() => {
+                  createNewChat();
+                  setShowHistoryDrawer(false);
+                }}
+                className="flex items-center gap-1 px-2.5 py-1.5 bg-[#7F1D1D] hover:bg-black text-white rounded text-[10px] font-black uppercase tracking-wider transition-colors cursor-pointer shadow-sm shrink-0"
+                title="Iniciar un nuevo chat"
               >
-                <Minimize2 size={18} />
+                <Plus size={13} strokeWidth={2.5} />
+                <span className="hidden sm:inline">Nuevo Chat</span>
+              </button>
+
+              {/* Historial Toggle Button */}
+              <button
+                onClick={() => setShowHistoryDrawer(!showHistoryDrawer)}
+                className={`flex items-center gap-1 px-2 py-1.5 border rounded text-[10px] font-bold uppercase tracking-wider transition-colors cursor-pointer shrink-0 ${
+                  showHistoryDrawer
+                    ? 'bg-amber-100 dark:bg-amber-950/50 text-[#7F1D1D] dark:text-amber-400 border-amber-300 dark:border-amber-700'
+                    : 'bg-stone-100 dark:bg-stone-800 hover:bg-stone-200 dark:hover:bg-stone-700 text-stone-700 dark:text-stone-200 border-stone-200 dark:border-stone-700'
+                }`}
+                title="Ver historial de chats"
+              >
+                <History size={13} />
+                <span className="hidden sm:inline">Historial</span>
+                <span className="px-1.5 py-0.2 bg-[#7F1D1D] text-white rounded-full text-[8px] font-bold">
+                  {sessions.length}
+                </span>
               </button>
 
               <button
-                onClick={() => setIsExpanded(prev => !prev)}
-                className="hidden sm:inline-flex p-2 text-stone-400 hover:text-[#1A2533] dark:hover:text-white hover:bg-stone-50 dark:hover:bg-stone-800 rounded transition-colors cursor-pointer"
-                title={isExpanded ? "Reducir ventana" : "Expandir pantalla completa"}
+                onClick={() => setIsExpanded(!isExpanded)}
+                className="p-1.5 text-stone-400 hover:text-[#7F1D1D] hover:bg-stone-50 dark:hover:bg-stone-800 rounded transition-colors cursor-pointer hidden sm:block"
+                title={isExpanded ? 'Restaurar tamaño' : 'Maximizar'}
               >
-                {isExpanded ? <Minimize2 size={18} /> : <Maximize2 size={18} />}
+                {isExpanded ? <Minimize2 size={16} /> : <Maximize2 size={16} />}
               </button>
 
               <button
                 onClick={onClose}
-                className="p-2 text-stone-400 hover:text-[#7F1D1D] hover:bg-stone-50 dark:hover:bg-stone-800 rounded transition-colors cursor-pointer"
-                title="Cerrar asistente"
+                className="p-1.5 text-stone-400 hover:text-[#7F1D1D] hover:bg-stone-50 dark:hover:bg-stone-800 rounded transition-colors cursor-pointer"
+                title="Cerrar consultor"
               >
-                <X size={20} />
+                <X size={18} />
               </button>
             </div>
           </div>
 
-          {/* CONTEXT BANNER */}
-          {(activeCourseTitle || activeLessonTitle) && (
-            <div className="px-5 py-2.5 bg-[#FAF9F5] dark:bg-stone-900 border-b border-stone-200 dark:border-stone-800 flex items-center justify-between text-[10px] font-bold text-stone-500 uppercase tracking-widest shrink-0 font-sans">
-              <div className="flex items-center gap-2 truncate">
-                <BookOpen size={14} className="text-[#7F1D1D] dark:text-amber-500 shrink-0" />
-                <span className="truncate">
-                  Referencia: <span className="text-[#1A2533] dark:text-stone-200">{activeLessonTitle || activeCourseTitle}</span>
-                </span>
-              </div>
-              <span className="text-[#7F1D1D] dark:text-amber-500 shrink-0 ml-2">Enfoque Académico</span>
-            </div>
-          )}
+          {/* HISTORY DRAWER OVERLAY (FLOATING MODE) */}
+          <AnimatePresence>
+            {showHistoryDrawer && (
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                className="absolute inset-x-0 top-[56px] bottom-0 z-40 bg-white dark:bg-stone-950 flex flex-col font-sans border-r border-stone-200 dark:border-stone-800 shadow-xl"
+              >
+                <div className="p-3 bg-[#1A2533] text-white flex items-center justify-between shrink-0">
+                  <div className="flex items-center gap-2">
+                    <History size={16} className="text-amber-400" />
+                    <h4 className="text-xs font-serif font-black uppercase tracking-widest text-amber-200">
+                      Historial de Consultas Teológicas
+                    </h4>
+                  </div>
+                  <button
+                    onClick={() => setShowHistoryDrawer(false)}
+                    className="p-1 text-stone-300 hover:text-white rounded transition-colors"
+                  >
+                    <X size={16} />
+                  </button>
+                </div>
+
+                <div className="p-2.5 bg-[#FAF9F5] dark:bg-stone-900 border-b border-stone-200 dark:border-stone-800 flex items-center justify-between gap-2">
+                  <button
+                    onClick={() => {
+                      createNewChat();
+                      setShowHistoryDrawer(false);
+                    }}
+                    className="flex-1 py-1.5 px-3 bg-[#7F1D1D] hover:bg-black text-white text-[10px] font-black uppercase tracking-wider rounded flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+                  >
+                    <Plus size={14} />
+                    + Nuevo Chat
+                  </button>
+                  <button
+                    onClick={() => {
+                      if (window.confirm('¿Desea borrar todo el historial?')) {
+                        clearAllHistory();
+                        setShowHistoryDrawer(false);
+                      }
+                    }}
+                    className="py-1.5 px-2 bg-stone-200 dark:bg-stone-800 hover:bg-red-900 hover:text-white text-stone-700 dark:text-stone-300 text-[9px] font-bold uppercase tracking-wider rounded flex items-center gap-1 transition-colors cursor-pointer"
+                  >
+                    <Trash2 size={12} />
+                    Vaciar
+                  </button>
+                </div>
+
+                <div className="p-2 border-b border-stone-200 dark:border-stone-800 bg-white dark:bg-zinc-950">
+                  <div className="flex items-center gap-2 px-2.5 py-1 bg-[#FAF9F5] dark:bg-stone-900 border border-stone-300 dark:border-stone-800 rounded text-xs">
+                    <Search size={13} className="text-stone-400" />
+                    <input
+                      type="text"
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      placeholder="Buscar chats..."
+                      className="flex-1 bg-transparent text-stone-800 dark:text-stone-200 outline-none text-xs"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex-1 overflow-y-auto p-2.5 space-y-2 custom-scrollbar">
+                  {filteredSessions.length === 0 ? (
+                    <div className="text-center py-6 text-stone-400 text-xs">
+                      No se encontraron conversaciones.
+                    </div>
+                  ) : (
+                    filteredSessions.map((session) => {
+                      const isActive = session.id === activeSessionId;
+                      const userMsgCount = session.messages.filter(m => m.role === 'user').length;
+                      const lastMsg = session.messages[session.messages.length - 1]?.content || '';
+
+                      return (
+                        <div
+                          key={session.id}
+                          onClick={() => {
+                            loadSession(session.id);
+                            setShowHistoryDrawer(false);
+                          }}
+                          className={`group p-2.5 rounded-lg border transition-all cursor-pointer flex items-center justify-between gap-2 ${
+                            isActive
+                              ? 'bg-[#FAF9F5] dark:bg-stone-900 border-[#7F1D1D] dark:border-amber-500/80 shadow-xs'
+                              : 'bg-white dark:bg-stone-900/40 border-stone-200 dark:border-stone-800 hover:border-stone-300 dark:hover:border-stone-700'
+                          }`}
+                        >
+                          <div className="min-w-0 flex-1">
+                            <div className="flex items-center gap-1.5">
+                              <MessageSquare size={12} className={isActive ? 'text-[#7F1D1D] dark:text-amber-500' : 'text-stone-400'} />
+                              <h5 className="text-xs font-bold text-stone-800 dark:text-stone-100 truncate">
+                                {session.title || 'Nuevo Chat'}
+                              </h5>
+                            </div>
+                            <div className="flex items-center gap-2 mt-0.5 text-[9px] text-stone-400">
+                              <Clock size={9} />
+                              <span>{session.updatedAt}</span>
+                              <span>• {userMsgCount} msg</span>
+                            </div>
+                            {lastMsg && (
+                              <p className="text-[10px] text-stone-500 dark:text-stone-400 truncate mt-1 italic">
+                                {lastMsg.replace(/[#*`>-]/g, '').slice(0, 50)}...
+                              </p>
+                            )}
+                          </div>
+
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              deleteSession(session.id);
+                            }}
+                            className="p-1 text-stone-300 hover:text-red-600 dark:hover:text-red-400 transition-colors opacity-0 group-hover:opacity-100 rounded"
+                            title="Eliminar chat"
+                          >
+                            <Trash2 size={13} />
+                          </button>
+                        </div>
+                      );
+                    })
+                  )}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           {/* MESSAGES LIST */}
           <div className="flex-1 flex flex-col min-w-0 bg-white dark:bg-zinc-950 overflow-hidden">
-            <div className="flex-1 overflow-y-auto p-6 space-y-6 custom-scrollbar">
+            <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 sm:space-y-6 custom-scrollbar">
               {messages.map((msg) => {
                 const isUser = msg.role === 'user';
 
@@ -579,7 +829,7 @@ export function VirtualAssistantWidget({
             </div>
 
             {/* INPUT BAR */}
-            <div className="p-5 bg-white dark:bg-zinc-950 border-t border-stone-200 dark:border-stone-800 shrink-0">
+            <div className="p-4 sm:p-5 bg-white dark:bg-zinc-950 border-t border-stone-200 dark:border-stone-800 shrink-0">
               <div className="relative flex items-center gap-3 bg-[#FAF9F5] dark:bg-stone-900 border border-stone-300 dark:border-stone-800 focus-within:border-[#7F1D1D] rounded p-3 transition-colors">
                 <textarea
                   ref={textareaRef}

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { safeFormatDate } from '../utils/dateUtils';
 import { Save, FileText, Trash2, Edit3, Plus, Search, Check, X as CloseIcon } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../hooks/useAuth';
 import { 
   UserNote, 

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { BookOpen, GraduationCap, Calendar as CalendarIcon, FileText, Sparkles, Quote, Bookmark, ArrowRight, CheckCircle2, Home, Copy, Share2, Check, Flame, Trophy, Clock, Search, Layers, Compass } from 'lucide-react';
 import { Course, UserProgress } from '../types';
 import { User } from 'firebase/auth';
-import { motion } from 'motion/react';
+import { motion } from 'framer-motion';
 
 interface HomePanelProps {
   user?: User | null;

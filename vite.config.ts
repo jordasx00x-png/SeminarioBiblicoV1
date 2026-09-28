@@ -120,7 +120,7 @@ export default defineConfig(async ({ command }) => {
               if (id.includes('lucide-react')) {
                 return 'vendor-lucide';
               }
-              if (id.includes('motion')) {
+              if (id.includes('motion') || id.includes('framer-motion')) {
                 return 'vendor-motion';
               }
               if (id.includes('react') || id.includes('react-dom')) {

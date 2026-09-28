@@ -21,7 +21,7 @@ import { FloatingNotesWidget } from './components/FloatingNotesWidget';
 import { VirtualAssistantWidget } from './components/VirtualAssistantWidget';
 import { BibleVerseModal } from './components/BibleVerseModal';
 import { MobileBottomNav } from './components/MobileBottomNav';
-import { AnimatePresence, motion } from 'motion/react';
+import { AnimatePresence, motion } from 'framer-motion';
 
 export default function App() {
   const { user, isLoading: authLoading, authError, signInWithGoogle, signInAsGuest, signOut } = useAuth();

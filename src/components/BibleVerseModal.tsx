@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo, useRef } from 'react';
-import { motion, AnimatePresence, useDragControls, useMotionValue } from 'motion/react';
+import { motion, AnimatePresence, useDragControls, useMotionValue } from 'framer-motion';
 import { 
   BookOpen, 
   X, 

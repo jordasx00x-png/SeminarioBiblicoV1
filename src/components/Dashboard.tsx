@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Course, UserProgress } from '../types';
 import { BookOpen, Award, CheckCircle, PlayCircle, ChevronDown, ChevronUp, GraduationCap, Lock, Unlock, ShieldCheck, Search } from 'lucide-react';
 import { User } from 'firebase/auth';
-import { motion } from 'motion/react';
+import { motion } from 'framer-motion';
 import { safeStorage } from '../utils/safeStorage';
 
 interface DashboardProps {

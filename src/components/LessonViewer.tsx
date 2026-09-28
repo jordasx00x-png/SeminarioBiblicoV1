@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { motion } from 'motion/react';
+import { motion } from 'framer-motion';
 import { Lesson, Course, UserProgress } from '../types';
 import { FinalExam } from './FinalExam';
 import { ReinforcementVerses } from './ReinforcementVerses';

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Home, BookOpen, Edit3, Calendar, Award, Moon, Sun, Flame, CheckCircle2, User, Settings, LogOut, ChevronDown, Sparkles, Download, ZoomIn, ZoomOut, Bot, GraduationCap } from 'lucide-react';
 import { User as FirebaseUser } from 'firebase/auth';
 import { UserProgress } from '../types';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { PWAInstallButton } from './PWAInstallButton';
 
 interface InteractiveHeaderProps {

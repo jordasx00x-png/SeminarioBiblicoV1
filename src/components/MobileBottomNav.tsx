@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Home, BookOpen, Edit3, Award, Menu, X, Bot, Calendar, FileText, Settings, Moon, Sun, LogOut, Sparkles, ChevronRight, Flame, Layers } from 'lucide-react';
 import { User as FirebaseUser } from 'firebase/auth';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { PWAInstallButton } from './PWAInstallButton';
 
 interface MobileBottomNavProps {

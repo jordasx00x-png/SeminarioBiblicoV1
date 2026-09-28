@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { X, Save, User as UserIcon, Phone, Mail, Bell, Clock, Trash2, AlertTriangle, Check, Moon, Sun, Palette } from 'lucide-react';
 import { User } from 'firebase/auth';
-import { motion } from 'motion/react';
+import { motion } from 'framer-motion';
 import { safeStorage } from '../utils/safeStorage';
 
 interface UserProfileData {
@@ -13,7 +13,6 @@ interface UserProfileData {
 }
 
 interface ProfileModalProps {
-  isOpen?: boolean;
   user: User | null;
   onClose: () => void;
   onSave?: (data: UserProfileData) => void;
@@ -22,8 +21,7 @@ interface ProfileModalProps {
   onToggleDarkMode?: () => void;
 }
 
-export function ProfileModal({ isOpen = false, user, onClose, onSave, onResetAllAccounts, darkMode, onToggleDarkMode }: ProfileModalProps) {
-  if (!isOpen) return null;
+export function ProfileModal({ user, onClose, onSave, onResetAllAccounts, darkMode, onToggleDarkMode }: ProfileModalProps) {
   const [profile, setProfile] = useState<UserProfileData>({
     fullName: user?.displayName || '',
     phoneNumber: '',

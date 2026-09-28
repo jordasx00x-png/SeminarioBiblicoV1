@@ -63,7 +63,7 @@ export default function App() {
 
   // Administrative command: automatically reset all previous accounts that have entered
   useEffect(() => {
-    const WIPE_KEY = 'seminario_wipe_v5_reset_done';
+    const WIPE_KEY = 'seminario_wipe_v6_reset_done';
     if (!safeStorage.getItem(WIPE_KEY)) {
       try {
         localStorage.clear();

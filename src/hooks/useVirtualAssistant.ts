@@ -3,7 +3,7 @@ import { AssistantMessage } from '../types';
 import { generateClientTheologicalResponse } from '../utils/theologicalFallback';
 import { safeStorage } from '../utils/safeStorage';
 
-const STORAGE_KEY = 'std_campus_chat_history_v5';
+const STORAGE_KEY = 'std_campus_chat_history_v6';
 
 const formatNow = () => {
   const d = new Date();
@@ -77,37 +77,48 @@ export function useVirtualAssistant() {
     };
 
     // 1. Add user message synchronously
-    const updatedMessages = [...messages, userMsg];
-    setMessages(updatedMessages);
+    setMessages(prev => [...prev, userMsg]);
 
     let replyContent = '';
 
     try {
-      const apiMessages = updatedMessages
+      const apiMessages = [...messages, userMsg]
         .filter(m => m.id !== 'welcome-msg')
         .map(m => ({
           role: m.role,
           content: m.content
         }));
 
-      const res = await fetch('/api/assistant/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          messages: apiMessages,
-          context: context || {}
-        })
-      });
+      // AbortController with 2.5 second timeout to prevent UI hanging
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 2500);
 
-      if (res.ok) {
-        const data = await res.json();
-        replyContent = data.reply || '';
+      try {
+        const res = await fetch('/api/assistant/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            messages: apiMessages,
+            context: context || {}
+          }),
+          signal: controller.signal
+        });
+
+        clearTimeout(timeoutId);
+
+        if (res.ok) {
+          const data = await res.json();
+          replyContent = data.reply || '';
+        }
+      } catch (fetchErr) {
+        clearTimeout(timeoutId);
+        console.warn('API fetch aborted/failed, using client theological response generator');
       }
     } catch (err) {
-      console.warn('Backend API request error, using client engine:', err);
+      console.warn('Backend API request error:', err);
     }
 
-    // 2. Fallback if API returned empty or failed
+    // 2. Fallback if API returned empty, failed, or timed out
     if (!replyContent) {
       replyContent = generateClientTheologicalResponse(trimmed, context);
     }

@@ -1,10 +1,8 @@
 import { 
   collection, 
   addDoc, 
-  serverTimestamp, 
   query, 
   where, 
-  orderBy, 
   onSnapshot,
   doc,
   updateDoc,
@@ -20,8 +18,8 @@ export interface Conversation {
   id: string;
   title: string;
   lastMessage: string;
-  createdAt: any;
-  updatedAt: any;
+  createdAt: number;
+  updatedAt: number;
 }
 
 const formatNow = () => new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
@@ -58,7 +56,7 @@ export function useVirtualAssistant() {
     return () => unsubscribe();
   }, []);
 
-  // Listen to user conversations from Firestore when signed in
+  // Listen to user conversations from Firestore without orderBy to avoid needing composite indexes
   useEffect(() => {
     if (!userId) {
       setConversations([]);
@@ -68,25 +66,34 @@ export function useVirtualAssistant() {
     try {
       const q = query(
         collection(db, 'conversations'),
-        where('userId', '==', userId),
-        orderBy('updatedAt', 'desc')
+        where('userId', '==', userId)
       );
 
       return onSnapshot(q, (snapshot) => {
-        const convos = snapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data()
-        })) as Conversation[];
+        const convos = snapshot.docs.map(doc => {
+          const data = doc.data();
+          return {
+            id: doc.id,
+            title: data.title || 'Consulta',
+            lastMessage: data.lastMessage || '',
+            createdAt: data.createdAt || 0,
+            updatedAt: data.updatedAt || 0,
+            userId: data.userId
+          };
+        }) as Conversation[];
+
+        // Sort in JS by updatedAt descending
+        convos.sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0));
         setConversations(convos);
       }, (err) => {
-        console.warn('Firestore conversation listener warning:', err);
+        console.warn('Firestore conversation listener warning (handled gracefully):', err);
       });
     } catch (err) {
       console.warn('Could not setup conversations listener:', err);
     }
   }, [userId]);
 
-  // Listen to messages of active conversation from Firestore when signed in
+  // Listen to messages of active conversation from Firestore without orderBy to avoid index errors
   useEffect(() => {
     if (!activeConversationId || !userId) {
       if (!activeConversationId) {
@@ -97,40 +104,44 @@ export function useVirtualAssistant() {
 
     try {
       const q = query(
-        collection(db, `conversations/${activeConversationId}/messages`),
-        orderBy('timestamp', 'asc')
+        collection(db, `conversations/${activeConversationId}/messages`)
       );
 
       return onSnapshot(q, (snapshot) => {
-        const msgs = snapshot.docs.map(doc => {
+        const rawMsgs = snapshot.docs.map(doc => {
           const data = doc.data();
           let tsStr = formatNow();
 
-          if (data.timestamp?.toDate) {
-            try {
-              tsStr = data.timestamp.toDate().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            } catch (e) {
-              tsStr = formatNow();
-            }
-          } else if (typeof data.timestamp === 'string' && data.timestamp && !data.timestamp.includes('Invalid')) {
+          if (typeof data.timestamp === 'string' && data.timestamp && !data.timestamp.includes('Invalid')) {
             tsStr = data.timestamp;
+          } else if (data.createdTime) {
+            tsStr = new Date(data.createdTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
           }
 
           return {
             id: doc.id,
             role: data.role,
             content: data.content,
-            timestamp: tsStr
+            timestamp: tsStr,
+            createdTime: data.createdTime || 0
           };
-        }) as AssistantMessage[];
+        });
+
+        // Sort in JS by createdTime ascending
+        rawMsgs.sort((a, b) => (a.createdTime || 0) - (b.createdTime || 0));
+
+        const msgs = rawMsgs.map(m => ({
+          id: m.id,
+          role: m.role,
+          content: m.content,
+          timestamp: m.timestamp
+        })) as AssistantMessage[];
         
-        if (msgs.length === 0) {
-          setMessages([INITIAL_GREETING]);
-        } else {
+        if (msgs.length > 0) {
           setMessages(msgs);
         }
       }, (err) => {
-        console.warn('Firestore messages listener warning:', err);
+        console.warn('Firestore messages listener warning (handled gracefully):', err);
       });
     } catch (err) {
       console.warn('Could not setup messages listener:', err);
@@ -145,12 +156,13 @@ export function useVirtualAssistant() {
     }
 
     try {
+      const now = Date.now();
       const docRef = await addDoc(collection(db, 'conversations'), {
         userId,
         title,
         lastMessage: '',
-        createdAt: serverTimestamp(),
-        updatedAt: serverTimestamp(),
+        createdAt: now,
+        updatedAt: now,
       });
       setActiveConversationId(docRef.id);
       return docRef.id;
@@ -172,7 +184,8 @@ export function useVirtualAssistant() {
     setError(null);
     setIsLoading(true);
 
-    const userMsgId = 'msg-' + Date.now();
+    const now = Date.now();
+    const userMsgId = 'msg-' + now;
     const userTimestamp = formatNow();
     const newUserMsg: AssistantMessage = {
       id: userMsgId,
@@ -181,12 +194,12 @@ export function useVirtualAssistant() {
       timestamp: userTimestamp
     };
 
-    // Optimistically update local messages so UI responds immediately!
+    // 1. Optimistically update local messages array immediately
     setMessages(prev => [...prev, newUserMsg]);
 
     let currentConvId = activeConversationId;
 
-    // Save user message to Firestore if logged in
+    // 2. Save user message to Firestore if logged in
     if (userId) {
       try {
         if (!currentConvId) {
@@ -197,11 +210,12 @@ export function useVirtualAssistant() {
           await addDoc(collection(db, `conversations/${currentConvId}/messages`), {
             role: 'user',
             content: trimmed,
-            timestamp: serverTimestamp(),
+            timestamp: userTimestamp,
+            createdTime: now
           });
 
           await updateDoc(doc(db, 'conversations', currentConvId), {
-            updatedAt: serverTimestamp(),
+            updatedAt: now,
             lastMessage: trimmed
           });
         }
@@ -243,7 +257,8 @@ export function useVirtualAssistant() {
       replyText = generateClientTheologicalResponse(trimmed, context);
     }
 
-    const assistantMsgId = 'msg-' + (Date.now() + 1);
+    const replyTime = Date.now();
+    const assistantMsgId = 'msg-' + replyTime;
     const assistantTimestamp = formatNow();
     const newAssistantMsg: AssistantMessage = {
       id: assistantMsgId,
@@ -252,20 +267,21 @@ export function useVirtualAssistant() {
       timestamp: assistantTimestamp
     };
 
-    // Add assistant response to Firestore if signed in
+    // 3. Save assistant response to Firestore if signed in
     if (userId && currentConvId) {
       try {
         await addDoc(collection(db, `conversations/${currentConvId}/messages`), {
           role: 'assistant',
           content: replyText,
-          timestamp: serverTimestamp(),
+          timestamp: assistantTimestamp,
+          createdTime: replyTime
         });
       } catch (err) {
         console.warn('Firestore write warning for assistant reply:', err);
       }
     }
 
-    // Update local state so answer appears immediately without waiting for Firestore
+    // 4. Update local state so answer appears immediately without waiting
     setMessages(prev => {
       if (prev.some(m => m.id === assistantMsgId)) return prev;
       return [...prev, newAssistantMsg];

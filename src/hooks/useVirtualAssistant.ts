@@ -14,6 +14,7 @@ import { db, auth } from '../firebase';
 import { useState, useEffect, useCallback } from 'react';
 import { onAuthStateChanged } from 'firebase/auth';
 import { AssistantMessage } from '../types';
+import { generateClientTheologicalResponse } from '../utils/theologicalFallback';
 
 export interface Conversation {
   id: string;
@@ -103,13 +104,16 @@ export function useVirtualAssistant() {
       return onSnapshot(q, (snapshot) => {
         const msgs = snapshot.docs.map(doc => {
           const data = doc.data();
-          let tsStr = 'Recién enviado';
+          let tsStr = formatNow();
+
           if (data.timestamp?.toDate) {
-            tsStr = data.timestamp.toDate().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-          } else if (typeof data.timestamp === 'string') {
+            try {
+              tsStr = data.timestamp.toDate().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            } catch (e) {
+              tsStr = formatNow();
+            }
+          } else if (typeof data.timestamp === 'string' && data.timestamp && !data.timestamp.includes('Invalid')) {
             tsStr = data.timestamp;
-          } else {
-            tsStr = formatNow();
           }
 
           return {
@@ -206,6 +210,8 @@ export function useVirtualAssistant() {
       }
     }
 
+    let replyText = '';
+
     try {
       // Prepare history for backend API
       const currentMsgs = messages.filter(m => m.id !== 'welcome-msg');
@@ -224,53 +230,48 @@ export function useVirtualAssistant() {
         }),
       });
 
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Error al comunicarse con el asistente.');
-
-      const replyText = data.reply || 'No se obtuvo respuesta del asistente.';
-      const assistantMsgId = 'msg-' + (Date.now() + 1);
-      const assistantTimestamp = formatNow();
-
-      // Add assistant response to Firestore if signed in
-      if (userId && currentConvId) {
-        try {
-          await addDoc(collection(db, `conversations/${currentConvId}/messages`), {
-            role: 'assistant',
-            content: replyText,
-            timestamp: serverTimestamp(),
-          });
-        } catch (err) {
-          console.warn('Firestore write warning for assistant reply:', err);
-        }
+      if (res.ok) {
+        const data = await res.json();
+        replyText = data.reply || '';
       }
+    } catch (err: any) {
+      console.warn('API call failed, switching to local theological engine:', err);
+    }
 
-      // Also update local state for immediate feedback
-      setMessages(prev => {
-        // Prevent duplication if Firestore listener already added it
-        if (prev.some(m => m.id === assistantMsgId)) return prev;
-        return [...prev, {
-          id: assistantMsgId,
+    // Fallback if API returned empty, failed, or was unreachable
+    if (!replyText) {
+      replyText = generateClientTheologicalResponse(trimmed, context);
+    }
+
+    const assistantMsgId = 'msg-' + (Date.now() + 1);
+    const assistantTimestamp = formatNow();
+    const newAssistantMsg: AssistantMessage = {
+      id: assistantMsgId,
+      role: 'assistant',
+      content: replyText,
+      timestamp: assistantTimestamp
+    };
+
+    // Add assistant response to Firestore if signed in
+    if (userId && currentConvId) {
+      try {
+        await addDoc(collection(db, `conversations/${currentConvId}/messages`), {
           role: 'assistant',
           content: replyText,
-          timestamp: assistantTimestamp
-        }];
-      });
-
-    } catch (err: any) {
-      console.error('Virtual assistant error:', err);
-      const errorText = err.message || 'Ocurrió un error al consultar al asistente.';
-      setError(errorText);
-
-      // Add error notification message in chat
-      setMessages(prev => [...prev, {
-        id: 'err-' + Date.now(),
-        role: 'assistant',
-        content: `⚠️ **Aviso del Sistema**: ${errorText}`,
-        timestamp: formatNow()
-      }]);
-    } finally {
-      setIsLoading(false);
+          timestamp: serverTimestamp(),
+        });
+      } catch (err) {
+        console.warn('Firestore write warning for assistant reply:', err);
+      }
     }
+
+    // Update local state so answer appears immediately without waiting for Firestore
+    setMessages(prev => {
+      if (prev.some(m => m.id === assistantMsgId)) return prev;
+      return [...prev, newAssistantMsg];
+    });
+
+    setIsLoading(false);
   }, [userId, activeConversationId, messages, isLoading, startNewConversation]);
 
   const deleteConversation = useCallback(async (id: string) => {

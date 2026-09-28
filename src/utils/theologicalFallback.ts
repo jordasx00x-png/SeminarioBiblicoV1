@@ -1,6 +1,59 @@
 export function generateClientTheologicalResponse(messageText: string, context?: { courseTitle?: string; lessonTitle?: string }): string {
   const query = (messageText || '').toLowerCase();
 
+  // Sermon / Homiletic Outline Generation
+  if (query.includes('sermon') || query.includes('predica') || query.includes('bosquejo') || query.includes('homiletica') || query.includes('mensaje') || query.includes('predicar')) {
+    return `### 📜 Bosquejo Homilético Expositivo y Profundo
+
+**Título del Sermón:** La Gloria Inmencionable de la Gracia y el Llamado
+**Texto Bíblico Base:** Romanos 8:28-30 / Efesios 2:8-10
+
+---
+
+#### 1. Marco Exegético y Propósito
+- **Idea Central del Texto (ICT):** Dios ejecuta soberanamente su plan de redención guiando cada acontecimiento para la gloria de su Nombre y el bien de sus escogidos.
+- **Idea Central del Sermón (ICS):** Nada en la vida del creyente es un accidente; todo está orquestado por la gracia divina.
+- **Proposición Homilética:** Al comprender la providencia de Dios, descansamos en su soberanía y vivimos con propósito eterno.
+
+---
+
+#### 2. Introducción Impactante
+- **Gancho Inicial:** En un mundo sumido en la incertidumbre y el caos, el ser humano busca desesperadamente dirección y significado.
+- **Contexto:** Pablo escribe a una iglesia en Roma expuesta al sufrimiento, asegurándoles que la soberanía de Dios no es un concepto abstracto, sino un ancla firme.
+- **Conexión:** ¿Cómo podemos mantener la fe inquebrantable cuando las circunstancias parecen desmoronarse?
+
+---
+
+#### 3. Bosquejo Expositivo del Pasaje
+
+##### I. El Propósito Inmovible de Dios (v. 28)
+- **Exégesis:** El término griego *synergei* (συνεργεῖ - "cooperan juntas para bien") revela que Dios no es espectador, sino el Arquiteto de nuestras vidas.
+- **Apoyo Bíblico:** Génesis 50:20; Isaías 46:10.
+- **Ilustración Pastoral:** El tapiz visto por la parte posterior muestra hilos enredados y nudos oscuros; pero al voltearlo, se aprecia una obra maestra impecable.
+- **Aplicación:** Confiar en Dios incluso cuando no podemos rastrear su mano en la prueba.
+
+##### II. La Cadena Dorada de la Redención (v. 29-30)
+- **Exégesis:** De *proegno* (conocidos de antemano) a *edoxasen* (glorificados en tiempo pasado, asegurando la victoria final).
+- **Apoyo Bíblico:** Efesios 1:4-6; 2 Timoteo 1:9.
+- **Ilustración Pastoral:** Una ancla de barco que no está amarrada al agua, sino fijada en la roca firme del cielo.
+- **Aplicación:** Tu identidad no la definen tus fracasos temporales, sino el decreto eterno de Dios.
+
+##### III. La Transformación a la Imagen de Cristo (v. 29b)
+- **Exégesis:** El fin último de nuestra salvación no es solo la comodidad, sino la *summorphos* (σύμμορφος - conformidad estructural profunda) a Cristo.
+- **Aplicación Práctica:** Medir cada decisión diaria con la pregunta: "¿Esto edifica el carácter de Cristo en mi vida?".
+
+---
+
+#### 4. Conclusión Homilética y Llamado
+- **Resumen:** Dios que te conoció, te llamó y te justificó, completará fielmente su obra en ti (*Filipenses 1:6*).
+- **Llamado a la Acción:**
+  1. Arrepentimiento y fe renovada en el Señor Jesús.
+  2. Rinde tus ansiedades al Trono de la Gracia.
+  3. Compromete tu vida al servicio activo en el Reino de Dios.
+
+> *"¿Qué, pues, diremos a esto? Si Dios es por nosotros, ¿quién contra nosotros?"* — **Romanos 8:31**`;
+  }
+
   if (query.includes('hola') || query.includes('buenos') || query.includes('buenas') || query.includes('saludos')) {
     return `¡Paz y gracia de nuestro Señor Jesucristo! 
 

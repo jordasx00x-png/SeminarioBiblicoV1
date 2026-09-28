@@ -18,16 +18,13 @@ const formatNow = () => {
 const INITIAL_GREETING: AssistantMessage = {
   id: 'welcome-msg',
   role: 'assistant',
-  content: `¡Paz y gracia! Soy tu **Asistente Virtual Teológico y Académico** del Seminario.
+  content: `¡Paz y gracia! Soy tu **Especialista en Teología, Exégesis y Homilética** del Seminario Teológico Digital.
 
-Estoy aquí para responder cualquier pregunta que tengas:
-- **Dudas sobre tus clases o lecciones** en curso.
-- **Exégesis bíblica**, análisis de pasajes y contexto histórico.
-- **Términos en idiomas bíblicos** (Griego koiné, Hebreo y Arameo).
-- **Doctrina cristiana, teología sistemática e historia de la iglesia.**
-- **Orientación pastoral y aplicación práctica.**
+Mi programación está optimizada para guiarte en dos áreas maestras:
+- 📜 **Creación de Sermones Profundos y Bosquejos Homiléticos** (Estructura expositiva, ICT/ICS, puntos clave, exégesis, ilustraciones y llamados al altar).
+- 🔍 **Estudio Bíblico Avanzado y Exégesis** (Contexto histórico-gramatical, idiomas originales Griego Koiné y Hebreo, y Teología Sistemática).
 
-¿Qué pregunta o tema te gustaría explorar hoy?`,
+¿Qué pasaje bíblico, tema para sermón o concepto teológico te gustaría preparar o estudiar hoy?`,
   timestamp: formatNow(),
 };
 

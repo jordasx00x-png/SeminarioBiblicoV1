@@ -315,6 +315,46 @@ export function VirtualAssistantWidget({
 
         {/* INPUT BAR */}
         <div className="p-3 bg-white dark:bg-zinc-950 border-t border-stone-200 dark:border-stone-800 shrink-0">
+          {/* Quick Homiletic / Exegetical Action Chips */}
+          <div className="flex items-center gap-1.5 overflow-x-auto pb-2 mb-1 custom-scrollbar shrink-0">
+            <button
+              onClick={() => {
+                setInputText("Por favor genera un bosquejo homilético expositivo profundo con exégesis, 3 puntos principales, aplicaciones e ilustraciones para el pasaje de: ");
+                textareaRef.current?.focus();
+              }}
+              className="px-2 py-1 bg-stone-100 dark:bg-stone-800 hover:bg-[#7F1D1D] hover:text-white dark:hover:bg-amber-600 border border-stone-200 dark:border-stone-700 rounded text-[10px] font-bold text-stone-600 dark:text-stone-300 transition-colors whitespace-nowrap shrink-0 flex items-center gap-1 cursor-pointer"
+            >
+              📜 Crear Sermón
+            </button>
+            <button
+              onClick={() => {
+                setInputText("Realiza un análisis exegético y contexto histórico-gramatical profundo del pasaje: ");
+                textareaRef.current?.focus();
+              }}
+              className="px-2 py-1 bg-stone-100 dark:bg-stone-800 hover:bg-[#7F1D1D] hover:text-white dark:hover:bg-amber-600 border border-stone-200 dark:border-stone-700 rounded text-[10px] font-bold text-stone-600 dark:text-stone-300 transition-colors whitespace-nowrap shrink-0 flex items-center gap-1 cursor-pointer"
+            >
+              🔍 Exégesis Bíblica
+            </button>
+            <button
+              onClick={() => {
+                setInputText("Analiza las palabras clave en Griego Koiné / Hebreo Bíblico con sus significados e implicaciones teológicas en: ");
+                textareaRef.current?.focus();
+              }}
+              className="px-2 py-1 bg-stone-100 dark:bg-stone-800 hover:bg-[#7F1D1D] hover:text-white dark:hover:bg-amber-600 border border-stone-200 dark:border-stone-700 rounded text-[10px] font-bold text-stone-600 dark:text-stone-300 transition-colors whitespace-nowrap shrink-0 flex items-center gap-1 cursor-pointer"
+            >
+              🏛️ Idiomas Originales
+            </button>
+            <button
+              onClick={() => {
+                setInputText("Explica la fundamentación de Teología Sistemática y doctrina bíblica sobre: ");
+                textareaRef.current?.focus();
+              }}
+              className="px-2 py-1 bg-stone-100 dark:bg-stone-800 hover:bg-[#7F1D1D] hover:text-white dark:hover:bg-amber-600 border border-stone-200 dark:border-stone-700 rounded text-[10px] font-bold text-stone-600 dark:text-stone-300 transition-colors whitespace-nowrap shrink-0 flex items-center gap-1 cursor-pointer"
+            >
+              ⚖️ Teología Sistemática
+            </button>
+          </div>
+
           <div className="relative flex items-center gap-2 bg-[#FAF9F5] dark:bg-stone-900 border border-stone-300 dark:border-stone-800 focus-within:border-[#7F1D1D] rounded p-2 transition-colors">
             <textarea
               ref={textareaRef}

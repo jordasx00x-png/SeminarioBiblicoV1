@@ -4,7 +4,7 @@ export function generateClientTheologicalResponse(
 ): string {
   const query = (messageText || '').toLowerCase();
 
-  // Extract Bible passage or topic cleanly from prompt
+  // Extract clean passage name from user query
   const cleanPassage = messageText
     .replace(/por favor/gi, '')
     .replace(/genera/gi, '')
@@ -31,200 +31,178 @@ export function generateClientTheologicalResponse(
     .trim();
 
   // -------------------------------------------------------------
-  // 1. SPECIFIC MATCH: SALMOS 23 / SALMO 23
+  // 1. SPECIFIC MATCH: SALMOS 23
   // -------------------------------------------------------------
   if (query.includes('salmo 23') || query.includes('salmos 23') || (query.includes('salmo') && query.includes('23'))) {
-    return `### 📜 Bosquejo Homilético Expositivo: Salmo 23
+    return `### 📜 EL SEÑOR ES MI PASTOR: LA PLENITUD DE LA GRACIA Y PROTECCIÓN DIVINA
 
-**Título del Sermón:** El Señor es mi Pastor: Provisión, Protección y Gracia Incalculable
-**Texto Bíblico Base:** Salmo 23:1-6 (RVR 1960)
-> *"Jehová es mi pastor; nada me faltará. En lugares de delicados pastos me hará descansar; junto a aguas de reposo me pastoreará."*
-
----
-
-#### 1. Marco Exegético y Propósito
-- **Contexto Histórico:** Compuesto por David, el rey-pastor de Israel. Usando su profunda experiencia juvenil en los campos de Belén, David contrapone el cuidado abnegado de Dios (*YHVH Ro'i*) a la desolación del desierto de Judea.
-- **Análisis de Palabras en Hebreo Bíblico:**
-  * **YHVH Ro'i (יְהוָה רֹעִי):** "El Señor es mi Pastor". Expresa una relación de pacto íntimo, personal y soberano.
-  * **Lo Echsas (לֹא אֶחְסָר):** "Nada me faltará". Significa "no sufriré escasez ni carencia de lo verdaderamente vital".
-  * **Tzalmaveth (צַלְמָוֶת):** "Valle de sombra de muerte" (oscuridad densa, peligro inminente).
-  * **Hesed (חֶסֶד):** "Amor de pacto, misericordia inquebrantable y fidelidad perenne".
-- **Idea Central del Texto (ICT):** Dios provee, guía, protege y restaura soberanamente la vida de quienes pertenecen a su rebaño.
-- **Idea Central del Sermón (ICS):** En las manos del Buen Pastor, el creyente tiene satisfacción completa hoy, paz en medio de las pruebas y una morada eterna asegurada.
-- **Proposición Homilética:** Al rendir nuestras vidas al cuidado de Cristo, sustituimos la ansiedad por la confianza gozosa en su providencia.
+**📖 TEXTO PRINCIPAL:** Salmo 23:1-6 (RVR 1960)
+**📖 TEXTOS SECUNDARIOS (OPCIONAL):** Juan 10:11-18; Isaías 40:11; Filipenses 4:19
+**💡 IDEA PRINCIPAL:** En las manos del Buen Pastor, el creyente goza de provisión inagotable hoy, paz inquebrantable en la prueba y la promesa de una morada eterna.
 
 ---
 
-#### 2. Introducción Impactante
-- **Gancho Inicial:** Vivimos en una sociedad plagada de agotamiento, insatisfacción constante y temor al futuro.
-- **Conexión Pastoral:** David no escribió este salmo en un palacio libre de problemas, sino recordando las garras de leones, los valles oscuros y los enemigos acechantes.
-- **Pregunta Transicional:** ¿Cómo experimentar descanso real y seguridad inamovible cuando todo a nuestro alrededor parece inestable?
+#### 🎙️ INTRODUCCIÓN CON EXÉGESIS
+- **Gancho Inicial y Relevancia:** Vivimos en una cultura hiperconectada pero profundamente ansiosa, donde la insatisfacción y el temor al futuro devoran la paz de los hombres.
+- **Contexto Histórico-Gramatical:** Escrito por el rey David, quien conoció de primera mano la vida dura del pastor de ovejas en el desierto de Judea. David contrapone el cuidado abnegado de Dios a los peligros de los depredadores y la sequía.
+- **Análisis Exegético de Idiomas Originales:**
+  * **YHVH Ro'i (יְהוָה רֹעִי):** "El Señor es mi Pastor" (término de pacto íntimo y cuidado personal).
+  * **Lo Echsas (לֹא אֶחְסָר):** "Nada me faltará" (literalmente: "no tendré escasez de lo verdaderamente esencial").
+  * **Tzalmaveth (צַלְמָוֶת):** "Valle de sombra de muerte" (sombra densa, tinieblas profundas).
+- **Pregunta Transicional:** ¿De qué manera podemos descansar con absoluta certidumbre en el cuidado del Buen Pastor en medio de nuestras crisis?
 
 ---
 
-#### 3. Bosquejo Expositivo del Pasaje
+#### 🏛️ DESARROLLO HOMILÉTICO
 
-##### I. La Provisión y Restauración del Pastor (vv. 1-3)
-- **Exégesis:** Los "delicados pastos" (*De'she*) y "aguas de reposo" (*Menuhot*) describen un lugar de reposo seguro donde la oveja puede alimentarse sin temor. El verbo "confortará" (*Shuv*) implica restaurar el alma cansada o descarriada.
-- **Apoyo Bíblico:** Juan 10:11, 14; Isaías 40:11.
-- **Ilustración Pastoral:** Una oveja patas arriba (*cast down*) no puede levantarse por sí misma; necesita la mano tierna del pastor para enderezarla y salvarle la vida.
-- **Aplicación:** Permite que la Palabra de Dios y el Espíritu Santo restauren tus fuerzas en lugar de buscar refugio en cisternas rotas.
+#### PUNTO 1: LA PROVISIÓN Y RESTAURACIÓN INAGOTABLE DEL PASTOR
+- **NOMBRE DEL PUNTO:** La Provisión y Restauración del Creyente
+- **TEXTO DEL PUNTO:** Salmo 23:1-3
+- **INTRODUCCIÓN DEL PUNTO:** Dios no nos promete una vida libre de desiertos, sino su provisión constante que sacia el alma cansada.
+- **EXÉGESIS DEL PUNTO:** Las expresiones "delicados pastos" (*De'she*) y "aguas de reposo" (*Menuhot*) describen lugares seguros de nutrición y paz. El verbo "confortará" (*Shuv*) significa hacer volver, restaurar o rescatar el alma descarriada.
+- **SOBRE QUÉ HABLAR DEL PUNTO:** Hablar de cómo la Palabra de Dios sacia las ansiedades modernas. Ilustrar con la oveja que cae de espaldas (*cast down*) y necesita la mano del pastor para incorporarse.
+- **UNA FRASE IMPORTANTE PARA LA CONGREGACIÓN:** *"Tu satisfacción no depende de lo que posees en las manos, sino de quién te sostiene en las suyas."*
+- **EL PUENTE PARA EL SIGUIENTE PUNTO:** Sin embargo, el camino del rebaño no siempre transcurre en prados verdes; a veces es necesario descender al valle...
 
-##### II. La Presencia y Consuelo en el Valle Oscuro (v. 4)
-- **Exégesis:** La "vara" (*Shevet*) era el garrote para defender al rebaño de los depredadores; el "cayado" (*Mish'enet*) era el bastón curvo para guiar y rescatar. Ambas herramientas comunican protección y disciplina amorosa.
-- **Apoyo Bíblico:** Isaías 43:2; Romanos 8:38-39.
-- **Ilustración Pastoral:** En los valles profundos de Judea, el sol no llega al fondo, pero la voz del pastor resuena más fuerte en las paredes de roca.
-- **Aplicación:** Aunque atravieses enfermedades, pérdidas o crisis, la presencia de Cristo está contigo; no estás solo en la prueba.
+#### PUNTO 2: LA PRESENCIA CONSOLADORA EN MEDIO DEL VALLE OSCURO
+- **NOMBRE DEL PUNTO:** Seguridad en la Prueba Profunda
+- **TEXTO DEL PUNTO:** Salmo 23:4
+- **INTRODUCCIÓN DEL PUNTO:** El creyente no está exento de angustias, pero nunca camina solo en medio de la tormenta.
+- **EXÉGESIS DEL PUNTO:** En los barrancos de Judea la luz del sol se apaga. La "vara" (*Shevet*) era el instrumento de defensa contra fieras; el "cayado" (*Mish'enet*) servía para guiar y rescatar.
+- **SOBRE QUÉ HABLAR DEL PUNTO:** Destacar que en el valle oscuro la voz y la vara del Pastor infunden aliento. Explicar cómo la presencia de Cristo consuela en el duelo y la enfermedad.
+- **UNA FRASE IMPORTANTE PARA LA CONGREGACIÓN:** *"En el valle de sombra, la oscuridad es real, pero la presencia de Dios es infinitamente superior a tu temor."*
+- **EL PUENTE PARA EL SIGUIENTE PUNTO:** Y Dios no solo nos defiende en el valle, sino que nos prepara un banquete de victoria...
 
-##### III. La Mesa Servida y la Morada Eterna (vv. 5-6)
-- **Exégesis:** Dios pasa de la figura del Pastor a la del Anfitrión Divino. Unge la cabeza con aceite (*Shemen* - honor y sanidad) y llena la copa hasta rebozar (*Revayah*). El "bien" (*Tov*) y la "misericordia" (*Hesed*) persiguen al creyente como guardianes divinos.
-- **Apoyo Bíblico:** Juan 14:2-3; Apocalipsis 7:16-17.
-- **Aplicación Práctica:** Vivir hoy con mentalidad de eternidad, sabiendo que nuestro hogar final está en la presencia del Dios Altísimo.
+#### PUNTO 3: EL BANQUETE DE LA GRACIA Y LA MORADA ETERNA
+- **NOMBRE DEL PUNTO:** La Abundancia del Anfitrión Divino y la Gloria Eterna
+- **TEXTO DEL PUNTO:** Salmo 23:5-6
+- **INTRODUCCIÓN DEL PUNTO:** Dios pasa de la figura del Pastor al Anfitrión Real que honra a sus siervos.
+- **EXÉGESIS DEL PUNTO:** Ungir la cabeza con aceite (*Shemen*) simboliza distinción y sanidad. La copa rebosante (*Revayah*) habla de gozo colmado. El bien y la misericordia (*Hesed*) nos persiguen activamente todos los días.
+- **SOBRE QUÉ HABLAR DEL PUNTO:** Explicar la seguridad de la salvación y la esperanza de la casa celestial. El creyente no es un vagabundo espiritual, sino un ciudadano del Reino.
+- **UNA FRASE IMPORTANTE PARA LA CONGREGACIÓN:** *"La misericordia de Dios no solo te perdona el pasado, sino que te escolta hoy y te asegura la eternidad."*
+- **EL PUENTE PARA EL SIGUIENTE PUNTO:** Por lo tanto, concluyamos rindiendo nuestra vida ante el Rey de Gloria.
 
 ---
 
-#### 4. Conclusión Homilética y Llamado
-- **Resumen:** Con Jehová como tu Pastor, tu pasado está perdonado, tu presente está protegido y tu futuro está asegurado.
-- **Llamado a la Acción:**
-  1. Si nunca has entregado tu vida a Jesucristo, ven hoy al Buen Pastor que dio su vida por las ovejas.
-  2. Rinde tus cargas y ansiedades en oración.
-  3. Camina cada día descansando en su dirección y gracia.
-
-> *"Yo soy el buen pastor; el buen pastor su vida da por las ovejas."* — **Juan 10:11**`;
+#### 🎯 CONCLUSIÓN
+- **Resumen Homilético:** Con YHVH como tu Pastor, tu pasado está perdonado por su gracia, tu presente protegido por su vara y tu futuro colmado en su casa.
+- **Llamado Pastoral y Aplicación Directa:** Rinde hoy tus angustias y temores al Señor Jesús. Si has estado caminando alejado del rebaño, regresa al Buen Pastor que dio su vida por ti en la cruz.
+- **TEXTO PARA TERMINAR:** *"Yo soy el buen pastor; el buen pastor su vida da por las ovejas."* — **Juan 10:11**`;
   }
 
   // -------------------------------------------------------------
   // 2. SPECIFIC MATCH: 1 TIMOTEO 4:12
   // -------------------------------------------------------------
   if (query.includes('1 timoteo 4:12') || query.includes('1 timoteo 4') || (query.includes('timoteo') && query.includes('juventud'))) {
-    return `### 📜 Bosquejo Homilético Expositivo: 1 Timoteo 4:12
+    return `### 📜 INQUEBRANTABLES: SÉ EJEMPLO DE INTEGRIDAD EN EL LIDERAZGO
 
-**Título del Sermón:** Inquebrantables: Sé Ejemplo de Integridad en el Liderazgo Cristiano
-**Texto Bíblico Base:** 1 Timoteo 4:12 (RVR 1960)
-> *"Ninguno tenga en poco tu juventud, sino sé ejemplo de los creyentes en palabra, conducta, amor, espíritu, fe y pureza."*
-
----
-
-#### 1. Marco Exegético y Propósito
-- **Contexto Histórico:** El apóstol Pablo escribe a su hijo espiritual Timoteo, encomendado a la iglesia de Éfeso para enfrentar falsos maestros y estructurar el liderazgo eclesial.
-- **Análisis de Palabras en Griego Koiné:**
-  * **Typos (τύπος):** "Modelo", "patrón", "sello de molde". El testimonio personal de Timoteo debía ser el estándar visible.
-  * **Neotes (νεότης):** "Juventud". Menores de 40 años en el contexto cultural grecorromano de ancianos (*presbyteros*).
-- **Idea Central del Texto (ICT):** La autoridad espiritual emana de la integridad del testimonio piadoso.
-- **Idea Central del Sermón (ICS):** El testimonio íntegro es la mayor apología y el fundamento del servicio cristiano.
+**📖 TEXTO PRINCIPAL:** 1 Timoteo 4:12 (RVR 1960)
+**📖 TEXTOS SECUNDARIOS (OPCIONAL):** Jeremías 1:6-8; 2 Timoteo 2:15; Tito 2:7-8
+**💡 IDEA PRINCIPAL:** La autoridad espiritual de un servidor de Dios no emana de su edad biológica, sino de la excelencia e intachabilidad de su testimonio cristiano.
 
 ---
 
-#### 2. Bosquejo Expositivo del Pasaje
+#### 🎙️ INTRODUCCIÓN CON EXÉGESIS
+- **Gancho Inicial y Relevancia:** A menudo el mundo evalúa la capacidad de un líder por sus años de experiencia o posición social. Sin embargo, en el Reino de Dios, el calibre espiritual se mide por el carácter.
+- **Contexto Histórico-Gramatical:** Pablo escribe a Timoteo en Éfeso, donde el joven pastor debía liderar a ancianos y enfrentar corrientes heréticas.
+- **Análisis Exegético de Idiomas Originales:**
+  * **Typos (τύπος):** "Modelo", "patrón", "estampa de sello". El testimonio de Timoteo debía ser el estándar visible.
+  * **Neotes (νεότης):** "Juventud". Menores de 40 años en el consejo cultural de ancianos (*presbyteros*).
+- **Pregunta Transicional:** ¿Cómo ganarnos el respeto espiritual y vencer el menosprecio en nuestro servicio al Señor?
 
-##### I. Superando el Menosprecio Mediante la Autoridad Espiritual ("Ninguno tenga en poco tu juventud")
-- **Exégesis:** *Kataphroneo* (mirar hacia abajo con desdén). Pablo exhorta a inspirar respeto a través del carácter cristiano.
-- **Aplicación:** No permitas que tu edad o las dudas de otros apaguen el llamado de Dios.
+---
 
-##### II. Las Seis Columnas del Modelo Cristiano ("Sé ejemplo de los creyentes...")
-1. **En Palabra (*Logos*):** Hablar piadoso, veraz y edificante.
-2. **En Conducta (*Anastrophe*):** Estilo de vida irreprensible.
-3. **En Amor (*Agape*):** Amor incondicional y sacrificial.
-4. **En Espíritu (*Pneuma*):** Fervor y celo por la verdad.
-5. **En Fe (*Pistis*):** Lealtad inquebrantable a las Escrituras.
-6. **En Pureza (*Hagneia*):** Santidad moral e intachabilidad.
+#### 🏛️ DESARROLLO HOMILÉTICO
 
-##### III. El Impacto Permanente del Testimonio Público
-- **Aplicación:** Vence las excusas y vive como un referente de Cristo en tu iglesia y comunidad.
+#### PUNTO 1: SUPERANDO EL MENOSPRECIO MEDIANTE LA AUTORIDAD ESPIRITUAL
+- **NOMBRE DEL PUNTO:** Venciendo el Prejuicio Humano
+- **TEXTO DEL PUNTO:** 1 Timoteo 4:12a
+- **INTRODUCCIÓN DEL PUNTO:** Las dudas externas o la inexperiencia no pueden apagar el llamado de Dios sobre tu vida.
+- **EXÉGESIS DEL PUNTO:** *Kataphroneo* (mirar hacia abajo con desdén). Pablo no le pide a Timoteo imponerse con agresividad, sino inspirar reverencia con su carácter.
+- **SOBRE QUÉ HABLAR DEL PUNTO:** La autoridad no se exige, se inspira mediante el servicio humilde y la fidelidad doctrinal.
+- **UNA FRASE IMPORTANTE PARA LA CONGREGACIÓN:** *"No dejes que el juicio de los hombres silencie la voz del llamado divino en tu vida."*
+- **EL PUENTE PARA EL SIGUIENTE PUNTO:** Y para inspirar esa autoridad, Pablo desglosa seis pilares de integridad...
 
-> *"Procura con diligencia presentarte a Dios aprobado, como obrero que no tiene de qué avergonzarse."* — **2 Timoteo 2:15**`;
+#### PUNTO 2: LAS SEIS COLUMNAS DEL TESTIMONIO PÚBLICO
+- **NOMBRE DEL PUNTO:** El Estándar Visible del Servidor
+- **TEXTO DEL PUNTO:** 1 Timoteo 4:12b
+- **INTRODUCCIÓN DEL PUNTO:** El testimonio cristiano abarca la comunicación, las acciones y la devoción interna.
+- **EXÉGESIS DEL PUNTO:** Explicación del vocabulario griego: *Logos* (palabra edificante), *Anastrophe* (conducta irreprensible), *Agape* (amor sacrificial), *Pneuma* (fervor), *Pistis* (fe leal) y *Hagneia* (pureza moral).
+- **SOBRE QUÉ HABLAR DEL PUNTO:** Detallar cada una de las 6 áreas. Aplicar la pureza en un mundo hipersexualizado y la palabra en tiempos de chisme.
+- **UNA FRASE IMPORTANTE PARA LA CONGREGACIÓN:** *"Tu vida hablada debe coincidir perfectamente con la vida que vives cuando nadie te observa."*
+- **EL PUENTE PARA EL SIGUIENTE PUNTO:** Cuando estas áreas están cimentadas, el impacto del Evangelio se vuelve irrefutable...
+
+#### PUNTO 3: EL IMPACTO TRANSFORMADOR DEL EJEMPLO VIVO
+- **NOMBRE DEL PUNTO:** La Apología Incorruptible del Evangelio
+- **TEXTO DEL PUNTO:** 1 Timoteo 4:12c
+- **INTRODUCCIÓN DEL PUNTO:** Un mensaje respaldado por una vida santa tiene el poder de transformar familias y congregaciones.
+- **EXÉGESIS DEL PUNTO:** El ejemplo piadoso consolida a los creyentes débiles y silencia a los detractores de la fe.
+- **SOBRE QUÉ HABLAR DEL PUNTO:** Desafiar a los creyentes a asumir la responsabilidad de ser modelos para las nuevas generaciones.
+- **UNA FRASE IMPORTANTE PARA LA CONGREGACIÓN:** *"Predica el Evangelio en todo momento; si es necesario, utiliza palabras, pero sobre todo utiliza tu vida."*
+- **EL PUENTE PARA EL SIGUIENTE PUNTO:** Avancemos con esta convicción hacia el compromiso final.
+
+---
+
+#### 🎯 CONCLUSIÓN
+- **Resumen Homilético:** Dios no busca gigantes de edad, sino siervos dispuestos a ser moldeados como referentes de Cristo.
+- **Llamado Pastoral y Aplicación Directa:** Arrepiéntete si has excusado tu tibieza en tu inexperiencia. Comprométete hoy a ser un modelo en palabra, conducta y pureza.
+- **TEXTO PARA TERMINAR:** *"Procura con diligencia presentarte a Dios aprobado, como obrero que no tiene de qué avergonzarse, que usa bien la palabra de verdad."* — **2 Timoteo 2:15**`;
   }
 
   // -------------------------------------------------------------
-  // 3. DYNAMIC SERMON GENERATOR FOR ANY OTHER REQUESTED PASSAGE
+  // 3. DYNAMIC SERMON GENERATOR FOR ANY REQUESTED BIBLE TEXT
   // -------------------------------------------------------------
-  if (query.includes('sermon') || query.includes('predica') || query.includes('bosquejo') || query.includes('homiletica') || query.includes('mensaje') || query.includes('predicar') || cleanPassage.length > 2) {
-    const targetTopic = cleanPassage && cleanPassage.length > 2 ? cleanPassage.toUpperCase() : 'LA VERDAD Y LA GRACIA DE DIOS';
+  const targetTopic = cleanPassage && cleanPassage.length > 2 ? cleanPassage.toUpperCase() : 'LA FIDELIDAD Y LA GRACIA DE DIOS';
 
-    return `### 📜 Bosquejo Homilético Expositivo: ${targetTopic}
+  return `### 📜 LA GLORIA DE LA VERDAD Y EL LLAMADO A LA SANTIDAD
 
-**Título del Sermón:** La Fidelidad de Dios y el Llamado a la Santidad
-**Texto Bíblico Base:** ${targetTopic}
+**📖 TEXTO PRINCIPAL:** ${targetTopic}
+**📖 TEXTOS SECUNDARIOS (OPCIONAL):** Salmo 119:105; 2 Timoteo 3:16-17; Romanos 12:1-2
+**💡 IDEA PRINCIPAL:** Dios revela su voluntad soberana en su Palabra para transformar la mente, el corazón y la vida práctica de todo creyente.
 
 ---
 
-#### 1. Marco Exegético y Propósito
-- **Idea Central del Texto (ICT):** Las Escrituras revelan la gloria, santidad y soberanía de Dios llamando a su pueblo a cimentar su fe en la verdad inmutable de su Palabra.
-- **Idea Central del Sermón (ICS):** Dios nos transforma mediante la exposición fiel de su Palabra y la gracia redentora de Jesucristo.
-- **Proposición Homilética:** Al estudiar e internalizar el pasaje de **${targetTopic}**, hallamos dirección, consuelo y poder para servir a Dios con integridad.
+#### 🎙️ INTRODUCCIÓN CON EXÉGESIS
+- **Gancho Inicial y Relevancia:** Frente al relativismo moral y la incertidumbre moderna, la Palabra de Dios permanece como la única ancla inamovible para la iglesia.
+- **Contexto Histórico-Gramatical:** El pasaje de **${targetTopic}** se enmarca dentro de la revelación inspirada por el Espíritu Santo para dar rumbo y edificación al pueblo de Dios.
+- **Análisis Exegético de Idiomas Originales:** Examen del trasfondo del texto original (Hebreo/Griego), destacando la suficiencia y la autoridad bíblica para la vida del creyente.
+- **Pregunta Transicional:** ¿De qué manera esta verdad eterna transforma nuestro caminar cotidiano y fortalece nuestra fe?
 
 ---
 
-#### 2. Introducción Impactante
-- **Gancho Inicial:** Frente a la incertidumbre del mundo contemporáneo, la Palabra de Dios se levanta como la única ancla inamovible para el alma.
-- **Pregunta Transicional:** ¿De qué manera este pasaje bíblico transforma nuestras decisiones y renueva nuestra esperanza?
+#### 🏛️ DESARROLLO HOMILÉTICO
+
+#### PUNTO 1: LA FIRMEZA DE LA VERDAD REVELADA
+- **NOMBRE DEL PUNTO:** Cimentados en la Palabra Inmutable
+- **TEXTO DEL PUNTO:** ${targetTopic}
+- **INTRODUCCIÓN DEL PUNTO:** Toda instrucción bíblica tiene como propósito dar luz y firmeza a nuestras decisiones.
+- **EXÉGESIS DEL PUNTO:** Análisis del contexto sintáctico y literario del texto original, mostrando la fidelidad de las promesas divinas.
+- **SOBRE QUÉ HABLAR DEL PUNTO:** La necesidad de meditar en las Escrituras diariamente para vencer el engaño del mundo. Ilustración del faro firme en la tormenta.
+- **UNA FRASE IMPORTANTE PARA LA CONGREGACIÓN:** *"Cuando las emociones vacilan, la Palabra de Dios permanece inamovible como nuestra roca."*
+- **EL PUENTE PARA EL SIGUIENTE PUNTO:** Y esa verdad revelada exige una respuesta viva en nuestra conducta...
+
+#### PUNTO 2: LA TRANSFORMACIÓN DE LA VIDA PRÁCTICA
+- **NOMBRE DEL PUNTO:** Obediencia y Fe en Acción
+- **TEXTO DEL PUNTO:** Santiago 1:22
+- **INTRODUCCIÓN DEL PUNTO:** La fe genuina se demuestra cuando la doctrina se convierte en estilo de vida.
+- **EXÉGESIS DEL PUNTO:** Los verbos imperativos bíblicos llaman a una acción continua (*Pistis* en acción constante).
+- **SOBRE QUÉ HABLAR DEL PUNTO:** Cómo llevar el mensaje bíblico al hogar, al trabajo y al testimonio público. Ilustrar con el cimiento profundo de una casa.
+- **UNA FRASE IMPORTANTE PARA LA CONGREGACIÓN:** *"Un sermón escuchado cambia tu entendimiento, pero un sermón vivido transforma tu eternidad."*
+- **EL PUENTE PARA EL SIGUIENTE PUNTO:** Esto solo es posible cuando contemplamos la gracia redentora de Cristo...
+
+#### PUNTO 3: LA ESPERANZA CRISTOCÉNTRICA Y EL LLAMADO ETERNO
+- **NOMBRE DEL PUNTO:** Fijando la Mirada en Jesucristo
+- **TEXTO DEL PUNTO:** Hebreos 12:1-2
+- **INTRODUCCIÓN DEL PUNTO:** El centro de toda la Escritura es la persona y la obra redentora del Señor Jesús.
+- **EXÉGESIS DEL PUNTO:** Lucas 24:27 enseña que todo el canon bíblico apunta al Mesías y a su victoria en la cruz.
+- **SOBRE QUÉ HABLAR DEL PUNTO:** La gracia inmerecida que sostiene al cristiano y la esperanza gloriosa de su venida.
+- **UNA FRASE IMPORTANTE PARA LA CONGREGACIÓN:** *"No servimos a Dios para ser aceptados; servimos a Dios porque en Cristo ya fuimos amados y aceptados."*
+- **EL PUENTE PARA EL SIGUIENTE PUNTO:** Avancemos a la conclusión con un corazón dispuesto a responder.
 
 ---
 
-#### 3. Bosquejo Expositivo del Pasaje
-
-##### I. La Verdad Revelada en el Pasaje (${targetTopic})
-- **Exégesis:** Análisis del contexto histórico y literario. Dios habla con autoridad para guiar y corregir a su pueblo.
-- **Apoyo Bíblico:** Salmo 119:105; 2 Timoteo 3:16-17.
-- **Ilustración Pastoral:** Un faro firme en medio de la tempestad no vacila frente a las olas; guía con luz constante a los navegantes.
-- **Aplicación:** Cimentar nuestras convicciones en la verdad bíblica y no en emociones pasajeras.
-
-##### II. La Transformación del Carácter Mediante la Obediencia
-- **Exégesis:** La fe genuina (*Pistis*) se demuestra en obras de amor y santidad cotidiana.
-- **Apoyo Bíblico:** Santiago 1:22; Romanos 12:1-2.
-- **Ilustración Pastoral:** Una raíz profunda no se aprecia en la superficie, pero sostiene al árbol maduro contra los vientos más fuertes.
-- **Aplicación:** Llevar la enseñanza de la Escritura a la práctica en el hogar, el trabajo y el ministerio.
-
-##### III. La Esperanza Redentora y el Cumplimiento Cristocéntrico
-- **Exégesis:** Toda la Escritura apunta al Señor Jesucristo y a su obra perfecta en la cruz (*Lucas 24:27*).
-- **Aplicación Práctica:** Vivir con gratitud, sirviendo a los demás con amor agape y testimonio intachable.
-
----
-
-#### 4. Conclusión Homilética y Llamado
-- **Resumen:** El mensaje de Dios en **${targetTopic}** nos urge a renovar nuestra mente y caminar en fidelidad.
-- **Llamado a la Acción:**
-  1. Examina tu corazón a la luz de las Sagradas Escrituras.
-  2. Rinde tus temores y ansiedades al Señor Jesús.
-  3. Compromete tu vida a proclamar y vivir el Evangelio con valentía.
-
-> *"Santifícalos en tu verdad; tu palabra es verdad."* — **Juan 17:17**`;
-  }
-
-  // -------------------------------------------------------------
-  // 4. EXEGESIS / BIBLE STUDY FALLBACK
-  // -------------------------------------------------------------
-  if (query.includes('exegesis') || query.includes('estudio') || query.includes('analisis')) {
-    const studyTarget = cleanPassage && cleanPassage.length > 2 ? cleanPassage.toUpperCase() : 'PASAJE BÍBLICO SOLICITADO';
-    return `### 🔍 Análisis Exegético Profundo: ${studyTarget}
-
-#### 1. Contexto Histórico-Gramatical
-- **Autor y Época:** Estudio del contexto histórico, cultural y político del pasaje **${studyTarget}**.
-- **Audiencia Original:** Desafíos espirituales y comunitarios que motivaron la redacción.
-- **Género Literario:** Análisis del estilo sintáctico y estructura del texto.
-
-#### 2. Idiomas Originales (Griego Koiné / Hebreo Bíblico)
-- **Vocabulario Clave:** Raíces léxicas, códigos Strong y matices teológicos de los verbos y términos principales.
-- **Sintaxis Gramatical:** Tiempos y modos verbales (aoristo, presente continuo, imperativo).
-
-#### 3. Aplicación Teológica y Pastoral
-- **Enfoque Redentor:** Conexión con el plan de salvación en Jesucristo.
-- **Transformación Práctica:** Lecciones espirituales atemporales para la vida cristiana hoy.`;
-  }
-
-  // -------------------------------------------------------------
-  // 5. GREETING & GENERAL FALLBACKS
-  // -------------------------------------------------------------
-  return `¡Paz y gracia de nuestro Señor Jesucristo! 
-
-Soy tu **Especialista en Teología, Exégesis y Homilética** del Seminario Teológico Digital.
-
-Respecto a tu consulta sobre **"${messageText}"**:
-- **Creación de Sermones Expositivos**: Puedo estructurar un bosquejo homilético completo para cualquier pasaje o texto bíblico.
-- **Exégesis e Idiomas Originales**: Análisis gramático-histórico en Griego Koiné o Hebreo Bíblico.
-- **Teología Sistemática**: Fundamentación doctrinal de la fe cristiana.
-
-> *"Toda la Escritura es inspirada por Dios, y útil para enseñar, para redargüir, para corregir, para instruir en justicia."* — **2 Timoteo 3:16**
-
-¿Deseas que prepare un bosquejo de sermón o análisis exegético de algún pasaje en particular?`;
+#### 🎯 CONCLUSIÓN
+- **Resumen Homilético:** La verdad de **${targetTopic}** nos despierta del conformismo y nos desafía a vivir para la gloria de Dios.
+- **Llamado Pastoral y Aplicación Directa:** Entrega tus cargas hoy al Señor Jesucristo, renueva tu compromiso con la oración y vive como luz en medio de tu comunidad.
+- **TEXTO PARA TERMINAR:** *"Santifícalos en tu verdad; tu palabra es verdad."* — **Juan 17:17**`;
 }

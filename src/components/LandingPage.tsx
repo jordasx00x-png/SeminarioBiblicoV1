@@ -11,8 +11,7 @@ export function LandingPage({ onSignIn, onSignInAsGuest, authError }: LandingPag
     <div className="min-h-screen bg-[#FDFCFB] font-serif text-[#2C2C2C] flex flex-col">
       {/* Header */}
       <header className="h-20 bg-[#1A2533] text-white border-b border-[#2C3E50] px-6 md:px-12 flex items-center justify-between sticky top-0 z-50">
-        <div className="flex items-center gap-3">
-          <ScrollText className="text-[#E0D7C6]" size={28} strokeWidth={1.5} />
+        <div className="flex items-center gap-4">
           <div>
             <h1 className="text-xl font-bold tracking-tight text-[#E0D7C6] leading-none">SEMINARIO</h1>
             <span className="text-[10px] font-normal opacity-80 uppercase tracking-[0.2em] font-sans">Teológico Digital</span>
@@ -241,7 +240,6 @@ export function LandingPage({ onSignIn, onSignInAsGuest, authError }: LandingPag
       <footer className="bg-[#111A24] text-white py-12 px-6 border-t border-[#2C3E50]">
          <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
             <div className="flex items-center gap-3">
-              <ScrollText className="text-[#E0D7C6] opacity-70" size={24} strokeWidth={1} />
               <div>
                 <h1 className="text-lg font-bold tracking-tight text-[#E0D7C6] leading-none">SEMINARIO</h1>
                 <span className="text-[9px] font-normal opacity-60 uppercase tracking-[0.2em] font-sans">Teológico Digital</span>

@@ -24,8 +24,8 @@ export function useProgress() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const user = auth.currentUser;
-    if (!user) {
+    const user = auth?.currentUser;
+    if (!user || !db) {
        setIsLoading(false);
        return;
     }
@@ -54,11 +54,11 @@ export function useProgress() {
     });
 
     return () => unsubscribe();
-  }, [auth.currentUser?.uid]); // depend on user
+  }, [auth?.currentUser?.uid]); // depend on user
 
   const updateFirestore = async (newProgress: UserProgress) => {
-    const user = auth.currentUser;
-    if (user) {
+    const user = auth?.currentUser;
+    if (user && db) {
       const docRef = doc(db, 'users', user.uid, 'progress', 'default');
       try {
         await setDoc(docRef, newProgress, { merge: true });

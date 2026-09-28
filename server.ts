@@ -59,8 +59,8 @@ Directrices para tus respuestas:
           messages: [
             { role: "system", content: systemInstruction },
             ...messages.map((m: any) => ({
-              role: m.role === 'assistant' ? 'assistant' : 'user',
-              content: m.content
+              role: (m.role === 'assistant' ? 'assistant' : 'user') as 'assistant' | 'user',
+              content: String(m.content)
             }))
           ],
           temperature: 0.7,
@@ -71,9 +71,11 @@ Directrices para tus respuestas:
       }
 
       // Fallback to Gemini if requested specifically or if OpenAI key is missing
-      if (geminiKey) {
+      const geminiApiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY || process.env.API_KEY;
+
+      if (geminiApiKey) {
         const ai = new GoogleGenAI({
-          apiKey: geminiKey,
+          apiKey: geminiApiKey,
           httpOptions: {
             headers: {
               'User-Agent': 'aistudio-build',
@@ -86,7 +88,8 @@ Directrices para tus respuestas:
           parts: [{ text: m.content }],
         }));
 
-        const modelsToTry = ['gemini-2.0-flash', 'gemini-1.5-flash'];
+        // Use valid models per gemini-api skill (gemini-3.8-flash as primary)
+        const modelsToTry = ['gemini-3.8-flash', 'gemini-flash-latest', 'gemini-2.5-flash'];
         let replyText = '';
         let lastError = null;
 
@@ -105,6 +108,7 @@ Directrices para tus respuestas:
               break;
             }
           } catch (err: any) {
+            console.warn(`Model ${modelName} failed:`, err?.message || err);
             lastError = err;
           }
         }

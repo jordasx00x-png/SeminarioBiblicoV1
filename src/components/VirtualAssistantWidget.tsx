@@ -348,7 +348,7 @@ export function VirtualAssistantWidget({
                     {msg.content}
                   </div>
                   <div className="mt-2 text-[9px] text-stone-400 dark:text-stone-500 flex items-center justify-between">
-                    <span>{new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                    <span>{msg.timestamp}</span>
                     {msg.role === 'assistant' && (
                       <button
                         onClick={() => handleCopy(msg.id, msg.content)}

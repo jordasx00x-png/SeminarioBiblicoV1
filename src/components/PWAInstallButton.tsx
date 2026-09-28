@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Download, Smartphone, X } from 'lucide-react';
 import { usePWAInstall } from '../hooks/usePWAInstall';
+import { Download, X, Smartphone } from 'lucide-react';
 
 export const PWAInstallButton: React.FC = () => {
   const { isInstallable, isInstalled, isIOS, install } = usePWAInstall();
@@ -16,60 +16,48 @@ export const PWAInstallButton: React.FC = () => {
     return (
       <button
         onClick={install}
-        className="w-full flex items-center justify-between gap-2 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 px-3 py-2 text-xs font-bold text-amber-200 shadow-sm transition-all cursor-pointer"
+        className="flex items-center gap-2 rounded-full bg-[#1D2533] px-4 py-2 text-xs font-bold text-white shadow-lg hover:bg-black transition-all active:scale-95"
       >
-        <div className="flex items-center gap-2">
-          <Download className="w-4 h-4 text-amber-400" />
-          <span>Instalar App Offline</span>
-        </div>
-        <span className="text-[10px] bg-amber-500/20 px-1.5 py-0.5 rounded text-amber-300 font-mono">PWA</span>
+        <Download size={14} />
+        Instalar Aplicación
       </button>
     );
   }
 
-  // iOS Safari flow
+  // iOS Safari flow (beforeinstallprompt is not supported by WebKit)
   if (isIOS) {
     return (
       <>
         <button
           onClick={() => setShowIOSGuide(true)}
-          className="w-full flex items-center justify-between gap-2 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 px-3 py-2 text-xs font-bold text-amber-200 transition-all cursor-pointer"
+          className="flex items-center gap-2 rounded-full border border-[#DEE2E6] bg-white px-4 py-2 text-xs font-bold text-[#1D2533] shadow-sm hover:bg-gray-50 transition-all active:scale-95"
         >
-          <div className="flex items-center gap-2">
-            <Smartphone className="w-4 h-4 text-amber-400" />
-            <span>Instalar en iPhone / iPad</span>
-          </div>
-          <span className="text-[10px] bg-amber-500/20 px-1.5 py-0.5 rounded text-amber-300 font-mono">iOS</span>
+          <Smartphone size={14} />
+          Instalar en iOS
         </button>
 
         {showIOSGuide && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 font-sans">
-            <div className="w-full max-w-sm rounded-2xl bg-[#FAF9F6] dark:bg-zinc-900 border border-[#E0D7C6] dark:border-zinc-700 p-5 shadow-2xl">
-              <div className="flex items-center justify-between border-b border-[#E0D7C6] dark:border-zinc-800 pb-3">
-                <h3 className="text-base font-bold text-stone-900 dark:text-white flex items-center gap-2">
-                  <Smartphone className="w-5 h-5 text-amber-600" />
-                  Instalar en iPhone / iPad
-                </h3>
-                <button
-                  onClick={() => setShowIOSGuide(false)}
-                  className="p-1 text-stone-400 hover:text-stone-600 dark:hover:text-stone-200"
-                >
-                  <X className="w-4 h-4" />
+          <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+            <div className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-2xl animate-in fade-in zoom-in duration-200">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-lg font-bold text-[#1D2533]">Instalar en tu iPhone</h3>
+                <button onClick={() => setShowIOSGuide(false)} className="text-gray-400 hover:text-gray-600">
+                  <X size={20} />
                 </button>
               </div>
-
-              <div className="mt-3 text-xs text-stone-600 dark:text-stone-300 space-y-2.5 leading-relaxed">
-                <p>Para usar la Biblia y los Estudios sin internet en tu iPhone/iPad:</p>
-                <div className="bg-amber-50 dark:bg-zinc-800 p-3 rounded-xl border border-amber-200 dark:border-zinc-700 space-y-1.5">
-                  <p><strong>1.</strong> Toca el botón <strong>Compartir</strong> <span className="text-blue-600 font-bold">⎋</span> en la barra de Safari.</p>
-                  <p><strong>2.</strong> Desplázate hacia abajo y toca <strong>"Agregar a inicio"</strong> ➕.</p>
-                  <p><strong>3.</strong> Confirma tocando <strong>"Agregar"</strong>.</p>
+              <div className="space-y-4 text-sm text-gray-600">
+                <div className="flex gap-3">
+                  <div className="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center font-bold text-xs shrink-0">1</div>
+                  <p>Pulsa el botón <strong>Compartir</strong> en la barra inferior de Safari.</p>
+                </div>
+                <div className="flex gap-3">
+                  <div className="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center font-bold text-xs shrink-0">2</div>
+                  <p>Desliza hacia abajo y pulsa en <strong>Añadir a pantalla de inicio</strong>.</p>
                 </div>
               </div>
-
               <button
                 onClick={() => setShowIOSGuide(false)}
-                className="mt-4 w-full rounded-xl bg-[#1A2533] text-white py-2 text-xs font-bold hover:bg-[#2C3E50] transition"
+                className="mt-6 w-full rounded-xl bg-[#1D2533] py-3 text-sm font-bold text-white hover:bg-black transition-colors"
               >
                 Entendido
               </button>

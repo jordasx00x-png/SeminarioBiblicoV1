@@ -8,12 +8,11 @@ import {
   onSnapshot,
   doc,
   updateDoc,
-  getDocs,
-  limit,
   deleteDoc
 } from 'firebase/firestore';
 import { db, auth } from '../firebase';
 import { useState, useEffect, useCallback } from 'react';
+import { onAuthStateChanged } from 'firebase/auth';
 import { AssistantMessage } from '../types';
 
 export interface Conversation {
@@ -23,6 +22,8 @@ export interface Conversation {
   createdAt: any;
   updatedAt: any;
 }
+
+const formatNow = () => new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
 const INITIAL_GREETING: AssistantMessage = {
   id: 'welcome-msg',
@@ -37,70 +38,107 @@ Estoy aquí para responder cualquier pregunta que tengas:
 - **Orientación pastoral y aplicación práctica.**
 
 ¿Qué pregunta o tema te gustaría explorar hoy?`,
-  timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+  timestamp: formatNow(),
 };
 
 export function useVirtualAssistant() {
+  const [userId, setUserId] = useState<string | null>(auth.currentUser?.uid || null);
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [activeConversationId, setActiveConversationId] = useState<string | null>(null);
   const [messages, setMessages] = useState<AssistantMessage[]>([INITIAL_GREETING]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const userId = auth.currentUser?.uid;
-
-  // Listen to user conversations
+  // Track Auth state changes dynamically
   useEffect(() => {
-    if (!userId) return;
-
-    const q = query(
-      collection(db, 'conversations'),
-      where('userId', '==', userId),
-      orderBy('updatedAt', 'desc')
-    );
-
-    return onSnapshot(q, (snapshot) => {
-      const convos = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      })) as Conversation[];
-      setConversations(convos);
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setUserId(user ? user.uid : null);
     });
-  }, [userId]);
+    return () => unsubscribe();
+  }, []);
 
-  // Listen to messages of active conversation
+  // Listen to user conversations from Firestore when signed in
   useEffect(() => {
-    if (!activeConversationId) {
-      setMessages([INITIAL_GREETING]);
+    if (!userId) {
+      setConversations([]);
       return;
     }
 
-    const q = query(
-      collection(db, `conversations/${activeConversationId}/messages`),
-      orderBy('timestamp', 'asc')
-    );
+    try {
+      const q = query(
+        collection(db, 'conversations'),
+        where('userId', '==', userId),
+        orderBy('updatedAt', 'desc')
+      );
 
-    return onSnapshot(q, (snapshot) => {
-      const msgs = snapshot.docs.map(doc => {
-        const data = doc.data();
-        return {
+      return onSnapshot(q, (snapshot) => {
+        const convos = snapshot.docs.map(doc => ({
           id: doc.id,
-          role: data.role,
-          content: data.content,
-          timestamp: data.timestamp?.toDate ? data.timestamp.toDate().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Recién enviado'
-        };
-      }) as AssistantMessage[];
-      
-      if (msgs.length === 0) {
+          ...doc.data()
+        })) as Conversation[];
+        setConversations(convos);
+      }, (err) => {
+        console.warn('Firestore conversation listener warning:', err);
+      });
+    } catch (err) {
+      console.warn('Could not setup conversations listener:', err);
+    }
+  }, [userId]);
+
+  // Listen to messages of active conversation from Firestore when signed in
+  useEffect(() => {
+    if (!activeConversationId || !userId) {
+      if (!activeConversationId) {
         setMessages([INITIAL_GREETING]);
-      } else {
-        setMessages(msgs);
       }
-    });
-  }, [activeConversationId]);
+      return;
+    }
+
+    try {
+      const q = query(
+        collection(db, `conversations/${activeConversationId}/messages`),
+        orderBy('timestamp', 'asc')
+      );
+
+      return onSnapshot(q, (snapshot) => {
+        const msgs = snapshot.docs.map(doc => {
+          const data = doc.data();
+          let tsStr = 'Recién enviado';
+          if (data.timestamp?.toDate) {
+            tsStr = data.timestamp.toDate().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+          } else if (typeof data.timestamp === 'string') {
+            tsStr = data.timestamp;
+          } else {
+            tsStr = formatNow();
+          }
+
+          return {
+            id: doc.id,
+            role: data.role,
+            content: data.content,
+            timestamp: tsStr
+          };
+        }) as AssistantMessage[];
+        
+        if (msgs.length === 0) {
+          setMessages([INITIAL_GREETING]);
+        } else {
+          setMessages(msgs);
+        }
+      }, (err) => {
+        console.warn('Firestore messages listener warning:', err);
+      });
+    } catch (err) {
+      console.warn('Could not setup messages listener:', err);
+    }
+  }, [activeConversationId, userId]);
 
   const startNewConversation = useCallback(async (title = 'Nueva Consulta') => {
-    if (!userId) return null;
+    if (!userId) {
+      setActiveConversationId(null);
+      setMessages([INITIAL_GREETING]);
+      return null;
+    }
 
     try {
       const docRef = await addDoc(collection(db, 'conversations'), {
@@ -113,7 +151,9 @@ export function useVirtualAssistant() {
       setActiveConversationId(docRef.id);
       return docRef.id;
     } catch (err) {
-      console.error('Error creating conversation:', err);
+      console.warn('Error creating conversation in Firestore:', err);
+      setActiveConversationId(null);
+      setMessages([INITIAL_GREETING]);
       return null;
     }
   }, [userId]);
@@ -123,41 +163,58 @@ export function useVirtualAssistant() {
     context?: { courseTitle?: string; lessonTitle?: string }
   ) => {
     const trimmed = text.trim();
-    if (!trimmed || isLoading || !userId) return;
+    if (!trimmed || isLoading) return;
 
     setError(null);
     setIsLoading(true);
 
-    try {
-      let currentConvId = activeConversationId;
-      
-      // If no active conversation, create one
-      if (!currentConvId) {
-        currentConvId = await startNewConversation(trimmed.slice(0, 30) + (trimmed.length > 30 ? '...' : ''));
-        if (!currentConvId) throw new Error('No se pudo crear la conversación.');
+    const userMsgId = 'msg-' + Date.now();
+    const userTimestamp = formatNow();
+    const newUserMsg: AssistantMessage = {
+      id: userMsgId,
+      role: 'user',
+      content: trimmed,
+      timestamp: userTimestamp
+    };
+
+    // Optimistically update local messages so UI responds immediately!
+    setMessages(prev => [...prev, newUserMsg]);
+
+    let currentConvId = activeConversationId;
+
+    // Save user message to Firestore if logged in
+    if (userId) {
+      try {
+        if (!currentConvId) {
+          currentConvId = await startNewConversation(trimmed.slice(0, 30) + (trimmed.length > 30 ? '...' : ''));
+        }
+
+        if (currentConvId) {
+          await addDoc(collection(db, `conversations/${currentConvId}/messages`), {
+            role: 'user',
+            content: trimmed,
+            timestamp: serverTimestamp(),
+          });
+
+          await updateDoc(doc(db, 'conversations', currentConvId), {
+            updatedAt: serverTimestamp(),
+            lastMessage: trimmed
+          });
+        }
+      } catch (err) {
+        console.warn('Firestore write warning (continuing with local chat):', err);
       }
+    }
 
-      // 1. Add user message to Firestore
-      await addDoc(collection(db, `conversations/${currentConvId}/messages`), {
-        role: 'user',
-        content: trimmed,
-        timestamp: serverTimestamp(),
-      });
-
-      // Update conversation metadata
-      await updateDoc(doc(db, 'conversations', currentConvId), {
-        updatedAt: serverTimestamp(),
-        lastMessage: trimmed
-      });
-
-      // 2. Prepare history for API
-      // We get the full history from the messages state (which is updated via onSnapshot)
-      const apiMessages = [...messages.filter(m => m.id !== 'welcome-msg'), { role: 'user', content: trimmed }].map(m => ({
+    try {
+      // Prepare history for backend API
+      const currentMsgs = messages.filter(m => m.id !== 'welcome-msg');
+      const apiMessages = [...currentMsgs, newUserMsg].map(m => ({
         role: m.role,
         content: m.content
       }));
 
-      // 3. Call Assistant API
+      // Call Assistant API
       const res = await fetch('/api/assistant/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -170,16 +227,47 @@ export function useVirtualAssistant() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Error al comunicarse con el asistente.');
 
-      // 4. Add assistant response to Firestore
-      await addDoc(collection(db, `conversations/${currentConvId}/messages`), {
-        role: 'assistant',
-        content: data.reply || 'No se obtuvo respuesta.',
-        timestamp: serverTimestamp(),
+      const replyText = data.reply || 'No se obtuvo respuesta del asistente.';
+      const assistantMsgId = 'msg-' + (Date.now() + 1);
+      const assistantTimestamp = formatNow();
+
+      // Add assistant response to Firestore if signed in
+      if (userId && currentConvId) {
+        try {
+          await addDoc(collection(db, `conversations/${currentConvId}/messages`), {
+            role: 'assistant',
+            content: replyText,
+            timestamp: serverTimestamp(),
+          });
+        } catch (err) {
+          console.warn('Firestore write warning for assistant reply:', err);
+        }
+      }
+
+      // Also update local state for immediate feedback
+      setMessages(prev => {
+        // Prevent duplication if Firestore listener already added it
+        if (prev.some(m => m.id === assistantMsgId)) return prev;
+        return [...prev, {
+          id: assistantMsgId,
+          role: 'assistant',
+          content: replyText,
+          timestamp: assistantTimestamp
+        }];
       });
 
     } catch (err: any) {
       console.error('Virtual assistant error:', err);
-      setError(err.message);
+      const errorText = err.message || 'Ocurrió un error al consultar al asistente.';
+      setError(errorText);
+
+      // Add error notification message in chat
+      setMessages(prev => [...prev, {
+        id: 'err-' + Date.now(),
+        role: 'assistant',
+        content: `⚠️ **Aviso del Sistema**: ${errorText}`,
+        timestamp: formatNow()
+      }]);
     } finally {
       setIsLoading(false);
     }
@@ -187,14 +275,17 @@ export function useVirtualAssistant() {
 
   const deleteConversation = useCallback(async (id: string) => {
     try {
-      await deleteDoc(doc(db, 'conversations', id));
+      if (userId) {
+        await deleteDoc(doc(db, 'conversations', id));
+      }
       if (activeConversationId === id) {
         setActiveConversationId(null);
+        setMessages([INITIAL_GREETING]);
       }
     } catch (err) {
       console.error('Error deleting conversation:', err);
     }
-  }, [activeConversationId]);
+  }, [userId, activeConversationId]);
 
   return {
     messages,

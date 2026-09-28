@@ -13,6 +13,7 @@ interface UserProfileData {
 }
 
 interface ProfileModalProps {
+  isOpen?: boolean;
   user: User | null;
   onClose: () => void;
   onSave?: (data: UserProfileData) => void;
@@ -21,7 +22,8 @@ interface ProfileModalProps {
   onToggleDarkMode?: () => void;
 }
 
-export function ProfileModal({ user, onClose, onSave, onResetAllAccounts, darkMode, onToggleDarkMode }: ProfileModalProps) {
+export function ProfileModal({ isOpen = false, user, onClose, onSave, onResetAllAccounts, darkMode, onToggleDarkMode }: ProfileModalProps) {
+  if (!isOpen) return null;
   const [profile, setProfile] = useState<UserProfileData>({
     fullName: user?.displayName || '',
     phoneNumber: '',

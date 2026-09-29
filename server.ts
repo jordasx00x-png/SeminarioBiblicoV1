@@ -8,6 +8,245 @@ import OpenAI from 'openai';
 function generateTheologicalFallbackResponse(messageText: string, context?: any): string {
   const query = (messageText || '').toLowerCase();
 
+  // If query asks for a sermon, bosquejo, predica, or specific bible text
+  if (
+    query.includes('serm') || 
+    query.includes('bosquejo') || 
+    query.includes('predica') || 
+    query.includes('1 timoteo') || 
+    query.includes('timoteo') || 
+    query.includes('salmo') || 
+    query.includes('juan') || 
+    query.includes('romanos') || 
+    query.includes('mateo') || 
+    query.includes('pasaje') || 
+    query.includes('texto final')
+  ) {
+    const isTimoteo = query.includes('timoteo') || query.includes('4:12');
+    const isSalmo = query.includes('salmo') || query.includes('23');
+
+    if (isTimoteo) {
+      return `### 📜 NINGUNO TENGA EN POCO TU JUVENTUD
+
+**Texto Principal:** 1 Timoteo 4:12  
+**Textos Secundarios:** 1 Samuel 17:42, Jeremías 1:6-8, Tito 2:7-8  
+**Idea Principal:** El liderazgo y testimonio cristiano no se miden por la edad cronológica, sino por la integridad del carácter, la pureza moral y la fidelidad visible en la conducta diaria.
+
+---
+
+#### 🎙️ INTRODUCCIÓN CON EXÉGESIS
+En una cultura que exalta la experiencia acumulada pero a menudo tolera la tibieza moral, la juventud creyente enfrenta el desafío de demostrar una fe auténtica y madura sin dejarse amedrentar por los prejuicios sociales o religiosos.
+
+Timoteo, siendo un pastor joven al frente de la iglesia en Éfeso, enfrentaba presiones internas y oposición de líderes mayores. Pablo escribe esta carta pastoral para infundir valentía y recordarle que la autoridad espiritual no se exige con títulos, sino que se demuestra con una conducta irreprensible.
+
+En el texto griego koiné, el verbo "tenga en poco" es *kataphroneō* (καταφρονέω), compuesto por *kata* (hacia abajo) y *phroneō* (pensar/estimar), que significa literalmente "despreciar o considerar inferior". Pablo ordena en modo imperativo (*kataphroneitō*) que Timoteo no permita que la iglesia rebaje su llamado a causa de su corta edad.
+
+*¿Cómo podemos vivir de tal manera que nuestra fe e integridad sean irreprochables ante Dios y ante la congregación?*
+
+---
+
+#### 🏛️ DESARROLLO HOMILÉTICO
+
+#### I. EL MODELO EN PALABRA Y CONDUCTA
+> **Lectura:** *"Ninguno tenga en poco tu juventud, sino sé ejemplo de los creyentes en palabra, conducta..."*
+
+Pablo establece el estándar del joven creyente comenzando por dos áreas inmediatas y visibles: la pureza del habla y la coherencia del testimonio en la vida cotidiana.
+
+**Exégesis:** La palabra "ejemplo" en griego es *typos* (τύπος), el cuño o marca indeleble dejada por un sello. Significa ser un patrón moldeable que otros puedan imitar. "Palabra" (*logos*) y "conducta" (*anastrophē*) abarcan tanto el contenido de nuestras conversaciones como la ética integral de vida.
+
+**Desarrollo y Aplicación Pastoral:** No basta con profesar doctrinas correctas si los labios vierten chisme o falsedad. La conducta diaria debe reflejar la gracia transformadora de Cristo en la familia, el trabajo y los estudios.
+
+> 🔥 *"La autoridad espiritual no se exige con títulos ni edad; se demuestra con una vida de integridad que silencia toda crítica."*
+
+*[A medida que cuidamos nuestro testimonio externo, debemos examinar la motivación interna del corazón...]*
+
+---
+
+#### II. LA TRÍADA DE LA MADUREZ ESPIRITUAL
+> **Lectura:** *"...en amor, espíritu, fe..."*
+
+El apóstol avanza hacia las virtudes del hombre interior que sustentan el testimonio público: la motivación suprema del amor y la firmeza doctrinaria de la fe.
+
+**Exégesis:** "Amor" traduce el griego *agape* (ἀγάπη), el amor incondicional y sacrificial. "Fe" (*pistis*) denota tanto la fidelidad inquebrantable a las verdades bíblicas como la confianza absoluta en Dios durante la prueba.
+
+**Desarrollo y Aplicación Pastoral:** El servicio sin amor agape se convierte en activismo hueco. Cultivar una fe profunda mediante el estudio bíblico constante otorga la madurez que la iglesia necesita en tiempos de confusión.
+
+> 🔥 *"La fe viva no calcula riesgos humanos; descansa plenamente en la soberanía divina."*
+
+*[Finalmente, Pablo corona esta exhortación señalando el resguardo moral indispensable...]*
+
+---
+
+#### III. LA PUREZA COMO CORONA DEL SERVICIO
+> **Lectura:** *"...en pureza."*
+
+La consagración moral en pensamientos, afectos e intenciones es el sello distintivo de quien ministra el Evangelio de Jesucristo.
+
+**Exégesis:** El término griego *hagneia* (ἁγνεία) se refiere a la pureza casta, la santidad ética y la limpieza de intenciones en las relaciones personales y afectivas.
+
+**Desarrollo y Aplicación Pastoral:** En una sociedad hipersexualizada, la pureza del creyente es un testimonio contracultural de gran poder. Guardar la mente y los afectos garantiza permanecer como vaso limpio para el uso del Señor.
+
+> 🔥 *"Un corazón puro es el testimonio más poderoso para reflejar la gloria de Dios a una generación sedienta de verdad."*
+
+*[Con estas virtudes grabadas en el alma, respondemos al llamado soberano de Dios...]*
+
+---
+
+#### 🎯 CONCLUSIÓN Y LLAMADO
+Ser ejemplo no es una opción para unos pocos líderes electos, sino el imperativo divino para todo creyente. Tu juventud o tu condición actual no son un obstáculo, son tu plataforma para glorificar a Cristo.
+
+Hoy el Señor te llama a renovar tu consagración, vestir tu vida de amor y fe inquebrantable, y levantarte como un referente de santidad para tu generación.
+
+> **Versículo de Cierre:** *"Procura con diligencia presentarte a Dios aprobado, como obrero que no tiene de qué avergonzarse, que usa bien la palabra de verdad."* — **2 Timoteo 2:15**`;
+    }
+
+    if (isSalmo) {
+      return `### 📜 EL SEÑOR ES MI PASTOR: NADA ME FALTARÁ
+
+**Texto Principal:** Salmos 23:1-6  
+**Textos Secundarios:** Juan 10:11, Isaías 40:11, Filipenses 4:19  
+**Idea Principal:** La suficiencia absoluta de Dios como nuestro Pastor divino garantiza provisión, guía, restauración y victoria frente a cualquier valle de sombra o aflicción.
+
+---
+
+#### 🎙️ INTRODUCCIÓN CON EXÉGESIS
+En un mundo invadido por la ansiedad económica, el aislamiento emocional y la incertidumbre del futuro, la promesa de la suficiencia divina en el Salmo 23 brilla como un ancla inamovible para el alma creyente.
+
+David, habiendo sido pastor de ovejas en los desiertos de Judea antes de ser rey de Israel, conocía perfectamente la fragilidad de las ovejas y la entrega total que requiere un pastor digno de confianza.
+
+En el texto hebreo, la primera declaración es *Yahweh Ro'i* (יְהוָה רֹעִי), "Yahvé es mi Pastor". Usar el nombre del pacto (*Yahweh*) junto al verbo pastoril implica una relación íntima, personal y soberana. La conclusión *lo echsar* (לֹא אֶחְסָר) no significa que no tendremos deseos terrenales, sino que no careceremos de nada de lo necesario para cumplir la voluntad divina.
+
+*¿Cómo cambia nuestra vida cuando confiamos en que Dios es nuestro Pastor todopoderoso?*
+
+---
+
+#### 🏛️ DESARROLLO HOMILÉTICO
+
+#### I. LA PROVISIÓN Y EL DESCANSO EN DIOS
+> **Lectura:** *"En lugares de delicados pastos me hará descansar; junto a aguas de reposo me pastoreará."*
+
+El Pastor divino no conduce a sus ovejas al agotamiento, sino a la abundancia de su gracia y al reposo que restaura las fuerzas del alma.
+
+**Exégesis:** "Delicados pastos" (*bin'ot deshe*) describe los pastos verdes y tiernos del desierto temprano. "Aguas de reposo" (*me menuchot*) se refiere a aguas tranquilas y profundas donde las ovejas temerosas pueden beber sin pánico.
+
+**Desarrollo y Aplicación Pastoral:** Dios provee el alimento espiritual mediante su Palabra y nos invita a reposar en su soberanía cuando las cargas de la vida abruman nuestra mente.
+
+> 🔥 *"El descanso espiritual no es la ausencia de problemas, sino la presencia de Dios en medio de ellos."*
+
+*[Del reposo de la gracia, el Pastor nos conduce a la caminata de la justicia...]*
+
+---
+
+#### II. LA GUÍA EN EL VALLE DE SOMBRA
+> **Lectura:** *"Aunque ande en valle de sombra de muerte, no temeré mal alguno, porque tú estarás conmigo..."*
+
+La vida cristiana no está exenta de valles oscuros o momentos de prueba intensa, pero la presencia de Dios transforma el pánico en victoria.
+
+**Exégesis:** "Sombra de muerte" (*tsalmavet*) significa oscuridad profunda o sombras amenazantes. "Tu vara y tu cayado" (*shivteka umishan'teka*) representan la vara de protección defensiva contra fieras y el cayado de dirección amorosa.
+
+**Desarrollo y Aplicación Pastoral:** En el duelo, la enfermedad o la prueba, la presencia del Pastor nos sostiene. Su disciplina nos corrige y su cayado nos devuelve al camino de salvación.
+
+> 🔥 *"La sombra de la muerte puede intimidarte, pero no puede dañarte porque la Luz del mundo camina a tu lado."*
+
+*[El valle oscurecido no es el destino final; el Pastor nos prepara una mesa de victoria...]*
+
+---
+
+#### III. LA MESA PREPARADA Y EL DESTINO ETERNO
+> **Lectura:** *"Aderezas mesa delante de mí en presencia de mis angustiadores; unges mi cabeza con aceite; mi copa está rebosando."*
+
+El Salmo culmina con una imagen triunfal: el Pastor divino actúa como el Anfitrión de honor que celebra el triunfo de sus siervos ante sus enemigos.
+
+**Exégesis:** "Unges" (*dishenta*) hace referencia al aceite perfumado con que se recibía a los huéspedes de honor. "Copa rebosante" (*cosi revayah*) simboliza el gozo colmado e inagotable.
+
+**Desarrollo y Aplicación Pastoral:** Dios nos honra en Cristo Jesús y nos concede un gozo que las circunstancias del mundo jamás podrán arrebatar.
+
+> 🔥 *"Tu copa no se llena por los recursos del mundo, sino por la abundancia inagotable del Espíritu Santo."*
+
+*[Con esta certeza victoriosa, miramos hacia la eternidad...]*
+
+---
+
+#### 🎯 CONCLUSIÓN Y LLAMADO
+Yahvé es tu Pastor. Si hoy te encuentras en un valle de sombra, desalentado o temeroso del mañana, recuerda que su vara y su cayado te sostienen, y que su bien y su misericordia te seguirán todos los días de tu vida.
+
+Entrega hoy las riendas de tu vida a Jesucristo, el Buen Pastor que da su vida por sus ovejas.
+
+> **Versículo de Cierre:** *"Yo soy el buen pastor; el buen pastor su vida da por las ovejas."* — **Juan 10:11**`;
+    }
+
+    return `### 📜 SERMÓN HOMILÉTICO Y EXEGÉTICO: ${messageText.slice(0, 40)}
+
+**Texto Principal:** Pasaje Solicitado  
+**Textos Secundarios:** Hebreos 4:12, 2 Timoteo 3:16  
+**Idea Principal:** La Palabra de Dios revelada transforma integralmente el carácter y la vida del creyente a la imagen de Jesucristo.
+
+---
+
+#### 🎙️ INTRODUCCIÓN CON EXÉGESIS
+El estudio profundo de las Sagradas Escrituras demanda un acercamiento reverente, exegético y pastoral que extraiga la verdad original del texto para aplicarla a la vida contemporánea.
+
+Este pasaje fue redactado dentro de un marco histórico-gramatical preciso con el propósito de fortalecer la fe de la iglesia primitiva y guiarnos hacia una consagración plena.
+
+En el idioma original, los términos clave comunican la firmeza del pacto divino y la suficiencia de la gracia de Dios para sostener al creyente frente a las adversidades.
+
+*¿De qué manera esta verdad transformadora debe impactar nuestro caminar diario?*
+
+---
+
+#### 🏛️ DESARROLLO HOMILÉTICO
+
+#### I. EL FUNDAMENTO EN LA PALABRA
+> **Lectura:** *"El texto bíblico revelado para nuestra enseñanza."*
+
+El primer pilar de la enseñanza nos invita a cimentar nuestra fe únicamente en la verdad escrita de las Sagradas Escrituras.
+
+**Exégesis:** El análisis del texto original revela que la inspiración divina garantiza la autoridad inerrante y la suficiencia del mensaje bíblico.
+
+**Desarrollo y Aplicación Pastoral:** Debemos renovar nuestra mente cada día mediante la lectura y meditación bíblica, permitiendo que la Verdad dirija nuestras decisiones familiares y sociales.
+
+> 🔥 *"La verdad de la Palabra de Dios es la roca firme en un mundo de opiniones cambiantes."*
+
+*[A partir del fundamento bíblico, avanzamos hacia la vivencia práctica de la fe...]*
+
+---
+
+#### II. LA TRANSFORMACIÓN DEL CORAZÓN
+> **Lectura:** *"La obra del Espíritu Santo en la vida del creyente."*
+
+La doctrina bíblica no busca únicamente informar la mente, sino transformar los afectos y la voluntad del ser humano.
+
+**Exégesis:** Las palabras clave en griego/hebreo acentúan el cambio profundo de naturaleza que Dios realiza en el corazón de quien cree.
+
+**Desarrollo y Aplicación Pastoral:** La fe viva se evidencia en frutos de amor, perdón, santidad y servicio abnegado al prójimo.
+
+> 🔥 *"La verdadera teología siempre culmina en una doxología de adoración y una vida de santidad."*
+
+*[Con el corazón renovado, asumimos la responsabilidad del testimonio público...]*
+
+---
+
+#### III. LA FIDELIDAD Y EL TESTIMONIO PÚBLICO
+> **Lectura:** *"El llamado a ser luz y sal en medio de la generación actual."*
+
+El impacto del Evangelio debe trascender las paredes del templo y reflejarse en cada esfera de la sociedad.
+
+**Exégesis:** Los verbos de acción en el texto original exhortan a una perseverancia continua e inquebrantable en el testimonio cristiano.
+
+**Desarrollo y Aplicación Pastoral:** Seamos embajadores de Cristo en nuestro entorno laboral, académico y comunitario, reflejando el amor de Dios.
+
+> 🔥 *"Una vida consagrada es el mensaje más claro y elocuente del poder del Evangelio."*
+
+*[Con esta gloriosa perspectiva, culminamos renovando nuestro compromiso con el Señor...]*
+
+---
+
+#### 🎯 CONCLUSIÓN Y LLAMADO
+Dios nos llama hoy a responder con obediencia humilde y gozosa a su Palabra. Rinde tu vida ante el Señorío de Cristo y camina en la plenitud del Espíritu Santo.
+
+> **Versículo de Cierre:** *"Santifícalos en tu verdad; tu palabra es verdad."* — **Juan 17:17**`;
+  }
+
   if (query.includes('hola') || query.includes('buenos') || query.includes('buenas') || query.includes('saludos')) {
     return `¡Paz y gracia de nuestro Señor Jesucristo! 
 
@@ -15,9 +254,9 @@ Soy el **Asistente Virtual Teológico y Pastoral** del Seminario Teológico Digi
 
 ¿En qué puedo asistirte hoy en tu formación académica y espiritual?
 - **Exégesis y análisis de pasajes bíblicos**
+- **Creación de Sermones y Bosquejos Homiléticos**
 - **Vocabulario en Griego Koiné y Hebreo Bíblico**
-- **Doctrinas de la Fe Cristiana y Teología Sistemática**
-- **Orientación sobre tus clases y lecciones activas**`;
+- **Doctrinas de la Fe Cristiana y Teología Sistemática**`;
   }
 
   if (query.includes('justificaci') || query.includes('santificaci') || query.includes('salvaci') || query.includes('fe')) {

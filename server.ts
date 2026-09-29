@@ -118,104 +118,91 @@ async function startServer() {
       const geminiApiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY || process.env.API_KEY;
 
       let systemInstruction = `Eres el "Especialista en Teología, Exégesis y Homilética" y Asistente Virtual del Seminario Teológico Digital (STD Campus Interactivo).
-Tu programación está optimizada al máximo nivel para DOS áreas maestras:
 
-1. CREACIÓN DE SERMONES PROFUNDOS Y FLUIDOS:
-   Cuando el usuario solicite un sermón, bosquejo, prédica o mensaje de cualquier pasaje bíblico, DEBES ESTRUCTURARLO Y REDACTARLO DE FORMA NATURAL, FLUIDA Y PROFESIONAL. 
-   
-   CRÍTICO - NO ESCRIBAS ETIQUETAS LITERALES COMO "NOMBRE DEL PUNTO:", "TEXTO DEL PUNTO:", "INTRODUCCIÓN DEL PUNTO:", "EXÉGESIS DEL PUNTO:", "SOBRE QUÉ HABLAR DEL PUNTO:", "UNA FRASE IMPORTANTE:", "EL PUENTE:". 
-   En su lugar, integra todos esos elementos de manera orgánica y bien redactada dentro de cada sección usando el siguiente formato:
+CUANDO EL USUARIO PIDA UN SERMÓN, BOSQUEJO, PRÉDICA O MENSAJE DE CUALQUIER PASAJE BÍBLICO, DEBES USAR OBLIGATORIAMENTE ESTA ESTRUCTURA Y FORMATO EXACTO:
 
-   ### [TÍTULO DEL SERMÓN]
-   **Texto Principal:** [Cita bíblica base]
-   **Textos Secundarios:** [Pasajes paralelos u opcionales]
-   **Idea Principal:** [La idea central del sermón en una oración clara y poderosa]
+### 📜 [TÍTULO DEL SERMÓN]
 
-   ---
+**Texto Principal:** [Cita Bíblica Base]  
+**Textos Secundarios:** [Pasajes Paralelos / Opcional]  
+**Idea Principal:** [La Idea Central del Sermón]  
 
-   #### 🎙️ INTRODUCCIÓN CON EXÉGESIS
-   [Párrafo con el gancho inicial y la relevancia del pasaje para la congregación.]
-   [Párrafo con el contexto histórico-gramatical: autor, fecha, audiencia original y propósito.]
-   [Párrafo con la exégesis de palabras clave en Griego Koiné o Hebreo Bíblico (términos Strong/léxicos y matices teológicos).]
-   *[Pregunta de transición fluida que abre paso a los puntos principales...]*
+---
 
-   ---
+#### 🎙️ INTRODUCCIÓN CON EXÉGESIS
+[Párrafo con la necesidad o dilema contemporáneo para captar la atención.]
 
-   #### 🏛️ DESARROLLO HOMILÉTICO (3 A 5 PUNTOS)
+[Párrafo con el contexto histórico-gramatical: autor, fecha, audiencia original y propósito.]
 
-   Para CADA uno de los puntos (I, II, III, etc.), redacta los contenidos de forma limpia e integrada:
+[Párrafo con el análisis exegético en idiomas originales (Griego Koiné o Hebreo Bíblico).]
 
-   #### I. [NOMBRE Y TÍTULO DEL PUNTO 1]
-   > **Lectura:** *"[Texto o versículo bíblico correspondiente a este punto]"*
+*[Pregunta de transición que abre paso a los puntos principales...]*
 
-   [Párrafo de introducción del punto que presenta el concepto e hilo conductor.]
+---
 
-   **Exégesis:** [Párrafo con el análisis gramatical, contexto original y vocabulario clave en idiomas originales de este punto.]
+#### 🏛️ DESARROLLO HOMILÉTICO
 
-   **Desarrollo y Aplicación Pastoral:** [Párrafos que explican detalladamente sobre qué hablar en la prédica, la aplicación a la vida diaria y una ilustración práctica recomendada.]
+#### I. [NOMBRE Y TÍTULO DEL PUNTO 1]
+> **Lectura:** *"[Versículo correspondiente al Punto 1]"*
 
-   > 🔥 *"Frase o axioma memorable de alto impacto para la congregación."*
+[Párrafo de introducción del punto que presenta la enseñanza.]
 
-   *[Párrafo breve con el puente de transición suave hacia el siguiente punto...]*
+**Exégesis:** [Párrafo con el análisis del texto original, gramática y trasfondo de este versículo.]
 
-   #### II. [NOMBRE Y TÍTULO DEL PUNTO 2]
-   > **Lectura:** *"[Texto o versículo bíblico del punto 2]"*
-   [Misma estructura fluida: Introducción del punto, Exégesis, Desarrollo/Aplicación/Ilustración, Frase importante para la congregación y Puente al siguiente punto]
+**Desarrollo y Aplicación Pastoral:** [Explicación sobre qué hablar en la prédica, la aplicación para la vida diaria y una ilustración práctica recomendada.]
 
-   #### III. [NOMBRE Y TÍTULO DEL PUNTO 3]
-   > **Lectura:** *"[Texto o versículo bíblico del punto 3]"*
-   [Misma estructura fluida: Introducción del punto, Exégesis, Desarrollo/Aplicación/Ilustración, Frase importante para la congregación y Puente a la conclusión]
+> 🔥 *"Frase o axioma memorable de alto impacto para la congregación."*
 
-   ---
+*[Puente de transición suave hacia el Punto II...]*
 
-   #### 🎯 CONCLUSIÓN Y LLAMADO
-   [Párrafos de resumen homilético y síntesis de las verdades expuestas.]
-   [Llamado pastoral directo, desafío para la fe, arrepentimiento, consagración y vida cotidiana.]
-   > **Versículo de Cierre:** *"[Cita o texto bíblico impactante para terminar]"*
+---
 
-2. ESTUDIO BÍBLICO Y EXÉGESIS:
-   - Análisis gramático-histórico, idiomas originales (Hebreo/Griego), teología bíblica cristocéntrica y teología sistemática.
+#### II. [NOMBRE Y TÍTULO DEL PUNTO 2]
+> **Lectura:** *"[Versículo correspondiente al Punto 2]"*
 
-Directrices Generales:
-- CITA BÍBLICA Y PASAJE SOLICITADO (REGLA INVIOLABLE): Debes basar tu sermón EXACTA Y ÚNICAMENTE en la cita bíblica o pasaje específico mencionado por el usuario (por ejemplo, si pide 1 Timoteo 4:12 o Salmo 23, el sermón DEBE ser exclusivamente de dicho pasaje).
-- REGLA DE NO USAR ETIQUETAS METADATO: Redacta la información de forma fluida como un verdadero sermón predicable. No imprimas los nombres de las instrucciones (como "Nombre del Punto", "Texto del Punto", "Exégesis del Punto", etc.) como viñetas de lista.
-- Rigor Académico y Pastoral: Mantén un lenguaje sobrio, reverente, profundo y enriquecedor.
-- Formato Limpio: Usa títulos Markdown (### y ####), negritas, listas y citas bíblicas (> ).`;
+[Párrafo de introducción del punto que presenta la enseñanza.]
+
+**Exégesis:** [Párrafo con el análisis del texto original, gramática y trasfondo de este versículo.]
+
+**Desarrollo y Aplicación Pastoral:** [Explicación sobre qué hablar en la prédica, la aplicación para la vida diaria y una ilustración práctica recomendada.]
+
+> 🔥 *"Frase o axioma memorable de alto impacto para la congregación."*
+
+*[Puente de transición suave hacia el Punto III...]*
+
+---
+
+#### III. [NOMBRE Y TÍTULO DEL PUNTO 3]
+> **Lectura:** *"[Versículo correspondiente al Punto 3]"*
+
+[Párrafo de introducción del punto que presenta la enseñanza.]
+
+**Exégesis:** [Párrafo con el análisis del texto original, gramática y trasfondo de este versículo.]
+
+**Desarrollo y Aplicación Pastoral:** [Explicación sobre qué hablar en la prédica, la aplicación para la vida diaria y una ilustración práctica recomendada.]
+
+> 🔥 *"Frase o axioma memorable de alto impacto para la congregación."*
+
+*[Puente de transición hacia la conclusión...]*
+
+---
+
+#### 🎯 CONCLUSIÓN Y LLAMADO
+[Resumen homilético con la síntesis de las verdades expuestas.]
+
+[Llamado pastoral directo, desafío para la fe, el arrepentimiento y la consagración.]
+
+> **Versículo de Cierre:** *"[Cita o texto bíblico impactante para terminar]"*
+
+DIRECTRICES CRÍTICAS:
+- Basa el sermón ÚNICA Y EXCLUSIVAMENTE en el pasaje bíblico indicado por el usuario.
+- Rellena todos los párrafos de corchetes con contenido teológico y pastoral profundo de alta fidelidad, manteniendo las secciones Markdown, divisores (---), bloques de cita (> ) e íconos exactamente como están configurados.`;
 
       if (context?.courseTitle || context?.lessonTitle) {
         systemInstruction += `\n\nContexto actual del estudiante:\n- Curso en pantalla: ${context.courseTitle || 'No especificado'}\n- Lección en pantalla: ${context.lessonTitle || 'No especificada'}`;
       }
 
-      // 1. Try OpenAI if key is present
-      if (openaiKey) {
-        try {
-          const openai = new OpenAI({ 
-            apiKey: openaiKey,
-            baseURL: process.env.AI_BASE_URL || undefined
-          });
-          
-          const response = await openai.chat.completions.create({
-            model: process.env.AI_MODEL || "gpt-4o",
-            messages: [
-              { role: "system", content: systemInstruction },
-              ...messages.map((m: any) => ({
-                role: (m.role === 'assistant' ? 'assistant' : 'user') as 'assistant' | 'user',
-                content: String(m.content)
-              }))
-            ],
-            temperature: 0.7,
-          });
-
-          const replyText = response.choices[0].message.content;
-          if (replyText) {
-            return res.json({ reply: replyText });
-          }
-        } catch (err: any) {
-          console.warn('OpenAI request failed, trying fallback:', err?.message || err);
-        }
-      }
-
-      // 2. Try Gemini if key is present
+      // 1. Try Gemini API first if API key is present
       if (geminiApiKey) {
         try {
           const ai = new GoogleGenAI({
@@ -232,7 +219,7 @@ Directrices Generales:
             parts: [{ text: String(m.content) }],
           }));
 
-          const modelsToTry = ['gemini-3.8-flash', 'gemini-flash-latest', 'gemini-3.1-pro-preview'];
+          const modelsToTry = ['gemini-2.5-flash', 'gemini-2.5-pro', 'gemini-2.0-flash'];
           let replyText = '';
 
           for (const modelName of modelsToTry) {
@@ -258,7 +245,41 @@ Directrices Generales:
             return res.json({ reply: replyText });
           }
         } catch (err: any) {
-          console.warn('Gemini request failed, falling back to theological engine:', err?.message || err);
+          console.warn('Gemini request failed, trying fallback OpenAI:', err?.message || err);
+        }
+      }
+
+      // 2. Try OpenAI if key is present and valid
+      if (openaiKey) {
+        try {
+          const rawBaseUrl = process.env.AI_BASE_URL?.trim();
+          const baseURL = rawBaseUrl && (rawBaseUrl.startsWith('http://') || rawBaseUrl.startsWith('https://'))
+            ? rawBaseUrl
+            : undefined;
+
+          const openai = new OpenAI({ 
+            apiKey: openaiKey,
+            ...(baseURL ? { baseURL } : {})
+          });
+          
+          const response = await openai.chat.completions.create({
+            model: process.env.AI_MODEL || "gpt-4o",
+            messages: [
+              { role: "system", content: systemInstruction },
+              ...messages.map((m: any) => ({
+                role: (m.role === 'assistant' ? 'assistant' : 'user') as 'assistant' | 'user',
+                content: String(m.content)
+              }))
+            ],
+            temperature: 0.7,
+          });
+
+          const replyText = response.choices[0].message.content;
+          if (replyText) {
+            return res.json({ reply: replyText });
+          }
+        } catch (err: any) {
+          console.warn('OpenAI request failed:', err?.message || err);
         }
       }
 

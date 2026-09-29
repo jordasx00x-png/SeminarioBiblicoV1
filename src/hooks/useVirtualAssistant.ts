@@ -72,7 +72,7 @@ export function useVirtualAssistant() {
   const activeSession = sessions.find(s => s.id === activeSessionId) || sessions[0] || createFreshSession();
   const messages = activeSession ? activeSession.messages : [];
 
-  // Sync to safeStorage & Firebase Firestore
+  // Local Storage sync
   useEffect(() => {
     try {
       safeStorage.setItem(SESSIONS_STORAGE_KEY, JSON.stringify(sessions));
@@ -80,16 +80,20 @@ export function useVirtualAssistant() {
         safeStorage.setItem(ACTIVE_SESSION_KEY, activeSessionId);
       }
     } catch (e) {}
-
-    // Firestore sync if user is logged in
-    const user = auth?.currentUser;
-    if (user && user.uid !== 'invitado_seminario' && db && sessions.length > 0) {
-      const docRef = doc(db, 'users', user.uid, 'chats', 'default');
-      setDoc(docRef, { sessions, updatedAt: new Date().toISOString() }, { merge: true }).catch(console.error);
-    }
   }, [sessions, activeSessionId]);
 
-  // Real-time Firestore sync across devices
+  // Sync to Firestore function (only invoked on user actions)
+  const syncSessionsToFirestore = useCallback((sessionsToSync: ChatSession[]) => {
+    const user = auth?.currentUser;
+    if (user && user.uid !== 'invitado_seminario' && db && sessionsToSync.length > 0) {
+      const docRef = doc(db, 'users', user.uid, 'chats', 'default');
+      setDoc(docRef, { sessions: sessionsToSync, updatedAt: new Date().toISOString() }, { merge: true }).catch(err => {
+        console.warn("Firestore chat write error:", err);
+      });
+    }
+  }, []);
+
+  // Real-time Firestore listener across devices
   useEffect(() => {
     const user = auth?.currentUser;
     if (!user || user.uid === 'invitado_seminario' || !db) return;
@@ -99,12 +103,17 @@ export function useVirtualAssistant() {
       if (docSnap.exists()) {
         const data = docSnap.data();
         if (data && Array.isArray(data.sessions) && data.sessions.length > 0) {
-          setSessions(data.sessions);
-          safeStorage.setItem(SESSIONS_STORAGE_KEY, JSON.stringify(data.sessions));
+          // Compare with local sessions before setting to prevent unnecessary re-renders
+          const remoteJson = JSON.stringify(data.sessions);
+          const localJson = safeStorage.getItem(SESSIONS_STORAGE_KEY);
+          if (remoteJson !== localJson) {
+            setSessions(data.sessions);
+            safeStorage.setItem(SESSIONS_STORAGE_KEY, remoteJson);
+          }
         }
       }
     }, (err) => {
-      console.error("Firebase chat sync error:", err);
+      console.warn("Firebase chat sync read error:", err);
     });
 
     return () => unsubscribe();
@@ -112,9 +121,13 @@ export function useVirtualAssistant() {
 
   const createNewChat = useCallback(() => {
     const newSession = createFreshSession();
-    setSessions(prev => [newSession, ...prev]);
+    setSessions(prev => {
+      const next = [newSession, ...prev];
+      syncSessionsToFirestore(next);
+      return next;
+    });
     setActiveSessionId(newSession.id);
-  }, []);
+  }, [syncSessionsToFirestore]);
 
   const loadSession = useCallback((sessionId: string) => {
     setActiveSessionId(sessionId);
@@ -123,23 +136,24 @@ export function useVirtualAssistant() {
   const deleteSession = useCallback((sessionId: string) => {
     setSessions(prev => {
       const filtered = prev.filter(s => s.id !== sessionId);
+      const next = filtered.length === 0 ? [createFreshSession()] : filtered;
       if (filtered.length === 0) {
-        const fresh = createFreshSession();
-        setActiveSessionId(fresh.id);
-        return [fresh];
+        setActiveSessionId(next[0].id);
+      } else if (sessionId === activeSessionId) {
+        setActiveSessionId(next[0].id);
       }
-      if (sessionId === activeSessionId) {
-        setActiveSessionId(filtered[0].id);
-      }
-      return filtered;
+      syncSessionsToFirestore(next);
+      return next;
     });
-  }, [activeSessionId]);
+  }, [activeSessionId, syncSessionsToFirestore]);
 
   const clearAllHistory = useCallback(() => {
     const fresh = createFreshSession();
-    setSessions([fresh]);
+    const next = [fresh];
+    setSessions(next);
     setActiveSessionId(fresh.id);
-  }, []);
+    syncSessionsToFirestore(next);
+  }, [syncSessionsToFirestore]);
 
   const sendMessage = useCallback(async (
     text: string, 
@@ -235,19 +249,23 @@ export function useVirtualAssistant() {
       timestamp: formatNow(),
     };
 
-    setSessions(prev => prev.map(s => {
-      if (s.id === activeSessionId) {
-        return {
-          ...s,
-          updatedAt: formatDateShort(),
-          messages: [...s.messages, assistantMsg],
-        };
-      }
-      return s;
-    }));
+    setSessions(prev => {
+      const next = prev.map(s => {
+        if (s.id === activeSessionId) {
+          return {
+            ...s,
+            updatedAt: formatDateShort(),
+            messages: [...s.messages, assistantMsg],
+          };
+        }
+        return s;
+      });
+      syncSessionsToFirestore(next);
+      return next;
+    });
 
     setIsLoading(false);
-  }, [activeSession, activeSessionId, isLoading]);
+  }, [activeSession, activeSessionId, isLoading, syncSessionsToFirestore]);
 
   return {
     sessions,

@@ -11,6 +11,7 @@ interface HomePanelProps {
   progress: UserProgress;
   onNavigateTab: (tab: 'home' | 'courses' | 'academic' | 'calendar' | 'grades') => void;
   onSelectCourse: (courseId: string) => void;
+  onOpenAssistant?: () => void;
 }
 
 const DAILY_VERSES = [
@@ -36,7 +37,7 @@ const DAILY_VERSES = [
   }
 ];
 
-export function HomePanel({ user, customProfile, courses, progress, onNavigateTab, onSelectCourse }: HomePanelProps) {
+export function HomePanel({ user, customProfile, courses, progress, onNavigateTab, onSelectCourse, onOpenAssistant }: HomePanelProps) {
   const [copiedVerse, setCopiedVerse] = useState(false);
   const [showCommentary, setShowCommentary] = useState(true);
 
@@ -97,14 +98,23 @@ export function HomePanel({ user, customProfile, courses, progress, onNavigateTa
             <div className="flex flex-wrap items-center gap-4 pt-4">
               <button
                 onClick={() => onNavigateTab('courses')}
-                className="px-8 py-3 bg-[#1A2533] hover:bg-black text-white font-bold text-xs uppercase tracking-widest rounded transition-all shadow-md flex items-center gap-3 cursor-pointer group active:scale-95"
+                className="px-6 py-3 bg-[#1A2533] hover:bg-black text-white font-bold text-xs uppercase tracking-widest rounded transition-all shadow-md flex items-center gap-2.5 cursor-pointer group active:scale-95"
               >
                 <BookOpen size={18} strokeWidth={1.5} />
                 <span>Explorar Programas</span>
               </button>
+              {onOpenAssistant && (
+                <button
+                  onClick={onOpenAssistant}
+                  className="px-6 py-3 bg-[#7F1D1D] hover:bg-black text-white font-bold text-xs uppercase tracking-widest rounded transition-all shadow-md flex items-center gap-2.5 cursor-pointer group active:scale-95 border border-[#7F1D1D]"
+                >
+                  <Sparkles size={18} strokeWidth={1.5} className="text-amber-300 animate-pulse" />
+                  <span>📜 Generador de Sermones IA</span>
+                </button>
+              )}
               <button
                 onClick={() => onNavigateTab('academic')}
-                className="px-8 py-3 bg-white hover:bg-stone-50 text-[#1A2533] font-bold text-xs uppercase tracking-widest rounded transition-all border border-stone-300 flex items-center gap-3 cursor-pointer shadow-sm active:scale-95"
+                className="px-6 py-3 bg-white hover:bg-stone-50 text-[#1A2533] font-bold text-xs uppercase tracking-widest rounded transition-all border border-stone-300 flex items-center gap-2.5 cursor-pointer shadow-sm active:scale-95"
               >
                 <Compass size={18} strokeWidth={1.5} className="text-[#7F1D1D]" />
                 <span>Visor Canónico</span>

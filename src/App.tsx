@@ -280,6 +280,7 @@ export default function App() {
                       customProfile={customProfile}
                       courses={mockDatabase.courses}
                       progress={progress}
+                      onOpenAssistant={() => handleOpenTool('assistant')}
                       onNavigateTab={(tab) => {
                         setActiveTab(tab);
                         setActiveCourseId(null);

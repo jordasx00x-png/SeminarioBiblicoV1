@@ -103,15 +103,6 @@ export function HomePanel({ user, customProfile, courses, progress, onNavigateTa
                 <BookOpen size={18} strokeWidth={1.5} />
                 <span>Explorar Programas</span>
               </button>
-              {onOpenAssistant && (
-                <button
-                  onClick={onOpenAssistant}
-                  className="px-6 py-3 bg-[#7F1D1D] hover:bg-black text-white font-bold text-xs uppercase tracking-widest rounded transition-all shadow-md flex items-center gap-2.5 cursor-pointer group active:scale-95 border border-[#7F1D1D]"
-                >
-                  <Sparkles size={18} strokeWidth={1.5} className="text-amber-300 animate-pulse" />
-                  <span>📜 Generador de Sermones IA</span>
-                </button>
-              )}
               <button
                 onClick={() => onNavigateTab('academic')}
                 className="px-6 py-3 bg-white hover:bg-stone-50 text-[#1A2533] font-bold text-xs uppercase tracking-widest rounded transition-all border border-stone-300 flex items-center gap-2.5 cursor-pointer shadow-sm active:scale-95"

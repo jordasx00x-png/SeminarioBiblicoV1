@@ -8,6 +8,8 @@ export interface ScriptureVerse {
   lbla: string;
   ntv: string;
   nvi: string;
+  tla?: string;
+  dhh?: string;
   originalText?: string;
   transliteration?: string;
   strong?: string;
@@ -730,6 +732,8 @@ export function getBibleChapter(bookId: string, chapterNum: number): ChapterCont
         lbla: `Cargando versículo ${i}...`,
         ntv: `Cargando versículo ${i}...`,
         nvi: `Cargando versículo ${i}...`,
+        tla: `Cargando versículo ${i}...`,
+        dhh: `Cargando versículo ${i}...`,
         originalText: '',
         transliteration: '',
         theologicalNote: '',

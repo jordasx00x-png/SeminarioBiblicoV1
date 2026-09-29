@@ -7,6 +7,8 @@ export interface BibleVerseDetail {
   nvi: string;
   lbla: string;
   dhh: string;
+  ntv?: string;
+  tla?: string;
   originalLanguage?: {
     originalText: string;
     transliteration: string;

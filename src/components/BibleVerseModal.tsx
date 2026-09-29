@@ -49,7 +49,7 @@ export function BibleVerseModal({
   const [currentRef, setCurrentRef] = useState(reference);
   const [currentFallback, setCurrentFallback] = useState(fallbackText);
   const [viewMode, setViewMode] = useState<'full_panel' | 'quick_card'>('full_panel');
-  const [selectedVersion, setSelectedVersion] = useState<'rvr1960' | 'nvi' | 'lbla' | 'dhh' | 'original'>('rvr1960');
+  const [selectedVersion, setSelectedVersion] = useState<'rvr1960' | 'nvi' | 'lbla' | 'ntv' | 'tla' | 'dhh' | 'original'>('rvr1960');
   const [activeSubTab, setActiveSubTab] = useState<'text' | 'context' | 'exegesis' | 'cross' | 'original'>('text');
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -167,6 +167,8 @@ export function BibleVerseModal({
     switch (selectedVersion) {
       case 'nvi': return verseData.nvi;
       case 'lbla': return verseData.lbla;
+      case 'ntv': return verseData.ntv || verseData.rvr1960;
+      case 'tla': return verseData.tla || verseData.rvr1960;
       case 'dhh': return verseData.dhh;
       case 'original': return verseData.originalLanguage?.originalText || verseData.rvr1960;
       case 'rvr1960':
@@ -378,7 +380,7 @@ export function BibleVerseModal({
                   <div className="flex flex-wrap items-center justify-between gap-3 pb-3 mb-5 border-b border-stone-200 dark:border-stone-800 font-sans">
                     <div className="flex items-center gap-1.5 flex-wrap">
                       <span className="text-[10px] font-bold uppercase tracking-wider text-stone-400 mr-1">Versión:</span>
-                      {(['rvr1960', 'nvi', 'lbla', 'dhh', 'original'] as const).map(ver => (
+                      {(['rvr1960', 'nvi', 'lbla', 'ntv', 'tla', 'dhh', 'original'] as const).map(ver => (
                         <button
                           key={ver}
                           onClick={() => setSelectedVersion(ver)}

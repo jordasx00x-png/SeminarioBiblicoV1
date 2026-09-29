@@ -69,7 +69,7 @@ export function AcademicPanel({
   const [selectedBookId, setSelectedBookId] = useState<string>(initialBookId || 'gen');
   const [selectedChapter, setSelectedChapter] = useState<number>(initialChapter || 1);
   const [selectedVerse, setSelectedVerse] = useState<number | null>(initialVerse || null);
-  const [activeTranslation, setActiveTranslation] = useState<'rvr1960' | 'lbla' | 'ntv' | 'nvi'>('rvr1960');
+  const [activeTranslation, setActiveTranslation] = useState<'rvr1960' | 'lbla' | 'ntv' | 'nvi' | 'tla' | 'dhh'>('rvr1960');
   const [bibleFontSize, setBibleFontSize] = useState<'sm' | 'base' | 'lg' | 'xl'>('base');
   const [isBookDrawerOpen, setIsBookDrawerOpen] = useState<boolean>(false);
   const [bookSearchQuery, setBookSearchQuery] = useState<string>('');
@@ -178,7 +178,9 @@ export function AcademicPanel({
           rvr1960: 'RV1960',
           nvi: 'NVI',
           lbla: 'LBLA',
-          ntv: 'NTV'
+          ntv: 'NTV',
+          tla: 'TLA',
+          dhh: 'DHH'
         };
         const translationId = transMap[activeTranslation] || 'RV1960';
         const response = await fetch(`https://bolls.life/get-chapter/${translationId}/${bookIndex}/${selectedChapter}/`);
@@ -193,7 +195,9 @@ export function AcademicPanel({
                 rvr1960: activeTranslation === 'rvr1960' ? cleanText : (cached?.find(c => c.num === v.verse)?.rvr1960 || cleanText),
                 lbla: activeTranslation === 'lbla' ? cleanText : (cached?.find(c => c.num === v.verse)?.lbla || cleanText),
                 ntv: activeTranslation === 'ntv' ? cleanText : (cached?.find(c => c.num === v.verse)?.ntv || cleanText),
-                nvi: activeTranslation === 'nvi' ? cleanText : (cached?.find(c => c.num === v.verse)?.nvi || cleanText)
+                nvi: activeTranslation === 'nvi' ? cleanText : (cached?.find(c => c.num === v.verse)?.nvi || cleanText),
+                tla: activeTranslation === 'tla' ? cleanText : (cached?.find(c => c.num === v.verse)?.tla || cleanText),
+                dhh: activeTranslation === 'dhh' ? cleanText : (cached?.find(c => c.num === v.verse)?.dhh || cleanText)
               };
             });
             setRealVerses(mapped);
@@ -258,10 +262,12 @@ export function AcademicPanel({
           ...existing,
           ...(!isPlaceholder ? cv : {}),
           // Keep real text if available and long enough, otherwise use curated
-          rvr1960: (existing.rvr1960 && existing.rvr1960.length > 30) ? existing.rvr1960 : cv.rvr1960,
-          lbla: (existing.lbla && existing.lbla.length > 30) ? existing.lbla : cv.lbla,
-          ntv: (existing.ntv && existing.ntv.length > 30) ? existing.ntv : cv.ntv,
-          nvi: (existing.nvi && existing.nvi.length > 30) ? existing.nvi : cv.nvi,
+          rvr1960: (existing.rvr1960 && existing.rvr1960.length > 10) ? existing.rvr1960 : cv.rvr1960,
+          lbla: (existing.lbla && existing.lbla.length > 10) ? existing.lbla : cv.lbla,
+          ntv: (existing.ntv && existing.ntv.length > 10) ? existing.ntv : cv.ntv,
+          nvi: (existing.nvi && existing.nvi.length > 10) ? existing.nvi : cv.nvi,
+          tla: (existing.tla && existing.tla.length > 10) ? existing.tla : (cv.tla || cv.rvr1960),
+          dhh: (existing.dhh && existing.dhh.length > 10) ? existing.dhh : (cv.dhh || cv.rvr1960),
           // Always keep metadata
           theologicalNote: cv.theologicalNote || existing.theologicalNote,
           originalText: cv.originalText || existing.originalText,
@@ -372,10 +378,12 @@ export function AcademicPanel({
                   onChange={(e) => setActiveTranslation(e.target.value as any)}
                   className="px-3 py-2 rounded bg-white dark:bg-stone-900 border border-stone-300 dark:border-stone-700 text-[#1A2533] dark:text-stone-100 text-[10px] font-black uppercase tracking-widest focus:outline-none focus:border-[#7F1D1D] cursor-pointer shadow-sm transition-all"
                 >
-                  <option value="rvr1960">RVR1960</option>
-                  <option value="lbla">LBLA</option>
-                  <option value="ntv">NTV</option>
-                  <option value="nvi">NVI</option>
+                  <option value="rvr1960">RVR1960 (Reina-Valera 1960)</option>
+                  <option value="lbla">LBLA (La Biblia de las Américas)</option>
+                  <option value="ntv">NTV (Nueva Traducción Viviente)</option>
+                  <option value="nvi">NVI (Nueva Versión Internacional)</option>
+                  <option value="tla">TLA (Traducción en Lenguaje Actual)</option>
+                  <option value="dhh">DHH (Dios Habla Hoy)</option>
                 </select>
               </div>
 

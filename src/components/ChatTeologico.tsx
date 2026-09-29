@@ -136,7 +136,7 @@ export default function VirtualAssistantWidget() {
   return (
     <div style={{ width: '100%', display: 'flex', flexDirection: 'column', height: '100%', minHeight: '500px', background: '#ffffff', fontFamily: 'sans-serif' }}>
       {/* Encabezado */}
-      <div style={{ padding: '16px 20px', background: '#1D2533', color: '#ffffff', display: 'flex', alignItems: 'center', justifyBetween: 'space-between' }}>
+      <div style={{ padding: '16px 20px', background: '#1D2533', color: '#ffffff', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div>
           <div style={{ fontWeight: 'bold', fontSize: '16px' }}>Consultoría Doctrinal IA</div>
           <div style={{ fontSize: '11px', opacity: 0.8 }}>Seminario Teológico Digital • Asistencia Académica</div>

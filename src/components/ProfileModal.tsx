@@ -112,6 +112,25 @@ export function ProfileModal({ user, onClose, onSave, onResetAllAccounts, darkMo
         </div>
 
         <form onSubmit={handleSave} className="p-6 space-y-6">
+          {/* Multi-Device Synchronization Status */}
+          <div className="p-4 rounded-xl border bg-[#FAF9F5] dark:bg-stone-900 border-amber-200 dark:border-stone-700">
+            <div className="flex items-center gap-2 mb-1.5">
+              <span className={`w-2.5 h-2.5 rounded-full animate-pulse ${user && user.uid !== 'invitado_seminario' ? 'bg-emerald-500' : 'bg-amber-500'}`} />
+              <h4 className="text-xs font-serif font-black uppercase tracking-widest text-[#1A2533] dark:text-amber-400">
+                Sincronización en la Nube
+              </h4>
+            </div>
+            {user && user.uid !== 'invitado_seminario' ? (
+              <p className="text-xs text-stone-600 dark:text-stone-300 leading-relaxed font-sans">
+                🟢 <strong>Cuenta conectada:</strong> <span className="font-mono text-[11px] text-[#7F1D1D] dark:text-amber-400">{user.email}</span>. Tu progreso de lecciones, notas bíblicas e historial de chats de la IA están <strong>sincronizados en tiempo real</strong>. Si abres esta cuenta en tu otra computadora, verás exactamente tus mismos datos.
+              </p>
+            ) : (
+              <p className="text-xs text-stone-600 dark:text-stone-300 leading-relaxed font-sans">
+                🟡 <strong>Modo Invitado (Sin Sincronizar):</strong> Para tener tu progreso, notas bíblicas e historial de chats de la IA sincronizados entre tus 2 computadoras, inicia sesión con tu misma cuenta de Google en ambos equipos.
+              </p>
+            )}
+          </div>
+
           <div className="space-y-4">
             <h3 className="text-sm font-bold text-[#1A2533] uppercase tracking-widest border-b pb-2">Datos Personales</h3>
             <div className="space-y-1.5">

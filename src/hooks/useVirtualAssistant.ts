@@ -2,6 +2,8 @@ import { useState, useEffect, useCallback } from 'react';
 import { AssistantMessage, ChatSession } from '../types';
 import { generateClientTheologicalResponse } from '../utils/theologicalFallback';
 import { safeStorage } from '../utils/safeStorage';
+import { db, auth } from '../firebase';
+import { doc, setDoc, onSnapshot } from 'firebase/firestore';
 
 const SESSIONS_STORAGE_KEY = 'std_campus_chat_sessions_v7';
 const ACTIVE_SESSION_KEY = 'std_campus_active_session_v7';
@@ -70,7 +72,7 @@ export function useVirtualAssistant() {
   const activeSession = sessions.find(s => s.id === activeSessionId) || sessions[0] || createFreshSession();
   const messages = activeSession ? activeSession.messages : [];
 
-  // Sync to safeStorage
+  // Sync to safeStorage & Firebase Firestore
   useEffect(() => {
     try {
       safeStorage.setItem(SESSIONS_STORAGE_KEY, JSON.stringify(sessions));
@@ -78,7 +80,35 @@ export function useVirtualAssistant() {
         safeStorage.setItem(ACTIVE_SESSION_KEY, activeSessionId);
       }
     } catch (e) {}
+
+    // Firestore sync if user is logged in
+    const user = auth?.currentUser;
+    if (user && user.uid !== 'invitado_seminario' && db && sessions.length > 0) {
+      const docRef = doc(db, 'users', user.uid, 'chats', 'default');
+      setDoc(docRef, { sessions, updatedAt: new Date().toISOString() }, { merge: true }).catch(console.error);
+    }
   }, [sessions, activeSessionId]);
+
+  // Real-time Firestore sync across devices
+  useEffect(() => {
+    const user = auth?.currentUser;
+    if (!user || user.uid === 'invitado_seminario' || !db) return;
+
+    const docRef = doc(db, 'users', user.uid, 'chats', 'default');
+    const unsubscribe = onSnapshot(docRef, (docSnap) => {
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        if (data && Array.isArray(data.sessions) && data.sessions.length > 0) {
+          setSessions(data.sessions);
+          safeStorage.setItem(SESSIONS_STORAGE_KEY, JSON.stringify(data.sessions));
+        }
+      }
+    }, (err) => {
+      console.error("Firebase chat sync error:", err);
+    });
+
+    return () => unsubscribe();
+  }, [auth?.currentUser?.uid]);
 
   const createNewChat = useCallback(() => {
     const newSession = createFreshSession();

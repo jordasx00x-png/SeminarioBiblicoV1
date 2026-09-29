@@ -31,12 +31,11 @@ service cloud.firestore {
       }
     }
 
-    // User Progress & Profile
+    // User Data (Progress, Profile, Chats, Bible Notes, etc.)
     match /users/{userId} {
-      match /progress/default {
-        allow read, write: if isOwner(userId);
-      }
-      match /profile/default {
+      allow read, write: if isOwner(userId);
+
+      match /{allSubcollections=**} {
         allow read, write: if isOwner(userId);
       }
     }

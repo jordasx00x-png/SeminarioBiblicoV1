@@ -1,4 +1,6 @@
 import { safeStorage } from './safeStorage';
+import { db, auth } from '../firebase';
+import { doc, setDoc } from 'firebase/firestore';
 
 export type HighlightColor = 'yellow' | 'green' | 'blue' | 'pink' | 'purple' | 'orange';
 
@@ -38,6 +40,27 @@ function notifyListeners() {
       }
     }
   });
+}
+
+export function setAllBibleNotesFromFirestore(notes: BibleHighlightNote[]): void {
+  try {
+    safeStorage.setItem(STORAGE_KEY, JSON.stringify(notes));
+    notifyListeners();
+  } catch (err) {
+    console.error('Error saving firestore bible notes locally:', err);
+  }
+}
+
+async function syncNotesToFirestore(allNotes: BibleHighlightNote[]) {
+  const user = auth?.currentUser;
+  if (user && user.uid !== 'invitado_seminario' && db) {
+    try {
+      const docRef = doc(db, 'users', user.uid, 'biblenotes', 'default');
+      await setDoc(docRef, { notes: allNotes, updatedAt: new Date().toISOString() }, { merge: true });
+    } catch (e) {
+      console.error('Failed to sync bible notes to firestore:', e);
+    }
+  }
 }
 
 export function getAllBibleNotes(): BibleHighlightNote[] {
@@ -116,6 +139,7 @@ export function saveBibleNote(
   try {
     safeStorage.setItem(STORAGE_KEY, JSON.stringify(all));
     notifyListeners();
+    syncNotesToFirestore(all);
   } catch (err) {
     console.error('Error saving bible note:', err);
   }
@@ -129,6 +153,7 @@ export function deleteBibleNote(id: string): void {
   try {
     safeStorage.setItem(STORAGE_KEY, JSON.stringify(filtered));
     notifyListeners();
+    syncNotesToFirestore(filtered);
   } catch (err) {
     console.error('Error deleting bible note:', err);
   }

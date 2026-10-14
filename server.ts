@@ -533,6 +533,12 @@ DIRECTRICES CRÍTICAS:
     }
   });
 
+  // Serve static files from public/ and dist/assets to prevent SPA HTML fallback on assets/manifests
+  const publicPath = path.join(process.cwd(), 'public');
+  const distAssetsPath = path.join(process.cwd(), 'dist', 'assets');
+  app.use(express.static(publicPath));
+  app.use('/assets', express.static(distAssetsPath));
+
   // Vite middleware for development
   if (process.env.NODE_ENV !== 'production') {
     const vite = await createViteServer({

@@ -279,6 +279,19 @@ export function AcademicPanel({
     return Array.from(verseMap.values()).sort((a, b) => a.num - b.num);
   }, [realVerses, currentChapterContent]);
 
+  const [realCommentary, setRealCommentary] = useState<string | null>(null);
+
+  useEffect(() => {
+    async function loadCommentary() {
+      if (selectedVerse !== null) {
+        setRealCommentary(null);
+        const comm = await import('../utils/commentaryService').then(m => m.fetchRealCommentary(selectedBookId, selectedChapter, selectedVerse));
+        setRealCommentary(comm);
+      }
+    }
+    loadCommentary();
+  }, [selectedVerse, selectedBookId, selectedChapter]);
+
   const selectedVerseData = useMemo(() => {
     if (selectedVerse === null) return null;
     return combinedVerses.find(v => v.num === selectedVerse) || null;
@@ -1428,7 +1441,7 @@ export function AcademicPanel({
                               Matthew Henry
                             </h4>
                             <p className="text-xs text-stone-600 dark:text-stone-400 leading-relaxed font-sans italic">
-                              {selectedVerseComm.matthewHenry}
+                              {realCommentary || selectedVerseComm.matthewHenry}
                             </p>
                           </div>
 

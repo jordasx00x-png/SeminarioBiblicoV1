@@ -94,7 +94,8 @@ export default function App() {
 
   const [zoomLevel, setZoomLevel] = useState<number>(() => {
     const savedZoom = safeStorage.getItem('zoomLevel');
-    return savedZoom ? parseInt(savedZoom, 10) : 100;
+    const parsed = savedZoom ? parseInt(savedZoom, 10) : 100;
+    return (!isNaN(parsed) && parsed >= 50 && parsed <= 150) ? parsed : 100;
   });
 
   const handleZoomIn = () => {
@@ -119,14 +120,13 @@ export default function App() {
   };
 
   useEffect(() => {
-    if (typeof document !== 'undefined') {
-      (document.documentElement.style as any).zoom = `${zoomLevel}%`;
-    }
-    return () => {
-      if (typeof document !== 'undefined') {
-        (document.documentElement.style as any).zoom = '100%';
+    if (typeof document !== 'undefined' && document.documentElement) {
+      if (zoomLevel && zoomLevel !== 100) {
+        (document.documentElement.style as any).zoom = `${zoomLevel}%`;
+      } else {
+        (document.documentElement.style as any).zoom = '';
       }
-    };
+    }
   }, [zoomLevel]);
 
   useEffect(() => {

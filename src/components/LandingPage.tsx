@@ -8,7 +8,7 @@ interface LandingPageProps {
 
 export function LandingPage({ onSignIn, onSignInAsGuest, authError }: LandingPageProps) {
   return (
-    <div className="min-h-screen bg-[#FDFCFB] font-serif text-[#2C2C2C] flex flex-col">
+    <div className="h-full w-full flex-1 overflow-y-auto bg-[#FDFCFB] font-serif text-[#2C2C2C] flex flex-col">
       {/* Header */}
       <header className="h-20 bg-[#1A2533] text-white border-b border-[#2C3E50] px-6 md:px-12 flex items-center justify-between sticky top-0 z-50">
         <div className="flex items-center gap-4">

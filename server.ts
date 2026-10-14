@@ -341,6 +341,16 @@ async function startServer() {
     });
   });
 
+  // Client debug logger
+  app.post('/api/client-log', (req, res) => {
+    try {
+      const fs = require('fs');
+      fs.appendFileSync('/tmp/browser_errors.log', JSON.stringify(req.body, null, 2) + '\n---\n');
+    } catch (e) {}
+    console.error('>>> [BROWSER ERROR]', JSON.stringify(req.body, null, 2));
+    res.json({ ok: true });
+  });
+
   // Theological Virtual Assistant Chat Endpoint
   app.post('/api/assistant/chat', async (req, res) => {
     try {

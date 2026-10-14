@@ -2,25 +2,42 @@
 <html lang="es">
   <head>
     <script>
-      // Ignore benign Vite WebSocket errors in AI Studio iframe environment as specified in system guidelines
       (function() {
-        const origError = console.error;
-        const origWarn = console.warn;
-        console.error = function(...args) {
-          const msg = args.map(function(a) { return String(a || ''); }).join(' ');
-          if (msg.includes('WebSocket') || msg.includes('[vite]')) return;
-          origError.apply(console, args);
-        };
-        console.warn = function(...args) {
-          const msg = args.map(function(a) { return String(a || ''); }).join(' ');
-          if (msg.includes('WebSocket') || msg.includes('[vite]')) return;
-          origWarn.apply(console, args);
-        };
+        function sendLog(type, data) {
+          try {
+            fetch('/api/client-log', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ type: type, data: data, url: window.location.href })
+            }).catch(function() {});
+          } catch(e) {}
+        }
+        window.addEventListener('error', function(e) {
+          sendLog('window.error', {
+            message: e.message,
+            filename: e.filename,
+            lineno: e.lineno,
+            colno: e.colno,
+            error: e.error ? (e.error.stack || e.error.message || String(e.error)) : null
+          });
+        });
         window.addEventListener('unhandledrejection', function(event) {
           if (event.reason && (String(event.reason).includes('WebSocket') || String(event.reason).includes('[vite]'))) {
             event.preventDefault();
+            return;
           }
+          sendLog('unhandledrejection', {
+            reason: event.reason ? (event.reason.stack || event.reason.message || String(event.reason)) : String(event)
+          });
         });
+        const origError = console.error;
+        console.error = function(...args) {
+          const msg = args.map(function(a) { return String(a || ''); }).join(' ');
+          if (!msg.includes('WebSocket') && !msg.includes('[vite]')) {
+            sendLog('console.error', msg);
+          }
+          origError.apply(console, args);
+        };
       })();
 
       // Safely unregister any stale Service Worker and purge old app cache on preview URLs

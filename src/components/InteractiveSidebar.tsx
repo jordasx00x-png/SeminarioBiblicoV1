@@ -409,9 +409,9 @@ export function InteractiveSidebar({
                   <Bot size={17} strokeWidth={2} />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-xs font-black truncate text-[#7F1D1D] dark:text-amber-400">📜 Creador de Sermones IA</p>
+                  <p className="text-xs font-black truncate text-[#7F1D1D] dark:text-amber-400">Asistente Teológico</p>
                   <p className="text-[10px] text-stone-400 uppercase tracking-wider truncate">
-                    {activeTool === 'assistant' ? '● En pantalla dividida' : 'Bosquejos, Exégesis & Homilética'}
+                    {activeTool === 'assistant' ? '● En pantalla dividida' : 'Consultas doctrinales & exégesis'}
                   </p>
                 </div>
               </button>

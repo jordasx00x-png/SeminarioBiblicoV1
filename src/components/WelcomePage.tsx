@@ -2,7 +2,7 @@ import React from 'react';
 
 export function WelcomePage() {
   return (
-    <div className="min-h-screen bg-[#FDFCFB] flex flex-col items-center justify-center p-6 text-center">
+    <div className="h-full w-full flex-1 min-h-screen bg-[#FDFCFB] flex flex-col items-center justify-center p-6 text-center">
       <div className="flex flex-col items-center gap-6 max-w-sm">
         <div>
           <h1 className="text-2xl md:text-3xl font-bold text-[#1A2533] font-sans tracking-tight mb-2">

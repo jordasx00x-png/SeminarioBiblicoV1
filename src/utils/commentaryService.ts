@@ -29,7 +29,19 @@ export async function fetchRealCommentary(bookId: string, chapter: number, verse
     const data = await response.json();
     const entry = data.entries.find((e: any) => e.verse === verse || (e.verses && e.verses.includes(verse)));
     
-    return entry ? entry.text : null;
+    if (entry && entry.text) {
+      const transRes = await fetch('/api/translate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text: entry.text })
+      });
+      if (transRes.ok) {
+        const transData = await transRes.json();
+        return transData.translatedText;
+      }
+      return entry.text;
+    }
+    return null;
   } catch (error) {
     console.error('Error fetching commentary:', error);
     return null;

@@ -351,6 +351,24 @@ async function startServer() {
     res.json({ ok: true });
   });
 
+  // Translation endpoint
+  app.post('/api/translate', async (req, res) => {
+    const { text } = req.body;
+    if (!text) return res.status(400).json({ error: 'Missing text' });
+
+    try {
+      const { GoogleGenerativeAI } = await import('@google/genai');
+      const ai = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
+      const model = ai.getGenerativeModel({ model: 'gemini-1.5-flash' });
+
+      const result = await model.generateContent(`Translate the following biblical commentary to Spanish:\n\n${text}`);
+      res.json({ translatedText: result.response.text() });
+    } catch (err) {
+      console.error('Translation error:', err);
+      res.status(500).json({ error: 'Translation failed' });
+    }
+  });
+
   // Theological Virtual Assistant Chat Endpoint
   app.post('/api/assistant/chat', async (req, res) => {
     try {

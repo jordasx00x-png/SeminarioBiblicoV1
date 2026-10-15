@@ -357,13 +357,28 @@ async function startServer() {
     if (!text) return res.status(400).json({ error: 'Missing text' });
 
     try {
+      const fs = require('fs');
+      const apiKey = process.env.GEMINI_API_KEY;
+      if (!apiKey) {
+        fs.appendFileSync('/tmp/server_logs.log', 'Translation error: Missing GEMINI_API_KEY\n');
+        console.error('Translation error: Missing GEMINI_API_KEY');
+        return res.status(500).json({ error: 'Translation configuration missing' });
+      }
+
       const { GoogleGenerativeAI } = await import('@google/genai');
-      const ai = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
+      const ai = new GoogleGenerativeAI(apiKey);
       const model = ai.getGenerativeModel({ model: 'gemini-1.5-flash' });
 
+      fs.appendFileSync('/tmp/server_logs.log', 'Sending text for translation (first 100 chars): ' + text.substring(0, 100) + '\n');
+      console.log('Sending text for translation (first 100 chars):', text.substring(0, 100));
       const result = await model.generateContent(`Translate the following biblical commentary to Spanish:\n\n${text}`);
-      res.json({ translatedText: result.response.text() });
+      const translated = result.response.text();
+      fs.appendFileSync('/tmp/server_logs.log', 'Translation successful\n');
+      console.log('Translation successful');
+      res.json({ translatedText: translated });
     } catch (err) {
+      const fs = require('fs');
+      fs.appendFileSync('/tmp/server_logs.log', 'Translation error: ' + err + '\n');
       console.error('Translation error:', err);
       res.status(500).json({ error: 'Translation failed' });
     }

@@ -30,7 +30,8 @@ export async function fetchRealCommentary(bookId: string, chapter: number, verse
     const entry = data.entries.find((e: any) => e.verse === verse || (e.verses && e.verses.includes(verse)));
     
     if (entry && entry.text) {
-      const transRes = await fetch('/api/translate', {
+      const translationApiUrl = import.meta.env.VITE_TRANSLATION_API_URL || '/api/translate';
+      const transRes = await fetch(translationApiUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ text: entry.text })

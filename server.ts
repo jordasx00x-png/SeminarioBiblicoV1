@@ -1,6 +1,7 @@
 import express from 'express';
 import http from 'http';
 import path from 'path';
+import fs from 'fs';
 import { createServer as createViteServer } from 'vite';
 import { GoogleGenAI } from '@google/genai';
 import OpenAI from 'openai';
@@ -351,13 +352,13 @@ async function startServer() {
     res.json({ ok: true });
   });
 
+
   // Translation endpoint
   app.post('/api/translate', async (req, res) => {
     const { text } = req.body;
     if (!text) return res.status(400).json({ error: 'Missing text' });
 
     try {
-      const fs = require('fs');
       const apiKey = process.env.GEMINI_API_KEY;
       if (!apiKey) {
         fs.appendFileSync('/tmp/server_logs.log', 'Translation error: Missing GEMINI_API_KEY\n');
@@ -377,7 +378,6 @@ async function startServer() {
       console.log('Translation successful');
       res.json({ translatedText: translated });
     } catch (err) {
-      const fs = require('fs');
       fs.appendFileSync('/tmp/server_logs.log', 'Translation error: ' + err + '\n');
       console.error('Translation error:', err);
       res.status(500).json({ error: 'Translation failed' });
